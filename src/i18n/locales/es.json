@@ -1,0 +1,253 @@
+{
+  "common": {
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "deleting": "Eliminando...",
+    "edit": "Editar",
+    "add": "Agregar",
+    "search": "Buscar",
+    "loading": "Cargando...",
+    "loadingData": "Cargando datos...",
+    "back": "Atrás",
+    "confirm": "Confirmar",
+    "close": "Cerrar",
+    "yes": "Sí",
+    "no": "No",
+    "required": "Requerido",
+    "optional": "Opcional",
+    "saveSuccess": "Guardado exitosamente.",
+    "saveError": "Error al guardar.",
+    "notFound": "No encontrado."
+  },
+  "navigation": {
+    "reservations": "Gestión de Reservas",
+    "customers": "Gestión de Clientes",
+    "products": "Gestión de Productos",
+    "settings": "Configuración",
+    "beautitouch": "BeautiTouch",
+    "adminSystem": "Sistema Administrativo"
+  },
+  "reservations": {
+    "title": "Gestión de Reservas",
+    "newReservation": "Nueva Reserva",
+    "editReservation": "Editar Reserva",
+    "customer": "Cliente",
+    "product": "Producto/Servicio",
+    "date": "Fecha",
+    "time": "Hora",
+    "price": "Precio",
+    "status": "Estado de Reserva",
+    "memo": "Nota",
+    "selectCustomer": "Seleccionar Cliente",
+    "selectProduct": "Seleccionar Producto",
+    "selectTime": "Seleccionar Hora",
+    "selectCustomerAndProduct": "Por favor, seleccione cliente y producto.",
+    "confirmed": "Confirmado",
+    "completed": "Completado",
+    "cancelled": "Cancelado",
+    "statusConfirmed": "Confirmado",
+    "statusCompleted": "Completado",
+    "statusCancelled": "Cancelado",
+    "today": "Hoy",
+    "month": "Mes",
+    "week": "Semana",
+    "day": "Día",
+    "noReservations": "No hay reservas.",
+    "deleteConfirm": "¿Está seguro de que desea eliminar esta reserva?",
+    "deleteError": "Error al eliminar la reserva.",
+    "saveSuccess": "Reserva guardada exitosamente.",
+    "saveError": "Error al guardar la reserva."
+  },
+  "customers": {
+    "title": "Gestión de Clientes",
+    "newCustomer": "Nuevo Cliente",
+    "editCustomer": "Editar Cliente",
+    "customerInfo": "Información del Cliente",
+    "name": "Nombre",
+    "phone": "Teléfono",
+    "gender": "Género",
+    "birthDate": "Fecha de Nacimiento",
+    "memo": "Memo",
+    "registrationDate": "Fecha de Registro",
+    "reservationHistory": "Historial de Reservas",
+    "noCustomers": "No hay clientes registrados.",
+    "noSearchResults": "No se encontraron resultados.",
+    "searchPlaceholder": "Buscar por nombre o número de teléfono",
+    "deleteConfirm": "¿Está seguro de que desea eliminar este cliente? La información de reserva relacionada también puede eliminarse.",
+    "saveSuccess": "Información del cliente guardada exitosamente.",
+    "saveError": "Error al guardar la información del cliente.",
+    "noMemo": "No hay memo escrito.",
+    "basicInfoMessage": "Ingrese información básica. Puede agregar información detallada en la página de detalles del cliente.",
+    "nameRequired": "El nombre es requerido.",
+    "customerNotFound": "Cliente no encontrado.",
+    "basicInfo": "Información Básica",
+    "detailInfo": "Información Detallada",
+    "chartInfo": "Información del Gráfico",
+    "skinType": "Tipo de Piel",
+    "selectSkinType": "Seleccionar tipo de piel",
+    "skinTypes": {
+      "dry": "Seco",
+      "oily": "Graso",
+      "combination": "Mixto",
+      "sensitive": "Sensible",
+      "normal": "Normal"
+    },
+    "genders": {
+      "female": "Femenino",
+      "male": "Masculino",
+      "other": "Otro"
+    },
+    "allergies": "Alergias",
+    "notes": "Notas",
+    "noReservations": "No hay historial de reservas.",
+    "backToList": "Volver a la Lista",
+    "createChart": "Crear Gráfico",
+    "viewChart": "Ver Gráfico"
+  },
+  "products": {
+    "title": "Gestión de Productos/Servicios",
+    "newProduct": "Nuevo Producto",
+    "editProduct": "Editar Producto",
+    "name": "Nombre del Producto",
+    "category": "Categoría",
+    "price": "Precio",
+    "duration": "Duración (minutos)",
+    "description": "Descripción",
+    "isActive": "Estado Activo",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "activeDescription": "Activo (mostrado en la lista de reservas)",
+    "noProducts": "No hay productos registrados.",
+    "deleteConfirm": "¿Está seguro de que desea eliminar este producto?",
+    "saveSuccess": "Información del producto guardada exitosamente.",
+    "saveError": "Error al guardar la información del producto.",
+    "categoryPlaceholder": "ej: Uñas, Pestañas"
+  },
+  "settings": {
+    "title": "Configuración",
+    "language": "Idioma",
+    "currency": "Moneda",
+    "businessType": "Tipo de Negocio",
+    "businessTypeDescription": "Establezca el tipo de negocio predeterminado que se seleccionará al ingresar información del gráfico del cliente.",
+    "languages": {
+      "ko": "한국어",
+      "en": "English",
+      "es": "Español",
+      "pt": "Português",
+      "th": "ไทย",
+      "vi": "Tiếng Việt"
+    },
+    "currencies": {
+      "KRW": "Won (₩)",
+      "USD": "Dólar ($)",
+      "EUR": "Euro (€)",
+      "VND": "Dong (₫)",
+      "THB": "Baht (฿)",
+      "BRL": "Real (R$)",
+      "MXN": "Peso ($)"
+    },
+    "businessTypes": {
+      "eyelash": "Pestañas",
+      "waxing": "Depilación",
+      "nail": "Uñas",
+      "skin": "Cuidado de la Piel",
+      "massage": "Masaje"
+    }
+  },
+  "errors": {
+    "requiredFields": "Por favor, complete todos los campos requeridos.",
+    "invalidData": "Datos inválidos.",
+    "networkError": "Ocurrió un error de red.",
+    "notFound": "No encontrado."
+  },
+  "chart": {
+    "type": {
+      "eyelash": "Pestañas",
+      "waxing": "Depilación",
+      "nail": "Uñas",
+      "skin": "Piel",
+      "massage": "Masaje"
+    },
+    "fields": {
+      "eyelashType": "Tipo de Pestañas",
+      "eyelashMaterial": "Material de Pestañas",
+      "eyelashMix": "Mezcla",
+      "eyelashDesign": "Diseño",
+      "eyelashGlue": "Pegamento",
+      "eyelashFeedback": "Comentarios",
+      "waxingArea": "Área de Depilación",
+      "waxingCycle": "Ciclo de Depilación",
+      "waxingSkin": "Condición de la Piel",
+      "waxingProduct": "Producto de Depilación",
+      "waxingPain": "Nivel de Dolor",
+      "nailType": "Tipo de Uñas",
+      "nailColor": "Color de Uñas",
+      "nailBaseTop": "Base/Top",
+      "nailCondition": "Condición de Uñas",
+      "nailFeedback": "Comentarios",
+      "skinTypeDetail": "Tipo de Piel",
+      "skinPurpose": "Propósito",
+      "skinTrouble": "Problemas de Piel",
+      "skinSensitivity": "Sensibilidad",
+      "skinFeedback": "Comentarios",
+      "massageArea": "Área de Masaje",
+      "massageStrength": "Intensidad",
+      "massagePreference": "Preferencia",
+      "massageMuscle": "Condición Muscular",
+      "visitCycle": "Ciclo de Visita",
+      "usedDevice": "Dispositivo Usado",
+      "usedProduct": "Producto Usado",
+      "caution": "Precaución"
+    },
+    "options": {
+      "eyelashType": {
+        "extension": "Extensión",
+        "perm": "Permanente",
+        "remove": "Remover"
+      },
+      "eyelashDesign": {
+        "cat": "Ojo de Gato",
+        "doll": "Ojo de Muñeca",
+        "natural": "Natural"
+      },
+      "waxingSkin": {
+        "sensitive": "Sensible",
+        "dry": "Seco",
+        "trouble": "Problema"
+      },
+      "waxingPain": {
+        "sensitive": "Sensible",
+        "normal": "Normal",
+        "none": "Ninguno"
+      },
+      "nailType": {
+        "care": "Cuidado",
+        "gel": "Gel",
+        "art": "Arte",
+        "remove": "Remover"
+      },
+      "nailCondition": {
+        "thin": "Delgado",
+        "split": "Partido",
+        "healthy": "Saludable"
+      },
+      "skinTypeDetail": {
+        "oily": "Graso",
+        "dry": "Seco",
+        "combination": "Mixto",
+        "sensitive": "Sensible"
+      },
+      "skinSensitivity": {
+        "tingle": "Hormigueo",
+        "none": "Ninguno"
+      },
+      "massageStrength": {
+        "weak": "Débil",
+        "medium": "Medio",
+        "strong": "Fuerte"
+      }
+    }
+  }
+} 

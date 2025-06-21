@@ -1,35 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n';
+import { SettingsProvider } from './contexts/SettingsContext';
+import Layout from './components/Layout';
+import ReservationsPage from './pages/ReservationsPage';
+import CustomersPage from './pages/CustomersPage';
+import CustomerDetailPage from './pages/CustomerDetailPage';
+import ProductsPage from './pages/ProductsPage';
+import SettingsPage from './pages/SettingsPage';
+import ChartPage from './pages/ChartPage';
+import './styles/main.scss';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <I18nextProvider i18n={i18n}>
+      <SettingsProvider>
+        <div className="app-container">
+          <Router>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<ReservationsPage />} />
+                <Route path="reservations" element={<ReservationsPage />} />
+                <Route path="customers" element={<CustomersPage />} />
+                <Route path="customers/:id" element={<CustomerDetailPage />} />
+                <Route path="products" element={<ProductsPage />} />
+                <Route path="settings" element={<SettingsPage />} />
+                <Route path="chart/:reservationId" element={<ChartPage />} />
+              </Route>
+            </Routes>
+          </Router>
+        </div>
+      </SettingsProvider>
+    </I18nextProvider>
+  );
 }
 
-export default App
+export default App;

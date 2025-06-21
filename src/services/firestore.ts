@@ -1,0 +1,295 @@
+import {
+  collection,
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  getDocs,
+  getDoc,
+  query,
+  where,
+  orderBy,
+  Timestamp
+} from 'firebase/firestore';
+import { db } from '../firebase';
+import type { Customer, Product, Reservation } from '../types';
+
+// 고객 관리
+export const customerService = {
+  async getAll(): Promise<Customer[]> {
+    const querySnapshot = await getDocs(collection(db, 'customers'));
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate(),
+      updatedAt: doc.data().updatedAt?.toDate()
+    })) as Customer[];
+  },
+
+  async getById(id: string): Promise<Customer | null> {
+    const docRef = doc(db, 'customers', id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...docSnap.data(),
+        createdAt: docSnap.data().createdAt?.toDate(),
+        updatedAt: docSnap.data().updatedAt?.toDate()
+      } as Customer;
+    }
+    return null;
+  },
+
+  async create(customer: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    const now = new Date();
+    const docRef = await addDoc(collection(db, 'customers'), {
+      ...customer,
+      createdAt: Timestamp.fromDate(now),
+      updatedAt: Timestamp.fromDate(now)
+    });
+    return docRef.id;
+  },
+
+  async update(id: string, customer: Partial<Customer>): Promise<void> {
+    const docRef = doc(db, 'customers', id);
+    await updateDoc(docRef, {
+      ...customer,
+      updatedAt: Timestamp.fromDate(new Date())
+    });
+  },
+
+  async delete(id: string): Promise<void> {
+    const docRef = doc(db, 'customers', id);
+    await deleteDoc(docRef);
+  }
+};
+
+// 상품 관리
+export const productService = {
+  async getAll(): Promise<Product[]> {
+    const querySnapshot = await getDocs(collection(db, 'products'));
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate(),
+      updatedAt: doc.data().updatedAt?.toDate()
+    })) as Product[];
+  },
+
+  async getActive(): Promise<Product[]> {
+    const q = query(
+      collection(db, 'products'),
+      where('isActive', '==', true)
+    );
+    const querySnapshot = await getDocs(q);
+    const products = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate(),
+      updatedAt: doc.data().updatedAt?.toDate()
+    })) as Product[];
+    
+    // 클라이언트에서 이름순으로 정렬
+    return products.sort((a, b) => a.name.localeCompare(b.name));
+  },
+
+  async getById(id: string): Promise<Product | null> {
+    const docRef = doc(db, 'products', id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...docSnap.data(),
+        createdAt: docSnap.data().createdAt?.toDate(),
+        updatedAt: docSnap.data().updatedAt?.toDate()
+      } as Product;
+    }
+    return null;
+  },
+
+  async create(product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    const now = new Date();
+    const docRef = await addDoc(collection(db, 'products'), {
+      ...product,
+      createdAt: Timestamp.fromDate(now),
+      updatedAt: Timestamp.fromDate(now)
+    });
+    return docRef.id;
+  },
+
+  async update(id: string, product: Partial<Product>): Promise<void> {
+    const docRef = doc(db, 'products', id);
+    await updateDoc(docRef, {
+      ...product,
+      updatedAt: Timestamp.fromDate(new Date())
+    });
+  },
+
+  async delete(id: string): Promise<void> {
+    const docRef = doc(db, 'products', id);
+    await deleteDoc(docRef);
+  }
+};
+
+// 예약 관리
+export const reservationService = {
+  async getAll(): Promise<Reservation[]> {
+    const q = query(collection(db, 'reservations'));
+    const querySnapshot = await getDocs(q);
+    const reservations = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      date: doc.data().date?.toDate(),
+      createdAt: doc.data().createdAt?.toDate(),
+      updatedAt: doc.data().updatedAt?.toDate()
+    })) as Reservation[];
+    
+    // 클라이언트에서 날짜와 시간순으로 정렬
+    return reservations.sort((a, b) => {
+      const dateA = a.date.getTime();
+      const dateB = b.date.getTime();
+      if (dateA !== dateB) {
+        return dateB - dateA; // 최신순
+      }
+      return b.time.localeCompare(a.time);
+    });
+  },
+
+  async getByDate(date: Date): Promise<Reservation[]> {
+    // 날짜를 UTC 기준으로 처리하여 타임존 문제 방지
+    const startOfDay = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0));
+    const endOfDay = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999));
+
+    const q = query(
+      collection(db, 'reservations'),
+      where('date', '>=', Timestamp.fromDate(startOfDay)),
+      where('date', '<=', Timestamp.fromDate(endOfDay))
+    );
+    const querySnapshot = await getDocs(q);
+    
+    const reservations = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      date: doc.data().date?.toDate(),
+      createdAt: doc.data().createdAt?.toDate(),
+      updatedAt: doc.data().updatedAt?.toDate()
+    })) as Reservation[];
+
+    // 클라이언트에서 시간순으로 정렬
+    return reservations.sort((a, b) => a.time.localeCompare(b.time));
+  },
+  
+  async getByDateRange(startDate: Date, endDate: Date): Promise<Reservation[]> {
+    // 날짜를 UTC 기준으로 처리하여 타임존 문제 방지
+    const utcStartDate = new Date(Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), 0, 0, 0, 0));
+    const utcEndDate = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23, 59, 59, 999));
+    
+    const q = query(
+      collection(db, "reservations"),
+      where("date", ">=", Timestamp.fromDate(utcStartDate)),
+      where("date", "<=", Timestamp.fromDate(utcEndDate))
+    );
+    const querySnapshot = await getDocs(q);
+    const reservations = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      date: doc.data().date?.toDate(),
+      createdAt: doc.data().createdAt?.toDate(),
+      updatedAt: doc.data().updatedAt?.toDate(),
+    })) as Reservation[];
+    
+    // 클라이언트에서 날짜와 시간순으로 정렬
+    return reservations.sort((a, b) => {
+      const dateA = a.date.getTime();
+      const dateB = b.date.getTime();
+      if (dateA !== dateB) {
+        return dateA - dateB;
+      }
+      return a.time.localeCompare(b.time);
+    });
+  },
+
+  async getByCustomerId(customerId: string): Promise<Reservation[]> {
+    const q = query(
+      collection(db, 'reservations'),
+      where('customerId', '==', customerId)
+    );
+    const querySnapshot = await getDocs(q);
+    const reservations = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      date: doc.data().date?.toDate(),
+      createdAt: doc.data().createdAt?.toDate(),
+      updatedAt: doc.data().updatedAt?.toDate()
+    })) as Reservation[];
+
+    // 클라이언트에서 날짜 최신순으로 정렬
+    return reservations.sort((a, b) => b.date.getTime() - a.date.getTime());
+  },
+
+  async getById(id: string): Promise<Reservation | null> {
+    const docRef = doc(db, 'reservations', id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...docSnap.data(),
+        date: docSnap.data().date?.toDate(),
+        createdAt: docSnap.data().createdAt?.toDate(),
+        updatedAt: docSnap.data().updatedAt?.toDate()
+      } as Reservation;
+    }
+    return null;
+  },
+
+  async create(reservation: Omit<Reservation, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    const now = new Date();
+    // 날짜를 UTC 기준으로 저장
+    const utcDate = new Date(Date.UTC(
+      reservation.date.getFullYear(),
+      reservation.date.getMonth(),
+      reservation.date.getDate(),
+      reservation.date.getHours(),
+      reservation.date.getMinutes(),
+      reservation.date.getSeconds(),
+      reservation.date.getMilliseconds()
+    ));
+    
+    const docRef = await addDoc(collection(db, 'reservations'), {
+      ...reservation,
+      date: Timestamp.fromDate(utcDate),
+      createdAt: Timestamp.fromDate(now),
+      updatedAt: Timestamp.fromDate(now)
+    });
+    return docRef.id;
+  },
+
+  async update(id: string, reservation: Partial<Reservation>): Promise<void> {
+    const docRef = doc(db, 'reservations', id);
+    const updateData: any = {
+      ...reservation,
+      updatedAt: Timestamp.fromDate(new Date())
+    };
+    
+    if (reservation.date) {
+      // 날짜를 UTC 기준으로 저장
+      const utcDate = new Date(Date.UTC(
+        reservation.date.getFullYear(),
+        reservation.date.getMonth(),
+        reservation.date.getDate(),
+        reservation.date.getHours(),
+        reservation.date.getMinutes(),
+        reservation.date.getSeconds(),
+        reservation.date.getMilliseconds()
+      ));
+      updateData.date = Timestamp.fromDate(utcDate);
+    }
+    
+    await updateDoc(docRef, updateData);
+  },
+
+  async delete(id: string): Promise<void> {
+    const docRef = doc(db, 'reservations', id);
+    await deleteDoc(docRef);
+  }
+}; 

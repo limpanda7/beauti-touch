@@ -1,0 +1,254 @@
+{
+  "common": {
+    "save": "저장",
+    "saving": "저장 중...",
+    "cancel": "취소",
+    "delete": "삭제",
+    "deleting": "삭제 중...",
+    "edit": "수정",
+    "add": "추가",
+    "search": "검색",
+    "loading": "로딩 중...",
+    "loadingData": "데이터를 불러오는 중...",
+    "back": "뒤로가기",
+    "confirm": "확인",
+    "close": "닫기",
+    "yes": "예",
+    "no": "아니오",
+    "required": "필수",
+    "optional": "선택사항",
+    "saveSuccess": "저장되었습니다.",
+    "saveError": "저장에 실패했습니다.",
+    "notFound": "찾을 수 없습니다."
+  },
+  "navigation": {
+    "reservations": "예약관리",
+    "customers": "고객관리",
+    "products": "상품관리",
+    "settings": "설정",
+    "beautitouch": "BeautiTouch",
+    "adminSystem": "관리자 시스템"
+  },
+  "reservations": {
+    "title": "예약관리",
+    "newReservation": "새 예약",
+    "editReservation": "예약 수정",
+    "customer": "고객",
+    "product": "상품/시술",
+    "date": "날짜",
+    "time": "시간",
+    "price": "가격",
+    "status": "예약 상태",
+    "memo": "메모",
+    "selectCustomer": "고객 선택",
+    "selectProduct": "상품 선택",
+    "selectTime": "시간 선택",
+    "selectCustomerAndProduct": "고객과 상품을 모두 선택해주세요.",
+    "confirmed": "예약 확정",
+    "completed": "시술 완료",
+    "cancelled": "예약 취소",
+    "statusConfirmed": "예약 확정",
+    "statusCompleted": "시술 완료",
+    "statusCancelled": "예약 취소",
+    "today": "오늘",
+    "month": "월",
+    "week": "주",
+    "day": "일",
+    "noReservations": "예약이 없습니다.",
+    "deleteConfirm": "정말로 이 예약을 삭제하시겠습니까?",
+    "deleteError": "예약 삭제에 실패했습니다."
+  },
+  "customers": {
+    "title": "고객관리",
+    "newCustomer": "새 고객",
+    "editCustomer": "고객 정보 수정",
+    "customerInfo": "고객 정보",
+    "name": "이름",
+    "phone": "연락처",
+    "gender": "성별",
+    "birthDate": "생년월일",
+    "age": "나이",
+    "memo": "메모",
+    "registrationDate": "등록일",
+    "reservationHistory": "예약 내역",
+    "noCustomers": "등록된 고객이 없습니다.",
+    "noSearchResults": "검색 결과가 없습니다.",
+    "searchPlaceholder": "고객 이름 또는 연락처로 검색",
+    "deleteConfirm": "정말로 이 고객을 삭제하시겠습니까? 관련 예약 정보도 모두 삭제될 수 있습니다.",
+    "saveSuccess": "고객 정보가 저장되었습니다.",
+    "saveError": "고객 정보 저장에 실패했습니다.",
+    "noMemo": "작성된 메모가 없습니다.",
+    "basicInfoMessage": "기본 정보를 입력하세요. 상세 정보는 고객 상세 페이지에서 입력할 수 있습니다.",
+    "nameRequired": "이름은 필수입니다.",
+    "genderRequired": "성별은 필수입니다.",
+    "phoneRequired": "연락처는 필수입니다.",
+    "customerNotFound": "고객을 찾을 수 없습니다.",
+    "basicInfo": "기본 정보",
+    "detailInfo": "상세 정보",
+    "chartInfo": "차트 정보",
+    "skinType": "피부 타입",
+    "selectSkinType": "피부 타입 선택",
+    "skinTypes": {
+      "dry": "건성",
+      "oily": "지성",
+      "combination": "복합성",
+      "sensitive": "민감성",
+      "normal": "중성"
+    },
+    "genders": {
+      "female": "여성",
+      "male": "남성",
+      "other": "기타"
+    },
+    "allergies": "알레르기",
+    "notes": "메모",
+    "noReservations": "예약 내역이 없습니다.",
+    "backToList": "목록으로",
+    "createChart": "차트 작성",
+    "viewChart": "차트 보기"
+  },
+  "products": {
+    "title": "상품/시술 관리",
+    "newProduct": "새 상품",
+    "editProduct": "상품 수정",
+    "name": "상품명",
+    "category": "카테고리",
+    "price": "가격",
+    "duration": "소요시간(분)",
+    "description": "설명",
+    "isActive": "활성상태",
+    "active": "활성",
+    "inactive": "비활성",
+    "activeDescription": "활성 (예약 시 목록에 표시)",
+    "noProducts": "등록된 상품이 없습니다.",
+    "deleteConfirm": "정말로 이 상품을 삭제하시겠습니까?",
+    "saveSuccess": "상품 정보가 저장되었습니다.",
+    "saveError": "상품 정보 저장에 실패했습니다.",
+    "categoryPlaceholder": "예: 네일, 속눈썹"
+  },
+  "settings": {
+    "title": "설정",
+    "language": "언어",
+    "currency": "통화",
+    "businessType": "업종",
+    "businessTypeDescription": "고객 차트 정보 입력 시 기본으로 선택될 업종을 설정하세요.",
+    "languages": {
+      "ko": "한국어",
+      "en": "English",
+      "es": "Español",
+      "pt": "Português",
+      "th": "ไทย",
+      "vi": "Tiếng Việt"
+    },
+    "currencies": {
+      "KRW": "원 (₩)",
+      "USD": "달러 ($)",
+      "EUR": "유로 (€)",
+      "VND": "동 (₫)",
+      "THB": "바트 (฿)",
+      "BRL": "헤알 (R$)",
+      "MXN": "페소 ($)"
+    },
+    "businessTypes": {
+      "eyelash": "속눈썹",
+      "waxing": "왁싱",
+      "nail": "네일",
+      "skin": "피부관리",
+      "massage": "마사지"
+    }
+  },
+  "errors": {
+    "requiredFields": "필수 항목을 모두 입력해주세요.",
+    "invalidData": "데이터가 올바르지 않습니다.",
+    "networkError": "네트워크 오류가 발생했습니다.",
+    "notFound": "찾을 수 없습니다."
+  },
+  "chart": {
+    "type": {
+      "eyelash": "속눈썹",
+      "waxing": "왁싱",
+      "nail": "네일",
+      "skin": "피부",
+      "massage": "마사지"
+    },
+    "fields": {
+      "eyelashType": "속눈썹 종류",
+      "eyelashMaterial": "속눈썹 재질",
+      "eyelashMix": "믹스",
+      "eyelashDesign": "디자인",
+      "eyelashGlue": "글루",
+      "eyelashFeedback": "피드백",
+      "waxingArea": "왁싱 부위",
+      "waxingCycle": "왁싱 주기",
+      "waxingSkin": "피부 상태",
+      "waxingProduct": "왁싱 제품",
+      "waxingPain": "통증 정도",
+      "nailType": "네일 종류",
+      "nailColor": "네일 컬러",
+      "nailBaseTop": "베이스/탑",
+      "nailCondition": "손톱 상태",
+      "nailFeedback": "피드백",
+      "skinTypeDetail": "피부 타입",
+      "skinPurpose": "관리 목적",
+      "skinTrouble": "피부 트러블",
+      "skinSensitivity": "민감도",
+      "skinFeedback": "피드백",
+      "massageArea": "마사지 부위",
+      "massageStrength": "강도",
+      "massagePreference": "선호도",
+      "massageMuscle": "근육 상태",
+      "visitCycle": "방문주기",
+      "usedDevice": "사용 기기",
+      "usedProduct": "사용 제품",
+      "caution": "주의사항"
+    },
+    "options": {
+      "eyelashType": {
+        "extension": "연장",
+        "perm": "펌",
+        "remove": "제거"
+      },
+      "eyelashDesign": {
+        "cat": "캣아이",
+        "doll": "돌아이",
+        "natural": "내추럴"
+      },
+      "waxingSkin": {
+        "sensitive": "민감성",
+        "dry": "건성",
+        "trouble": "트러블"
+      },
+      "waxingPain": {
+        "sensitive": "민감함",
+        "normal": "보통",
+        "none": "없음"
+      },
+      "nailType": {
+        "care": "케어",
+        "gel": "젤",
+        "art": "아트",
+        "remove": "제거"
+      },
+      "nailCondition": {
+        "thin": "얇음",
+        "split": "갈라짐",
+        "healthy": "건강함"
+      },
+      "skinTypeDetail": {
+        "oily": "지성",
+        "dry": "건성",
+        "combination": "복합성",
+        "sensitive": "민감성"
+      },
+      "skinSensitivity": {
+        "tingle": "따가움",
+        "none": "없음"
+      },
+      "massageStrength": {
+        "weak": "약함",
+        "medium": "보통",
+        "strong": "강함"
+      }
+    }
+  }
+} 
