@@ -30,7 +30,7 @@ const ReservationsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [view, setView] = useState<ViewType>('month');
+  const [view, setView] = useState<ViewType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingReservation, setEditingReservation] = useState<Reservation | null>(null);
   const [selectedDateForModal, setSelectedDateForModal] = useState<Date | null>(null);
@@ -44,6 +44,29 @@ const ReservationsPage: React.FC = () => {
   const [swipeFeedback, setSwipeFeedback] = useState<'left' | 'right' | null>(null);
 
   const minSwipeDistance = 50;
+
+  // 마지막으로 본 뷰 상태를 localStorage에서 복원
+  useEffect(() => {
+    const savedView = localStorage.getItem('reservationsLastView');
+    
+    if (savedView && ['month', 'week', 'day'].includes(savedView)) {
+      setView(savedView as ViewType);
+    } else {
+      setView('month');
+    }
+    
+    // 날짜는 항상 오늘로 설정
+    setCurrentDate(new Date());
+  }, []);
+
+  // 뷰가 변경될 때마다 localStorage에 저장 (날짜 제외)
+  useEffect(() => {
+    if (view === null) {
+      return;
+    }
+    
+    localStorage.setItem('reservationsLastView', view);
+  }, [view]);
 
   // 상품 정보를 ID로 빠르게 찾기 위한 Map
   const productsMap = useMemo(() => {
@@ -98,7 +121,7 @@ const ReservationsPage: React.FC = () => {
 
   // 모바일에서 스와이프 힌트 표시
   useEffect(() => {
-    if (isMobile && (view === 'month' || view === 'week')) {
+    if (isMobile && view && (view === 'month' || view === 'week')) {
       const hasShownHint = localStorage.getItem('swipeHintShown');
       if (!hasShownHint) {
         setShowSwipeHint(true);
@@ -115,7 +138,10 @@ const ReservationsPage: React.FC = () => {
     let end: Date;
     let text: string;
     
-    switch (view) {
+    // view가 null이면 기본값으로 month 사용
+    const currentView = view || 'month';
+    
+    switch (currentView) {
       case 'week':
         start = startOfWeek(currentDate, { weekStartsOn: 0 }); // Sunday
         end = endOfWeek(currentDate, { weekStartsOn: 0 });
@@ -213,7 +239,9 @@ const ReservationsPage: React.FC = () => {
     }
 
     const modifier = direction === 'prev' ? -1 : 1;
-    switch (view) {
+    const currentView = view || 'month'; // view가 null이면 기본값 사용
+    
+    switch (currentView) {
       case 'week':
         setCurrentDate(addDays(currentDate, 7 * modifier));
         break;
@@ -235,7 +263,7 @@ const ReservationsPage: React.FC = () => {
     const days = eachDayOfInterval({ start: startDate, end: endDate });
     const dayNames = [t('calendar.days.sun'), t('calendar.days.mon'), t('calendar.days.tue'), t('calendar.days.wed'), t('calendar.days.thu'), t('calendar.days.fri'), t('calendar.days.sat')];
 
-    return renderMobileMonthView(days, dayNames);
+      return renderMobileMonthView(days, dayNames);
   };
 
   const renderMobileMonthView = (days: Date[], dayNames: string[]) => {
@@ -316,7 +344,7 @@ const ReservationsPage: React.FC = () => {
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 });
     const days = eachDayOfInterval({ start: weekStart, end: endOfWeek(weekStart, { weekStartsOn: 0 }) });
     
-    return renderMobileWeekView(days);
+      return renderMobileWeekView(days);
   };
 
   const renderMobileWeekView = (days: Date[]) => {
@@ -341,32 +369,32 @@ const ReservationsPage: React.FC = () => {
           onTouchEnd={onTouchEnd}
         >
           <div className="calendar-week-mobile-header">
-            {days.map((day, index) => {
-              const isToday = isSameDay(day, new Date());
-              return (
+          {days.map((day, index) => {
+            const isToday = isSameDay(day, new Date());
+            return (
                 <div key={index} className="calendar-week-mobile-day-header">
                   <span className="calendar-week-mobile-day-name">
-                    {format(day, 'eee', { locale: ko })}
+                {format(day, 'eee', { locale: ko })}
                   </span>
                   <span className={`calendar-week-mobile-day-number ${isToday ? 'today' : ''}`}>
-                    {format(day, 'd')}
+                  {format(day, 'd')}
                   </span>
-                </div>
-              );
-            })}
-          </div>
-          
+              </div>
+            );
+          })}
+        </div>
+        
           <div className="calendar-week-mobile-grid">
-            {days.map((day, dayIndex) => {
-              const reservationsForDay = reservations.filter(r => isSameDay(r.date, day));
-              const isToday = isSameDay(day, new Date());
-              
-              return (
-                <div
-                  key={dayIndex}
+          {days.map((day, dayIndex) => {
+            const reservationsForDay = reservations.filter(r => isSameDay(r.date, day));
+            const isToday = isSameDay(day, new Date());
+            
+            return (
+              <div
+                key={dayIndex}
                   className={`calendar-week-mobile-day-slot ${isToday ? 'today' : ''}`}
-                  onClick={() => handleOpenModal(null, day)}
-                >
+                onClick={() => handleOpenModal(null, day)}
+              >
                   {reservationsForDay.map((res, resIndex) => (
                     <div 
                       key={res.id} 
@@ -381,9 +409,9 @@ const ReservationsPage: React.FC = () => {
                       <span className="event-product">{res.productName}</span>
                     </div>
                   ))}
-                </div>
-              );
-            })}
+              </div>
+            );
+          })}
           </div>
         </div>
       </div>
@@ -423,7 +451,7 @@ const ReservationsPage: React.FC = () => {
     </div>
   );
 
-  if (loading) {
+  if (loading || view === null) {
     return (
       <div className="content-wrapper">
         <LoadingSpinner fullScreen text={t('common.loading')} />

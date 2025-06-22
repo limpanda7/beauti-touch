@@ -31,21 +31,10 @@ const CustomersPage: React.FC = () => {
       
       const today = new Date();
       today.setHours(0, 0, 0, 0); // 오늘 날짜의 시작 시간으로 설정
-      console.log('오늘 날짜 (시작):', today);
 
       const processedCustomers = await Promise.all(
         customerData.map(async (customer) => {
           const reservations = await reservationService.getByCustomerId(customer.id);
-          
-          // 디버깅: 첫 번째 고객의 예약 정보 출력
-          if (customer.name === '테스트 고객') {
-            console.log('테스트 고객 예약들:', reservations);
-            reservations.forEach(res => {
-              const reservationDate = new Date(res.date);
-              reservationDate.setHours(0, 0, 0, 0);
-              console.log(`예약 날짜: ${reservationDate}, 오늘: ${today}, 비교: ${reservationDate < today}`);
-            });
-          }
 
           const pastReservations = reservations
             .filter(r => {
@@ -62,12 +51,6 @@ const CustomersPage: React.FC = () => {
               return r.status === 'confirmed' && reservationDate >= today;
             })
             .sort((a, b) => a.date.getTime() - b.date.getTime());
-          
-          // 디버깅: 필터링 결과 출력
-          if (customer.name === '테스트 고객') {
-            console.log('과거 예약:', pastReservations);
-            console.log('미래 예약:', futureReservations);
-          }
           
           return {
             ...customer,
