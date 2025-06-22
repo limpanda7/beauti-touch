@@ -1,9 +1,15 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Calendar, Users, ClipboardList, Settings } from 'lucide-react';
+import { Calendar, Users, ClipboardList, Settings, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  onClose?: () => void;
+  isMobile?: boolean;
+  className?: string;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ onClose, isMobile = false, className = '' }) => {
   const { t } = useTranslation();
   
   const menuItems = [
@@ -13,8 +19,14 @@ const Sidebar: React.FC = () => {
     { id: 'settings', label: t('navigation.settings'), icon: Settings, path: '/settings' },
   ];
 
+  const handleNavClick = () => {
+    if (isMobile && onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${isMobile ? 'sidebar-mobile' : ''} ${className}`}>
       <div className="sidebar-header">
         <div className="brand-container">
           <img src="/logo.png" alt="Beautitouch Logo" className="sidebar-logo-large" />
@@ -27,7 +39,7 @@ const Sidebar: React.FC = () => {
         <ul>
           {menuItems.map((item) => (
             <li key={item.id}>
-              <NavLink to={item.path}>
+              <NavLink to={item.path} onClick={handleNavClick}>
                 <item.icon />
                 <span>{item.label}</span>
               </NavLink>

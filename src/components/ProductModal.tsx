@@ -131,6 +131,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave })
                   name="price"
                   value={formData.price}
                   onChange={handleChange}
+                  pattern="[0-9]*"
+                  inputMode="numeric"
                   className="product-modal-input"
                   required
                 />
@@ -145,13 +147,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave })
               </label>
               <div className="product-modal-input-group">
                 <input
-                  type="number"
+                  type="text"
                   id="duration"
                   name="duration"
                   value={formData.duration}
                   onChange={handleNumberChange}
-                  min="0"
-                  step="5"
+                  pattern="[0-9]*"
+                  inputMode="numeric"
                   className="product-modal-input"
                   required
                 />

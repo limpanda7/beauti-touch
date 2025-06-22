@@ -340,6 +340,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
+                pattern="[0-9]*"
+                inputMode="numeric"
                 required
                 className="price-input"
               />

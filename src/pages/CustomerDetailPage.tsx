@@ -279,10 +279,13 @@ const CustomerDetailPage: React.FC = () => {
               <label className="customer-detail-label">{t('customers.age')}</label>
               {isDetailEdit ? (
                 <input
-                  type="number"
+                  type="text"
                   name="age"
                   value={detailForm?.age || ''}
                   onChange={handleFormChange}
+                  pattern="[0-9]*"
+                  inputMode="numeric"
+                  placeholder="나이를 입력하세요"
                 />
               ) : (
                 <p className="customer-detail-value">{customer.age || '-'}</p>

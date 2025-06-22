@@ -14,11 +14,12 @@ import {
   isSameMonth,
 } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import type { Reservation } from '../types';
-import { reservationService } from '../services/firestore';
+import type { Reservation, Product } from '../types';
+import { reservationService, productService } from '../services/firestore';
 import ReservationModal from '../components/ReservationModal';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useCurrencyFormat } from '../utils/currency';
+import { getTimeRange } from '../utils/timeUtils';
 
 type ViewType = 'month' | 'week' | 'day';
 
@@ -26,6 +27,7 @@ const ReservationsPage: React.FC = () => {
   const { t } = useTranslation();
   const { formatCurrency } = useCurrencyFormat();
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<ViewType>('month');
@@ -33,6 +35,80 @@ const ReservationsPage: React.FC = () => {
   const [editingReservation, setEditingReservation] = useState<Reservation | null>(null);
   const [selectedDateForModal, setSelectedDateForModal] = useState<Date | null>(null);
   const [initialCustomerIdForModal, setInitialCustomerIdForModal] = useState<string | undefined>(undefined);
+  const [isMobile, setIsMobile] = useState(false);
+  const [showSwipeHint, setShowSwipeHint] = useState(false);
+
+  // 스와이프 제스처를 위한 터치 이벤트 처리
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [swipeFeedback, setSwipeFeedback] = useState<'left' | 'right' | null>(null);
+
+  const minSwipeDistance = 50;
+
+  // 상품 정보를 ID로 빠르게 찾기 위한 Map
+  const productsMap = useMemo(() => {
+    const map = new Map<string, Product>();
+    products.forEach(product => {
+      map.set(product.id, product);
+    });
+    return map;
+  }, [products]);
+
+  // 예약의 시간 범위를 계산하는 함수
+  const getReservationTimeRange = (reservation: Reservation): string => {
+    const product = productsMap.get(reservation.productId);
+    if (product && product.duration) {
+      return getTimeRange(reservation.time, product.duration);
+    }
+    return reservation.time; // 상품 정보가 없으면 원래 시간 반환
+  };
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+    setSwipeFeedback(null);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      setSwipeFeedback('left');
+      setTimeout(() => {
+        changeDate('next');
+        setSwipeFeedback(null);
+      }, 150);
+    }
+    if (isRightSwipe) {
+      setSwipeFeedback('right');
+      setTimeout(() => {
+        changeDate('prev');
+        setSwipeFeedback(null);
+      }, 150);
+    }
+  };
+
+  // 모바일에서 스와이프 힌트 표시
+  useEffect(() => {
+    if (isMobile && (view === 'month' || view === 'week')) {
+      const hasShownHint = localStorage.getItem('swipeHintShown');
+      if (!hasShownHint) {
+        setShowSwipeHint(true);
+        setTimeout(() => {
+          setShowSwipeHint(false);
+          localStorage.setItem('swipeHintShown', 'true');
+        }, 4000);
+      }
+    }
+  }, [isMobile, view]);
 
   const getDateRangeAndHeader = useMemo(() => {
     let start: Date;
@@ -64,10 +140,6 @@ const ReservationsPage: React.FC = () => {
     };
   }, [currentDate, view]);
 
-  useEffect(() => {
-    loadReservations();
-  }, [getDateRangeAndHeader]);
-
   const loadReservations = async () => {
     try {
       setLoading(true);
@@ -79,6 +151,31 @@ const ReservationsPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const loadProducts = async () => {
+    try {
+      const data = await productService.getAll();
+      setProducts(data);
+    } catch (error) {
+      console.error('상품 목록을 불러오는데 실패했습니다:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadReservations();
+    loadProducts();
+  }, [getDateRangeAndHeader]);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 1200);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const handleOpenModal = (reservation: Reservation | null, date?: Date) => {
     setEditingReservation(reservation);
@@ -138,36 +235,79 @@ const ReservationsPage: React.FC = () => {
     const days = eachDayOfInterval({ start: startDate, end: endDate });
     const dayNames = [t('calendar.days.sun'), t('calendar.days.mon'), t('calendar.days.tue'), t('calendar.days.wed'), t('calendar.days.thu'), t('calendar.days.fri'), t('calendar.days.sat')];
 
+    return renderMobileMonthView(days, dayNames);
+  };
+
+  const renderMobileMonthView = (days: Date[], dayNames: string[]) => {
     return (
-      <div className="calendar">
-        {dayNames.map(name => (
-          <div key={name} className="calendar-header">{name}</div>
-        ))}
-        {days.map((day, index) => {
-          const reservationsForDay = reservations.filter(r => isSameDay(r.date, day));
-          return (
-            <div
-              key={index}
-              className={`calendar-day ${!isSameMonth(day, currentDate) ? 'other-month' : ''} ${isSameDay(day, new Date()) ? 'today' : ''}`}
-            >
-              <div className="day-number">
-                {format(day, 'd')}
-              </div>
-              <div style={{ marginTop: '0.25rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                {reservationsForDay.map(res => (
-                  <div 
-                    key={res.id} 
-                    className={`reservation-item ${res.status === 'cancelled' ? 'cancelled' : ''} ${res.status === 'completed' ? 'completed' : ''}`} 
-                    onClick={() => handleOpenModal(res)}
-                  >
-                    <p className="time">{res.time} {res.customerName}</p>
-                    <p className="product-price">{res.productName} - {formatCurrency(res.price)}</p>
+      <div className="calendar-mobile-container">
+        {showSwipeHint && (
+          <div className="swipe-hint">
+            <span>← 스와이프하여 월 이동 →</span>
+          </div>
+        )}
+        
+        {swipeFeedback && (
+          <div className={`swipe-feedback ${swipeFeedback}`}>
+            {swipeFeedback === 'left' ? '다음 월' : '이전 월'}
+          </div>
+        )}
+        
+        <div 
+          className={`calendar-mobile ${swipeFeedback ? `swipe-${swipeFeedback}` : ''}`}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          <div className="calendar-mobile-header">
+            {dayNames.map(name => (
+              <div key={name} className="calendar-mobile-day-name">{name}</div>
+            ))}
+          </div>
+          
+          <div className="calendar-mobile-grid">
+            {days.map((day, index) => {
+              const reservationsForDay = reservations.filter(r => isSameDay(r.date, day));
+              const isToday = isSameDay(day, new Date());
+              const isCurrentMonth = isSameMonth(day, currentDate);
+              
+              return (
+                <div
+                  key={index}
+                  className={`calendar-mobile-day ${!isCurrentMonth ? 'other-month' : ''} ${isToday ? 'today' : ''}`}
+                  onClick={() => handleOpenModal(null, day)}
+                >
+                  <div className="calendar-mobile-day-number">
+                    {format(day, 'd')}
                   </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+                  
+                  <div className="calendar-mobile-events">
+                    {reservationsForDay.slice(0, 3).map((res, resIndex) => (
+                      <div 
+                        key={res.id} 
+                        className={`calendar-mobile-event ${res.status === 'cancelled' ? 'cancelled' : ''} ${res.status === 'completed' ? 'completed' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenModal(res);
+                        }}
+                      >
+                        <span className="event-time">{getReservationTimeRange(res)}</span>
+                        <span className="event-customer">{res.customerName}</span>
+                        <span className="event-product">{res.productName}</span>
+                      </div>
+                    ))}
+                    
+                    {reservationsForDay.length > 3 && (
+                      <div className="calendar-mobile-more-events">
+                        +{reservationsForDay.length - 3}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     );
   };
@@ -176,34 +316,76 @@ const ReservationsPage: React.FC = () => {
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 });
     const days = eachDayOfInterval({ start: weekStart, end: endOfWeek(weekStart, { weekStartsOn: 0 }) });
     
+    return renderMobileWeekView(days);
+  };
+
+  const renderMobileWeekView = (days: Date[]) => {
     return (
-      <div className="calendar">
-        {days.map((day, index) => {
-          const reservationsForDay = reservations.filter(r => isSameDay(r.date, day));
-          const isToday = isSameDay(day, new Date());
+      <div className="calendar-week-mobile-container">
+        {showSwipeHint && (
+          <div className="swipe-hint">
+            <span>← 스와이프하여 주 이동 →</span>
+          </div>
+        )}
+        
+        {swipeFeedback && (
+          <div className={`swipe-feedback ${swipeFeedback}`}>
+            {swipeFeedback === 'left' ? '다음 주' : '이전 주'}
+          </div>
+        )}
+        
+        <div 
+          className={`calendar-week-mobile ${swipeFeedback ? `swipe-${swipeFeedback}` : ''}`}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          <div className="calendar-week-mobile-header">
+            {days.map((day, index) => {
+              const isToday = isSameDay(day, new Date());
+              return (
+                <div key={index} className="calendar-week-mobile-day-header">
+                  <span className="calendar-week-mobile-day-name">
+                    {format(day, 'eee', { locale: ko })}
+                  </span>
+                  <span className={`calendar-week-mobile-day-number ${isToday ? 'today' : ''}`}>
+                    {format(day, 'd')}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
           
-          return (
-            <div key={index} className={`week-day-container ${isToday ? 'today' : ''}`}>
-              <div className="calendar-header">
-                {format(day, 'eee, d', { locale: ko })}
-              </div>
-              <div className="calendar-day" style={{ minHeight: '200px' }}>
-                {reservationsForDay.map(res => (
-                  <div 
-                    key={res.id} 
-                    className={`reservation-item ${res.status === 'cancelled' ? 'cancelled' : ''} ${res.status === 'completed' ? 'completed' : ''}`} 
-                    onClick={() => handleOpenModal(res)}
-                  >
-                    <p className="time">{res.time}</p>
-                    <p>{res.customerName}</p>
-                    <p style={{ fontSize: '0.75rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{res.productName}</p>
-                    <p className="price">{formatCurrency(res.price)}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+          <div className="calendar-week-mobile-grid">
+            {days.map((day, dayIndex) => {
+              const reservationsForDay = reservations.filter(r => isSameDay(r.date, day));
+              const isToday = isSameDay(day, new Date());
+              
+              return (
+                <div
+                  key={dayIndex}
+                  className={`calendar-week-mobile-day-slot ${isToday ? 'today' : ''}`}
+                  onClick={() => handleOpenModal(null, day)}
+                >
+                  {reservationsForDay.map((res, resIndex) => (
+                    <div 
+                      key={res.id} 
+                      className={`calendar-week-mobile-event ${res.status === 'cancelled' ? 'cancelled' : ''} ${res.status === 'completed' ? 'completed' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenModal(res);
+                      }}
+                    >
+                      <span className="event-time">{getReservationTimeRange(res)}</span>
+                      <span className="event-customer">{res.customerName}</span>
+                      <span className="event-product">{res.productName}</span>
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     );
   };
@@ -216,7 +398,7 @@ const ReservationsPage: React.FC = () => {
         reservations.map(reservation => (
           <div key={reservation.id} className={`reservations-day-item ${reservation.status === 'completed' ? 'completed' : ''}`}>
             <div>
-              <p className="reservations-day-item-time">{reservation.time}</p>
+              <p className="reservations-day-item-time">{getReservationTimeRange(reservation)}</p>
               <p className="reservations-day-item-customer">{reservation.customerName}</p>
               <p className="reservations-day-item-product">{reservation.productName}</p>
             </div>
@@ -265,25 +447,54 @@ const ReservationsPage: React.FC = () => {
       <div className="card">
         <div className="page-header">
           <div className="reservations-header">
-            <button
-              onClick={() => changeDate('prev')}
-              className="btn btn-icon"
-            >
-              <ChevronLeft style={{ width: '1.25rem', height: '1.25rem' }} />
-            </button>
-            <h2 className="reservations-header-title">{getDateRangeAndHeader.headerText}</h2>
-            <button
-              onClick={() => changeDate('next')}
-              className="btn btn-icon"
-            >
-              <ChevronRight style={{ width: '1.25rem', height: '1.25rem' }} />
-            </button>
-            <button
-              onClick={() => changeDate('today')}
-              className="btn btn-secondary"
-            >
-              {t('reservations.today')}
-            </button>
+            {!isMobile && (
+              <>
+                <button
+                  onClick={() => changeDate('prev')}
+                  className="btn btn-icon"
+                >
+                  <ChevronLeft style={{ width: '1.25rem', height: '1.25rem' }} />
+                </button>
+                <h2 className="reservations-header-title">{getDateRangeAndHeader.headerText}</h2>
+                <button
+                  onClick={() => changeDate('next')}
+                  className="btn btn-icon"
+                >
+                  <ChevronRight style={{ width: '1.25rem', height: '1.25rem' }} />
+                </button>
+                <button
+                  onClick={() => changeDate('today')}
+                  className="btn btn-secondary"
+                >
+                  {t('reservations.today')}
+                </button>
+              </>
+            )}
+            {isMobile && (
+              <>
+                <div className="month-nav-group">
+                  <button
+                    onClick={() => changeDate('prev')}
+                    className="btn btn-icon btn-nav"
+                  >
+                    <ChevronLeft style={{ width: '1rem', height: '1rem' }} />
+                  </button>
+                  <h2 className="reservations-header-title">{getDateRangeAndHeader.headerText}</h2>
+                  <button
+                    onClick={() => changeDate('next')}
+                    className="btn btn-icon btn-nav"
+                  >
+                    <ChevronRight style={{ width: '1rem', height: '1rem' }} />
+                  </button>
+                </div>
+                <button
+                  onClick={() => changeDate('today')}
+                  className="btn btn-secondary btn-today"
+                >
+                  {t('reservations.today')}
+                </button>
+              </>
+            )}
           </div>
           <div className="reservations-header-btns">
             <button

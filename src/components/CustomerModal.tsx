@@ -149,6 +149,8 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
               value={formData.phone}
               onChange={handleChange}
               required
+              pattern="[0-9]*"
+              inputMode="numeric"
               placeholder="연락처를 입력하세요"
             />
           </div>
@@ -182,13 +184,13 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
           <div className="form-group">
             <label htmlFor="age">{t('customers.age')} <span className="optional-text">({t('common.optional')})</span></label>
             <input
-              type="number"
+              type="text"
               id="age"
               name="age"
               value={formData.age}
               onChange={handleChange}
-              min="1"
-              max="120"
+              pattern="[0-9]*"
+              inputMode="numeric"
               placeholder="나이를 입력하세요"
             />
           </div>
