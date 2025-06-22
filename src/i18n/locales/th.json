@@ -27,7 +27,8 @@
     "products": "จัดการสินค้า",
     "settings": "ตั้งค่า",
     "beautitouch": "BeautiTouch",
-    "adminSystem": "ระบบจัดการ"
+    "adminSystem": "ระบบผู้ดูแล",
+    "other": "อื่นๆ"
   },
   "reservations": {
     "title": "จัดการการจอง",
@@ -37,13 +38,16 @@
     "product": "สินค้า/บริการ",
     "date": "วันที่",
     "time": "เวลา",
+    "hour": "ชั่วโมง",
+    "minute": "นาที",
     "price": "ราคา",
     "status": "สถานะการจอง",
     "memo": "บันทึก",
     "selectCustomer": "เลือกลูกค้า",
     "selectProduct": "เลือกสินค้า",
     "selectTime": "เลือกเวลา",
-    "selectCustomerAndProduct": "กรุณาเลือกลูกค้าและสินค้าทั้งหมด",
+    "selectCustomerAndProduct": "กรุณาเลือกลูกค้าและสินค้า",
+    "timeRequired": "กรุณาใส่เวลา",
     "confirmed": "ยืนยันแล้ว",
     "completed": "เสร็จสิ้น",
     "cancelled": "ยกเลิก",
@@ -56,29 +60,34 @@
     "day": "วัน",
     "noReservations": "ไม่มีการจอง",
     "deleteConfirm": "คุณแน่ใจหรือไม่ที่จะลบการจองนี้?",
-    "deleteError": "ลบการจองไม่สำเร็จ"
+    "deleteError": "ลบการจองไม่สำเร็จ",
+    "saveSuccess": "บันทึกการจองสำเร็จ",
+    "saveError": "บันทึกการจองไม่สำเร็จ"
   },
   "customers": {
     "title": "จัดการลูกค้า",
     "newCustomer": "ลูกค้าใหม่",
-    "editCustomer": "แก้ไขข้อมูลลูกค้า",
+    "editCustomer": "แก้ไขลูกค้า",
     "customerInfo": "ข้อมูลลูกค้า",
     "name": "ชื่อ",
-    "phone": "เบอร์โทรศัพท์",
+    "phone": "โทรศัพท์",
     "gender": "เพศ",
     "birthDate": "วันเกิด",
+    "age": "อายุ",
     "memo": "บันทึก",
     "registrationDate": "วันที่ลงทะเบียน",
     "reservationHistory": "ประวัติการจอง",
-    "noCustomers": "ไม่มีลูกค้า",
+    "noCustomers": "ไม่มีลูกค้าลงทะเบียน",
     "noSearchResults": "ไม่พบผลการค้นหา",
-    "searchPlaceholder": "ค้นหาตามชื่อหรือเบอร์โทรศัพท์",
+    "searchPlaceholder": "ค้นหาตามชื่อหรือหมายเลขโทรศัพท์",
     "deleteConfirm": "คุณแน่ใจหรือไม่ที่จะลบลูกค้านี้? ข้อมูลการจองที่เกี่ยวข้องอาจถูกลบด้วย",
     "saveSuccess": "บันทึกข้อมูลลูกค้าสำเร็จ",
     "saveError": "บันทึกข้อมูลลูกค้าไม่สำเร็จ",
     "noMemo": "ไม่มีบันทึก",
-    "basicInfoMessage": "กรอกข้อมูลพื้นฐาน คุณสามารถเพิ่มข้อมูลรายละเอียดในหน้าข้อมูลลูกค้าได้",
+    "basicInfoMessage": "ใส่ข้อมูลพื้นฐาน คุณสามารถเพิ่มข้อมูลรายละเอียดในหน้าข้อมูลลูกค้า",
     "nameRequired": "ชื่อเป็นสิ่งจำเป็น",
+    "genderRequired": "เพศเป็นสิ่งจำเป็น",
+    "phoneRequired": "หมายเลขโทรศัพท์เป็นสิ่งจำเป็น",
     "customerNotFound": "ไม่พบลูกค้า",
     "basicInfo": "ข้อมูลพื้นฐาน",
     "detailInfo": "ข้อมูลรายละเอียด",
@@ -102,7 +111,9 @@
     "noReservations": "ไม่มีประวัติการจอง",
     "backToList": "กลับไปยังรายการ",
     "createChart": "สร้างแผนภูมิ",
-    "viewChart": "ดูแผนภูมิ"
+    "viewChart": "ดูแผนภูมิ",
+    "lastVisit": "การเยี่ยมครั้งล่าสุด",
+    "nextVisit": "การเยี่ยมครั้งถัดไป"
   },
   "products": {
     "title": "จัดการสินค้า/บริการ",
@@ -113,22 +124,24 @@
     "price": "ราคา",
     "duration": "ระยะเวลา (นาที)",
     "description": "คำอธิบาย",
-    "isActive": "สถานะการใช้งาน",
-    "active": "ใช้งาน",
-    "inactive": "ไม่ใช้งาน",
-    "activeDescription": "ใช้งาน (แสดงในรายการจอง)",
-    "noProducts": "ไม่มีสินค้า",
+    "isActive": "สถานะการทำงาน",
+    "active": "ทำงาน",
+    "inactive": "ไม่ทำงาน",
+    "activeDescription": "ทำงาน (แสดงในรายการจอง)",
+    "noProducts": "ไม่มีสินค้าลงทะเบียน",
     "deleteConfirm": "คุณแน่ใจหรือไม่ที่จะลบสินค้านี้?",
     "saveSuccess": "บันทึกข้อมูลสินค้าสำเร็จ",
     "saveError": "บันทึกข้อมูลสินค้าไม่สำเร็จ",
-    "categoryPlaceholder": "เช่น เล็บ, ขนตา"
+    "categoryPlaceholder": "เช่น เล็บ ขนตา"
   },
   "settings": {
-    "title": "การตั้งค่า",
+    "title": "ตั้งค่า",
     "language": "ภาษา",
+    "languageDescription": "เลือกภาษาการแสดงผลสำหรับแอปพลิเคชัน",
     "currency": "สกุลเงิน",
+    "currencyDescription": "เลือกสกุลเงินที่จะใช้สำหรับการแสดงราคา",
     "businessType": "ประเภทธุรกิจ",
-    "businessTypeDescription": "ตั้งค่าประเภทธุรกิจเริ่มต้นที่จะถูกเลือกเมื่อป้อนข้อมูลแผนภูมิของลูกค้า",
+    "businessTypeDescription": "ตั้งค่าประเภทธุรกิจเริ่มต้นที่จะถูกเลือกเมื่อใส่ข้อมูลแผนภูมิลูกค้า",
     "languages": {
       "ko": "한국어",
       "en": "English",
@@ -138,13 +151,13 @@
       "vi": "Tiếng Việt"
     },
     "currencies": {
-      "KRW": "Won (₩)",
-      "USD": "Dollar ($)",
-      "EUR": "Euro (€)",
-      "VND": "Dong (₫)",
-      "THB": "Baht (฿)",
-      "BRL": "Real (R$)",
-      "MXN": "Peso ($)"
+      "KRW": "วอน (₩)",
+      "USD": "ดอลลาร์ ($)",
+      "EUR": "ยูโร (€)",
+      "VND": "ดอง (₫)",
+      "THB": "บาท (฿)",
+      "BRL": "เรียล (R$)",
+      "MXN": "เปโซ ($)"
     },
     "businessTypes": {
       "eyelash": "ขนตา",
@@ -155,46 +168,64 @@
     }
   },
   "errors": {
-    "requiredFields": "กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน",
+    "requiredFields": "กรุณากรอกข้อมูลในช่องที่จำเป็นทั้งหมด",
     "invalidData": "ข้อมูลไม่ถูกต้อง",
     "networkError": "เกิดข้อผิดพลาดเครือข่าย",
     "notFound": "ไม่พบ"
   },
+  "calendar": {
+    "days": {
+      "sun": "อา",
+      "mon": "จ",
+      "tue": "อ",
+      "wed": "พ",
+      "thu": "พฤ",
+      "fri": "ศ",
+      "sat": "ส"
+    }
+  },
   "chart": {
+    "title": "แผนภูมิ",
+    "createChart": "สร้างแผนภูมิ",
     "type": {
+      "label": "ประเภทแผนภูมิ",
       "eyelash": "ขนตา",
       "waxing": "แว็กซ์",
       "nail": "เล็บ",
       "skin": "ผิว",
-      "massage": "นวด"
+      "massage": "นวด",
+      "waxingPain": "ระดับความเจ็บปวด",
+      "waxingAftercare": "การดูแลหลัง"
     },
     "fields": {
       "eyelashType": "ประเภทขนตา",
       "eyelashMaterial": "วัสดุขนตา",
       "eyelashMix": "ผสม",
       "eyelashDesign": "ดีไซน์",
-      "eyelashGlue": "กาวขนตา",
-      "eyelashFeedback": "ความคิดเห็น",
-      "waxingArea": "บริเวณแว็กซ์",
+      "eyelashGlue": "กาว",
+      "eyelashFeedback": "ข้อเสนอแนะ",
+      "waxingArea": "พื้นที่แว็กซ์",
       "waxingCycle": "รอบแว็กซ์",
       "waxingSkin": "สภาพผิว",
       "waxingProduct": "ผลิตภัณฑ์แว็กซ์",
       "waxingPain": "ระดับความเจ็บปวด",
+      "waxingAftercare": "การดูแลหลัง",
       "nailType": "ประเภทเล็บ",
       "nailColor": "สีเล็บ",
       "nailBaseTop": "เบส/ท็อป",
       "nailCondition": "สภาพเล็บ",
-      "nailFeedback": "ความคิดเห็น",
-      "skinTypeDetail": "ประเภทผิว",
-      "skinPurpose": "วัตถุประสงค์",
+      "nailFeedback": "ข้อเสนอแนะ",
+      "skinType": "ประเภทผิว",
+      "skinTypeDetail": "ประเภทผิวรายละเอียด",
+      "skinPurpose": "วัตถุประสงค์การรักษา",
       "skinTrouble": "ปัญหาผิว",
-      "skinSensitivity": "ความไวต่อผิว",
-      "skinFeedback": "ความคิดเห็น",
-      "massageArea": "บริเวณนวด",
+      "skinSensitivity": "ความไว",
+      "skinFeedback": "ข้อเสนอแนะ",
+      "massageArea": "พื้นที่นวด",
       "massageStrength": "ความแรง",
       "massagePreference": "ความชอบ",
       "massageMuscle": "สภาพกล้ามเนื้อ",
-      "visitCycle": "รอบการมา",
+      "visitCycle": "รอบการเยี่ยม",
       "usedDevice": "อุปกรณ์ที่ใช้",
       "usedProduct": "ผลิตภัณฑ์ที่ใช้",
       "caution": "ข้อควรระวัง"
@@ -203,7 +234,7 @@
       "eyelashType": {
         "extension": "ต่อ",
         "perm": "ดัด",
-        "remove": "ถอด"
+        "remove": "ลบ"
       },
       "eyelashDesign": {
         "cat": "ตาแมว",
@@ -213,9 +244,14 @@
       "waxingSkin": {
         "sensitive": "แพ้ง่าย",
         "dry": "แห้ง",
-        "trouble": "มีปัญหา"
+        "trouble": "ปัญหา"
       },
       "waxingPain": {
+        "sensitive": "แพ้ง่าย",
+        "normal": "ปกติ",
+        "none": "ไม่มี"
+      },
+      "waxingAftercare": {
         "sensitive": "แพ้ง่าย",
         "normal": "ปกติ",
         "none": "ไม่มี"
@@ -224,12 +260,19 @@
         "care": "ดูแล",
         "gel": "เจล",
         "art": "ศิลปะ",
-        "remove": "ถอด"
+        "remove": "ลบ"
       },
       "nailCondition": {
         "thin": "บาง",
         "split": "แตก",
         "healthy": "แข็งแรง"
+      },
+      "skinType": {
+        "normal": "ปกติ",
+        "dry": "แห้ง",
+        "oily": "มัน",
+        "combination": "ผสม",
+        "sensitive": "แพ้ง่าย"
       },
       "skinTypeDetail": {
         "oily": "มัน",

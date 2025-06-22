@@ -22,12 +22,13 @@
     "notFound": "Não encontrado."
   },
   "navigation": {
-    "reservations": "Gerenciar Reservas",
-    "customers": "Gerenciar Clientes",
-    "products": "Gerenciar Produtos",
+    "reservations": "Gerenciamento de Reservas",
+    "customers": "Gerenciamento de Clientes",
+    "products": "Gerenciamento de Produtos",
     "settings": "Configurações",
     "beautitouch": "BeautiTouch",
-    "adminSystem": "Sistema Administrativo"
+    "adminSystem": "Sistema Administrativo",
+    "other": "Outro"
   },
   "reservations": {
     "title": "Gerenciamento de Reservas",
@@ -36,14 +37,17 @@
     "customer": "Cliente",
     "product": "Produto/Serviço",
     "date": "Data",
-    "time": "Horário",
+    "time": "Hora",
+    "hour": "Hora",
+    "minute": "Minuto",
     "price": "Preço",
     "status": "Status da Reserva",
     "memo": "Observação",
     "selectCustomer": "Selecionar Cliente",
     "selectProduct": "Selecionar Produto",
-    "selectTime": "Selecionar Horário",
+    "selectTime": "Selecionar Hora",
     "selectCustomerAndProduct": "Por favor, selecione cliente e produto.",
+    "timeRequired": "Por favor, insira a hora.",
     "confirmed": "Confirmado",
     "completed": "Concluído",
     "cancelled": "Cancelado",
@@ -54,14 +58,14 @@
     "month": "Mês",
     "week": "Semana",
     "day": "Dia",
-    "noReservations": "Nenhuma reserva.",
+    "noReservations": "Não há reservas.",
     "deleteConfirm": "Tem certeza de que deseja excluir esta reserva?",
-    "deleteError": "Erro ao excluir a reserva.",
+    "deleteError": "Falha ao excluir reserva.",
     "saveSuccess": "Reserva salva com sucesso.",
     "saveError": "Falha ao salvar reserva."
   },
   "customers": {
-    "title": "Gestão de Clientes",
+    "title": "Gerenciamento de Clientes",
     "newCustomer": "Novo Cliente",
     "editCustomer": "Editar Cliente",
     "customerInfo": "Informações do Cliente",
@@ -69,18 +73,21 @@
     "phone": "Telefone",
     "gender": "Gênero",
     "birthDate": "Data de Nascimento",
-    "memo": "Memo",
+    "age": "Idade",
+    "memo": "Observação",
     "registrationDate": "Data de Registro",
     "reservationHistory": "Histórico de Reservas",
-    "noCustomers": "Nenhum cliente registrado.",
+    "noCustomers": "Não há clientes registrados.",
     "noSearchResults": "Nenhum resultado encontrado.",
     "searchPlaceholder": "Pesquisar por nome ou número de telefone",
     "deleteConfirm": "Tem certeza de que deseja excluir este cliente? As informações de reserva relacionadas também podem ser excluídas.",
     "saveSuccess": "Informações do cliente salvas com sucesso.",
     "saveError": "Falha ao salvar informações do cliente.",
-    "noMemo": "Nenhum memo escrito.",
-    "basicInfoMessage": "Digite informações básicas. Você pode adicionar informações detalhadas na página de detalhes do cliente.",
+    "noMemo": "Nenhuma observação escrita.",
+    "basicInfoMessage": "Insira informações básicas. Você pode adicionar informações detalhadas na página de detalhes do cliente.",
     "nameRequired": "Nome é obrigatório.",
+    "genderRequired": "Gênero é obrigatório.",
+    "phoneRequired": "Número de telefone é obrigatório.",
     "customerNotFound": "Cliente não encontrado.",
     "basicInfo": "Informações Básicas",
     "detailInfo": "Informações Detalhadas",
@@ -100,11 +107,13 @@
       "other": "Outro"
     },
     "allergies": "Alergias",
-    "notes": "Notas",
-    "noReservations": "Não há histórico de reservas.",
+    "notes": "Observações",
+    "noReservations": "Nenhum histórico de reserva.",
     "backToList": "Voltar à Lista",
     "createChart": "Criar Gráfico",
-    "viewChart": "Ver Gráfico"
+    "viewChart": "Ver Gráfico",
+    "lastVisit": "Última Visita",
+    "nextVisit": "Próxima Visita"
   },
   "products": {
     "title": "Gerenciamento de Produtos/Serviços",
@@ -118,8 +127,8 @@
     "isActive": "Status Ativo",
     "active": "Ativo",
     "inactive": "Inativo",
-    "activeDescription": "Ativo (exibido na lista de reservas)",
-    "noProducts": "Nenhum produto cadastrado.",
+    "activeDescription": "Ativo (mostrado na lista de reservas)",
+    "noProducts": "Não há produtos registrados.",
     "deleteConfirm": "Tem certeza de que deseja excluir este produto?",
     "saveSuccess": "Informações do produto salvas com sucesso.",
     "saveError": "Falha ao salvar informações do produto.",
@@ -128,7 +137,9 @@
   "settings": {
     "title": "Configurações",
     "language": "Idioma",
+    "languageDescription": "Selecione o idioma de exibição para o aplicativo.",
     "currency": "Moeda",
+    "currencyDescription": "Selecione a moeda a ser usada para exibição de preços.",
     "businessType": "Tipo de Negócio",
     "businessTypeDescription": "Defina o tipo de negócio padrão que será selecionado ao inserir informações do gráfico do cliente.",
     "languages": {
@@ -151,7 +162,7 @@
     "businessTypes": {
       "eyelash": "Cílios",
       "waxing": "Depilação",
-      "nail": "Unhas",
+      "nail": "Unha",
       "skin": "Cuidados com a Pele",
       "massage": "Massagem"
     }
@@ -159,21 +170,37 @@
   "errors": {
     "requiredFields": "Por favor, preencha todos os campos obrigatórios.",
     "invalidData": "Dados inválidos.",
-    "networkError": "Erro de rede ocorreu.",
+    "networkError": "Ocorreu um erro de rede.",
     "notFound": "Não encontrado."
   },
+  "calendar": {
+    "days": {
+      "sun": "Dom",
+      "mon": "Seg",
+      "tue": "Ter",
+      "wed": "Qua",
+      "thu": "Qui",
+      "fri": "Sex",
+      "sat": "Sáb"
+    }
+  },
   "chart": {
+    "title": "Gráfico",
+    "createChart": "Criar Gráfico",
     "type": {
+      "label": "Tipo de Gráfico",
       "eyelash": "Cílios",
       "waxing": "Depilação",
       "nail": "Unha",
       "skin": "Pele",
-      "massage": "Massagem"
+      "massage": "Massagem",
+      "waxingPain": "Nível de Dor",
+      "waxingAftercare": "Cuidados Pós"
     },
     "fields": {
       "eyelashType": "Tipo de Cílios",
       "eyelashMaterial": "Material dos Cílios",
-      "eyelashMix": "Mixagem",
+      "eyelashMix": "Mistura",
       "eyelashDesign": "Design",
       "eyelashGlue": "Cola",
       "eyelashFeedback": "Feedback",
@@ -182,18 +209,20 @@
       "waxingSkin": "Condição da Pele",
       "waxingProduct": "Produto de Depilação",
       "waxingPain": "Nível de Dor",
+      "waxingAftercare": "Cuidados Pós",
       "nailType": "Tipo de Unha",
       "nailColor": "Cor da Unha",
       "nailBaseTop": "Base/Top",
       "nailCondition": "Condição da Unha",
       "nailFeedback": "Feedback",
-      "skinTypeDetail": "Tipo de Pele",
-      "skinPurpose": "Propósito",
+      "skinType": "Tipo de Pele",
+      "skinTypeDetail": "Tipo de Pele Detalhado",
+      "skinPurpose": "Propósito do Tratamento",
       "skinTrouble": "Problemas de Pele",
       "skinSensitivity": "Sensibilidade",
       "skinFeedback": "Feedback",
       "massageArea": "Área de Massagem",
-      "massageStrength": "Intensidade",
+      "massageStrength": "Força",
       "massagePreference": "Preferência",
       "massageMuscle": "Condição Muscular",
       "visitCycle": "Ciclo de Visita",
@@ -222,6 +251,11 @@
         "normal": "Normal",
         "none": "Nenhum"
       },
+      "waxingAftercare": {
+        "sensitive": "Sensível",
+        "normal": "Normal",
+        "none": "Nenhum"
+      },
       "nailType": {
         "care": "Cuidado",
         "gel": "Gel",
@@ -232,6 +266,13 @@
         "thin": "Fino",
         "split": "Rachado",
         "healthy": "Saudável"
+      },
+      "skinType": {
+        "normal": "Normal",
+        "dry": "Seco",
+        "oily": "Oleoso",
+        "combination": "Misto",
+        "sensitive": "Sensível"
       },
       "skinTypeDetail": {
         "oily": "Oleoso",

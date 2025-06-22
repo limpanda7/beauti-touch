@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Calendar, Users, Package, Settings } from 'lucide-react';
+import { Calendar, Users, ClipboardList, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const Sidebar: React.FC = () => {
@@ -9,7 +9,7 @@ const Sidebar: React.FC = () => {
   const menuItems = [
     { id: 'reservations', label: t('navigation.reservations'), icon: Calendar, path: '/reservations' },
     { id: 'customers', label: t('navigation.customers'), icon: Users, path: '/customers' },
-    { id: 'products', label: t('navigation.products'), icon: Package, path: '/products' },
+    { id: 'products', label: t('navigation.products'), icon: ClipboardList, path: '/products' },
     { id: 'settings', label: t('navigation.settings'), icon: Settings, path: '/settings' },
   ];
 

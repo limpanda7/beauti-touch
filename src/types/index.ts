@@ -5,8 +5,6 @@ export interface Customer {
   birthDate?: string;
   age?: number;
   gender?: 'female' | 'male';
-  skinType?: 'normal' | 'dry' | 'oily' | 'combination' | 'sensitive' | '';
-  allergies?: string;
   procedures?: CustomerProcedure[];
   contraindications?: string;
   memo?: string;
@@ -49,7 +47,6 @@ export interface Reservation {
   // 차트 정보 (회차별 정보)
   chartType?: ChartType; // 업종(시술 종류)
   chartData?: ChartData; // 업종별 세부 정보
-  chartCommon?: ChartCommon; // 공통 항목
 }
 
 export type ChartType = 'eyelash' | 'waxing' | 'nail' | 'skin' | 'massage' | '';
@@ -76,6 +73,7 @@ export interface ChartData {
   nailCondition?: string;
   nailFeedback?: string;
   // 피부관리
+  skinType?: 'normal' | 'dry' | 'oily' | 'combination' | 'sensitive' | '';
   skinTypeDetail?: string;
   skinPurpose?: string;
   skinTrouble?: string;
@@ -88,9 +86,11 @@ export interface ChartData {
   massageMuscle?: string;
 }
 
+/*
 export interface ChartCommon {
   visitCycle?: string;
   usedDevice?: string;
   usedProduct?: string;
   caution?: string;
-} 
+}
+*/ 

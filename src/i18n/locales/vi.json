@@ -27,7 +27,8 @@
     "products": "Quản lý sản phẩm",
     "settings": "Cài đặt",
     "beautitouch": "BeautiTouch",
-    "adminSystem": "Hệ thống quản trị"
+    "adminSystem": "Hệ thống quản trị",
+    "other": "Khác"
   },
   "reservations": {
     "title": "Quản lý đặt lịch",
@@ -37,24 +38,30 @@
     "product": "Sản phẩm/Dịch vụ",
     "date": "Ngày",
     "time": "Thời gian",
+    "hour": "Giờ",
+    "minute": "Phút",
     "price": "Giá",
     "status": "Trạng thái đặt lịch",
     "memo": "Ghi chú",
     "selectCustomer": "Chọn khách hàng",
     "selectProduct": "Chọn sản phẩm",
     "selectTime": "Chọn thời gian",
-    "selectCustomerAndProduct": "Vui lòng chọn cả khách hàng và sản phẩm.",
+    "selectCustomerAndProduct": "Vui lòng chọn khách hàng và sản phẩm.",
+    "timeRequired": "Vui lòng nhập thời gian.",
     "confirmed": "Đã xác nhận",
     "completed": "Hoàn thành",
     "cancelled": "Đã hủy",
+    "statusConfirmed": "Đã xác nhận",
+    "statusCompleted": "Hoàn thành",
+    "statusCancelled": "Đã hủy",
     "today": "Hôm nay",
     "month": "Tháng",
     "week": "Tuần",
     "day": "Ngày",
     "noReservations": "Không có đặt lịch.",
-    "deleteConfirm": "Bạn có chắc chắn muốn xóa đặt lịch này không?",
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa đặt lịch này?",
     "deleteError": "Xóa đặt lịch thất bại.",
-    "saveSuccess": "Đặt lịch đã được lưu thành công.",
+    "saveSuccess": "Lưu đặt lịch thành công.",
     "saveError": "Lưu đặt lịch thất bại."
   },
   "customers": {
@@ -66,6 +73,7 @@
     "phone": "Điện thoại",
     "gender": "Giới tính",
     "birthDate": "Ngày sinh",
+    "age": "Tuổi",
     "memo": "Ghi chú",
     "registrationDate": "Ngày đăng ký",
     "reservationHistory": "Lịch sử Đặt lịch",
@@ -78,6 +86,8 @@
     "noMemo": "Không có ghi chú.",
     "basicInfoMessage": "Nhập thông tin cơ bản. Bạn có thể thêm thông tin chi tiết trong trang chi tiết khách hàng.",
     "nameRequired": "Tên là bắt buộc.",
+    "genderRequired": "Giới tính là bắt buộc.",
+    "phoneRequired": "Số điện thoại là bắt buộc.",
     "customerNotFound": "Không tìm thấy khách hàng.",
     "basicInfo": "Thông tin Cơ bản",
     "detailInfo": "Thông tin Chi tiết",
@@ -101,7 +111,9 @@
     "noReservations": "Không có lịch sử đặt lịch.",
     "backToList": "Quay lại Danh sách",
     "createChart": "Tạo Biểu đồ",
-    "viewChart": "Xem Biểu đồ"
+    "viewChart": "Xem Biểu đồ",
+    "lastVisit": "Lần thăm cuối",
+    "nextVisit": "Lần thăm tiếp theo"
   },
   "products": {
     "title": "Quản lý sản phẩm/Dịch vụ",
@@ -125,7 +137,9 @@
   "settings": {
     "title": "Cài đặt",
     "language": "Ngôn ngữ",
+    "languageDescription": "Chọn ngôn ngữ hiển thị cho ứng dụng.",
     "currency": "Tiền tệ",
+    "currencyDescription": "Chọn tiền tệ để sử dụng cho hiển thị giá.",
     "businessType": "Loại hình kinh doanh",
     "businessTypeDescription": "Đặt loại hình kinh doanh mặc định sẽ được chọn khi nhập thông tin biểu đồ khách hàng.",
     "languages": {
@@ -159,13 +173,29 @@
     "networkError": "Đã xảy ra lỗi mạng.",
     "notFound": "Không tìm thấy."
   },
+  "calendar": {
+    "days": {
+      "sun": "CN",
+      "mon": "T2",
+      "tue": "T3",
+      "wed": "T4",
+      "thu": "T5",
+      "fri": "T6",
+      "sat": "T7"
+    }
+  },
   "chart": {
+    "title": "Biểu đồ",
+    "createChart": "Tạo Biểu đồ",
     "type": {
+      "label": "Loại Biểu đồ",
       "eyelash": "Nối mi",
       "waxing": "Waxing",
       "nail": "Móng tay",
       "skin": "Da",
-      "massage": "Massage"
+      "massage": "Massage",
+      "waxingPain": "Mức độ đau",
+      "waxingAftercare": "Chăm sóc sau"
     },
     "fields": {
       "eyelashType": "Loại mi",
@@ -179,13 +209,15 @@
       "waxingSkin": "Tình trạng da",
       "waxingProduct": "Sản phẩm waxing",
       "waxingPain": "Mức độ đau",
+      "waxingAftercare": "Chăm sóc sau",
       "nailType": "Loại móng",
       "nailColor": "Màu móng",
       "nailBaseTop": "Base/Top",
       "nailCondition": "Tình trạng móng",
       "nailFeedback": "Phản hồi",
-      "skinTypeDetail": "Loại da",
-      "skinPurpose": "Mục đích",
+      "skinType": "Loại da",
+      "skinTypeDetail": "Loại da chi tiết",
+      "skinPurpose": "Mục đích điều trị",
       "skinTrouble": "Vấn đề da",
       "skinSensitivity": "Độ nhạy cảm",
       "skinFeedback": "Phản hồi",
@@ -200,9 +232,9 @@
     },
     "options": {
       "eyelashType": {
-        "extension": "Nối",
+        "extension": "Nối dài",
         "perm": "Uốn",
-        "remove": "Gỡ"
+        "remove": "Gỡ bỏ"
       },
       "eyelashDesign": {
         "cat": "Mắt mèo",
@@ -219,16 +251,28 @@
         "normal": "Bình thường",
         "none": "Không"
       },
+      "waxingAftercare": {
+        "sensitive": "Nhạy cảm",
+        "normal": "Bình thường",
+        "none": "Không"
+      },
       "nailType": {
         "care": "Chăm sóc",
         "gel": "Gel",
         "art": "Nghệ thuật",
-        "remove": "Gỡ"
+        "remove": "Gỡ bỏ"
       },
       "nailCondition": {
         "thin": "Mỏng",
-        "split": "Nứt",
+        "split": "Tách",
         "healthy": "Khỏe mạnh"
+      },
+      "skinType": {
+        "normal": "Bình thường",
+        "dry": "Khô",
+        "oily": "Dầu",
+        "combination": "Hỗn hợp",
+        "sensitive": "Nhạy cảm"
       },
       "skinTypeDetail": {
         "oily": "Dầu",
@@ -237,7 +281,7 @@
         "sensitive": "Nhạy cảm"
       },
       "skinSensitivity": {
-        "tingle": "Ngứa",
+        "tingle": "Ngứa ran",
         "none": "Không"
       },
       "massageStrength": {

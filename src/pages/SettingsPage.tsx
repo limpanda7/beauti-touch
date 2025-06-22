@@ -1,23 +1,23 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Settings, Globe, DollarSign, Briefcase } from 'lucide-react';
-import { useSettings } from '../contexts/SettingsContext';
+import { Settings as SettingsIcon, Globe, DollarSign, Briefcase } from 'lucide-react';
+import { useSettings, type Settings } from '../contexts/SettingsContext';
+import type { ChartType } from '../types';
 
 const SettingsPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { settings, updateSettings } = useSettings();
 
-  const handleLanguageChange = (language: string) => {
-    updateSettings({ language });
-    i18n.changeLanguage(language);
-  };
-
-  const handleCurrencyChange = (currency: string) => {
-    updateSettings({ currency });
-  };
-
-  const handleBusinessTypeChange = (businessType: string) => {
-    updateSettings({ businessType: businessType as any });
+  const handleSettingChange = (key: keyof Settings, value: string) => {
+    if (key === 'businessType') {
+      updateSettings({ [key]: value as ChartType });
+    } else {
+      updateSettings({ [key]: value });
+    }
+    
+    if (key === 'language') {
+      i18n.changeLanguage(value);
+    }
   };
 
   const languages = [
@@ -50,84 +50,61 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div className="settings-page">
-      <h1 className="settings-title">{t('settings.title')}</h1>
-
-      <div className="settings-card">
-        <h2 className="settings-card-title">
-          <Globe style={{ width: '1.25rem', height: '1.25rem', marginRight: '0.5rem' }} />
-          {t('settings.language')}
-        </h2>
-        <div className="settings-list">
-          {languages.map(lang => (
-            <label key={lang.code} className="settings-list-label">
-              <input
-                type="radio"
-                name="language"
-                value={lang.code}
-                checked={settings.language === lang.code}
-                onChange={(e) => handleLanguageChange(e.target.value)}
-                className="settings-radio"
-              />
-              <span className="settings-list-text">{lang.name}</span>
-            </label>
-          ))}
-        </div>
+      <div className="page-header">
+        <h1>{t('settings.title')}</h1>
       </div>
-
-      <div className="settings-card">
-        <h2 className="settings-card-title">
-          <DollarSign style={{ width: '1.25rem', height: '1.25rem', marginRight: '0.5rem' }} />
-          {t('settings.currency')}
-        </h2>
-        <div className="settings-list">
-          {currencies.map(currency => (
-            <label key={currency.code} className="settings-list-label">
-              <input
-                type="radio"
-                name="currency"
-                value={currency.code}
-                checked={settings.currency === currency.code}
-                onChange={(e) => handleCurrencyChange(e.target.value)}
-                className="settings-radio"
-              />
-              <span className="settings-list-text">{currency.name}</span>
-            </label>
-          ))}
+      
+      <div className="settings-grid">
+        <div className="settings-item">
+          <div className="settings-item-header">
+            <Globe className="settings-item-icon" />
+            <h2 className="settings-item-title">{t('settings.language')}</h2>
+          </div>
+          <p className="settings-item-description">{t('settings.languageDescription')}</p>
+          <select
+            value={settings.language}
+            onChange={(e) => handleSettingChange('language', e.target.value)}
+            className="settings-select"
+          >
+            {languages.map(lang => (
+              <option key={lang.code} value={lang.code}>{lang.name}</option>
+            ))}
+          </select>
         </div>
-      </div>
 
-      <div className="settings-card">
-        <h2 className="settings-card-title">
-          <Briefcase style={{ width: '1.25rem', height: '1.25rem', marginRight: '0.5rem' }} />
-          {t('settings.businessType')}
-        </h2>
-        <p className="settings-description">{t('settings.businessTypeDescription')}</p>
-        <div className="settings-list">
-          {businessTypes.map(businessType => (
-            <label key={businessType.code} className="settings-list-label">
-              <input
-                type="radio"
-                name="businessType"
-                value={businessType.code}
-                checked={settings.businessType === businessType.code}
-                onChange={(e) => handleBusinessTypeChange(e.target.value)}
-                className="settings-radio"
-              />
-              <span className="settings-list-text">{businessType.name}</span>
-            </label>
-          ))}
+        <div className="settings-item">
+          <div className="settings-item-header">
+            <DollarSign className="settings-item-icon" />
+            <h2 className="settings-item-title">{t('settings.currency')}</h2>
+          </div>
+          <p className="settings-item-description">{t('settings.currencyDescription')}</p>
+          <select
+            value={settings.currency}
+            onChange={(e) => handleSettingChange('currency', e.target.value)}
+            className="settings-select"
+          >
+            {currencies.map(currency => (
+              <option key={currency.code} value={currency.code}>{currency.name}</option>
+            ))}
+          </select>
         </div>
-      </div>
 
-      <div className="settings-btn-group">
-        <button
-          onClick={() => {
-            // Settings are automatically saved when changed
-          }}
-          className="settings-btn-save"
-        >
-          {t('common.save')}
-        </button>
+        <div className="settings-item">
+          <div className="settings-item-header">
+            <Briefcase className="settings-item-icon" />
+            <h2 className="settings-item-title">{t('settings.businessType')}</h2>
+          </div>
+          <p className="settings-item-description">{t('settings.businessTypeDescription')}</p>
+          <select
+            value={settings.businessType}
+            onChange={(e) => handleSettingChange('businessType', e.target.value)}
+            className="settings-select"
+          >
+            {businessTypes.map(businessType => (
+              <option key={businessType.code} value={businessType.code}>{businessType.name}</option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );

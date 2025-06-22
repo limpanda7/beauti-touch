@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { ChartType } from '../types';
 
-interface Settings {
+export interface Settings {
   language: string;
   currency: string;
   businessType: ChartType;

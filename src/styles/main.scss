@@ -308,21 +308,26 @@ body {
     position: relative;
     display: flex;
     align-items: center;
-    
-    .price-input {
-      padding-right: 2.5rem;
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-      border-right: none;
-    }
-    
-    .price-unit {
-      position: absolute;
-      right: 0.75rem;
-      color: #6B7280;
-      font-size: 0.875rem;
-      pointer-events: none;
-    }
+    width: 100%;
+    min-width: 0;
+  }
+  
+  .price-input-wrapper .price-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 2.5rem;
+    /* 삭제: 오른쪽 테두리 제거 관련 스타일 */
+    // border-top-right-radius: 0;
+    // border-bottom-right-radius: 0;
+    // border-right: none;
+  }
+  
+  .price-input-wrapper .price-unit {
+    position: absolute;
+    right: 0.75rem;
+    color: #6B7280;
+    font-size: 0.875rem;
+    pointer-events: none;
   }
   
   .radio-group {
@@ -420,8 +425,7 @@ body {
   
   .calendar-day {
     padding: 0.5rem;
-    border-bottom: 1px solid $gray-200;
-    border-right: 1px solid $gray-200;
+    border: 1px solid #E5E7EB;
     min-height: 120px;
     
     &.other-month {
@@ -432,11 +436,11 @@ body {
       font-size: 0.875rem;
       color: $gray-700;
       font-weight: normal;
-      
-      &.today {
-        color: $primary-color;
-        font-weight: bold;
-      }
+    }
+    
+    &.today {
+      border: 2px solid $primary-color;
+      border-radius: 0.375rem;
     }
     
     .reservation-item {
@@ -465,6 +469,23 @@ body {
         }
       }
       
+      &.completed {
+        background-color: #D1FAE5;
+        border: 1px solid #A7F3D0;
+        
+        p {
+          color: #065F46;
+          
+          &.time {
+            color: #065F46;
+          }
+          
+          &.price {
+            color: #065F46;
+          }
+        }
+      }
+      
       p {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -480,7 +501,22 @@ body {
           font-weight: 500;
           color: $gray-500;
         }
+        
+        &.product-price {
+          font-size: 0.75rem;
+          color: $gray-500;
+        }
       }
+    }
+  }
+  
+  .week-day-container {
+    display: flex;
+    flex-direction: column;
+    
+    &.today {
+      border: 2px solid $primary-color;
+      border-radius: 0.375rem;
     }
   }
 }
@@ -745,12 +781,18 @@ body {
 }
 .customer-detail-section {
   background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+.customer-detail-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 .customer-detail-section-title {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 600;
   margin: 0 0 1rem 0;
   color: #111827;
@@ -810,6 +852,17 @@ body {
   padding: 0.75rem;
   border: 1px solid #E5E7EB;
   border-radius: 0.375rem;
+  
+  &.completed {
+    background-color: #D1FAE5;
+    border-color: #A7F3D0;
+    
+    .customer-detail-reservation-date,
+    .customer-detail-reservation-product,
+    .customer-detail-reservation-price {
+      color: #065F46;
+    }
+  }
 }
 .customer-detail-reservation-date {
   font-weight: 600;
@@ -862,71 +915,59 @@ body {
 
 // SettingsPage 스타일
 .settings-page {
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
+  .page-header {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
 }
-.settings-title {
-  font-size: 1.875rem;
-  font-weight: bold;
-  color: #111827;
-  margin: 0;
-}
-.settings-card {
+
+.settings-item {
   background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
-}
-.settings-card-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0 0 1rem 0;
-  color: #111827;
-}
-.settings-list {
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
 }
-.settings-list-label {
+
+.settings-item-header {
   display: flex;
   align-items: center;
-  cursor: pointer;
+  margin-bottom: 0.5rem;
 }
-.settings-radio {
-  margin-right: 0.5rem;
+
+.settings-item-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.75rem;
+  color: #4B5563;
 }
-.settings-list-text {
-  font-size: 0.875rem;
+
+.settings-item-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
 }
-.settings-description {
+
+.settings-item-description {
   font-size: 0.875rem;
   color: #6B7280;
   margin: 0 0 1rem 0;
-  line-height: 1.5;
+  flex-grow: 1; /* 내용을 정렬하기 위해 추가 */
 }
-.settings-btn-group {
-  display: flex;
-  justify-content: flex-end;
-}
-.settings-btn-save {
-  background-color: $btn-primary-color;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1rem;
-  font-weight: 500;
-  
-  &:hover {
-    background-color: $btn-primary-hover;
-  }
+
+.settings-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  background-color: white;
 }
 
 // ReservationModal 스타일
@@ -940,9 +981,6 @@ body {
   font-size: 1.25rem;
   font-weight: bold;
   margin: 0;
-}
-.reservation-modal-add-customer-btn {
-  margin-top: 0.5rem;
 }
 .reservation-modal-grid {
   display: grid;
@@ -1266,6 +1304,18 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
+  &.completed {
+    background-color: #D1FAE5;
+    border-color: #A7F3D0;
+    
+    .reservations-day-item-time,
+    .reservations-day-item-customer,
+    .reservations-day-item-product,
+    .reservations-day-item-price {
+      color: #065F46;
+    }
+  }
 }
 .reservations-day-item-time {
   font-weight: bold;
@@ -1635,4 +1685,21 @@ body {
 
 .customer-detail-reservation-action:hover {
   background-color: #059669;
+}
+
+.customer-select-group {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.customer-select-group select {
+  flex: 1;
+  min-width: 0;
+}
+
+.customer-select-group .reservation-modal-add-customer-btn {
+  margin-top: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
 } 

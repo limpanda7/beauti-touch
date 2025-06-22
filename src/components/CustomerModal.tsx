@@ -14,8 +14,10 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
+    phone: '',
     gender: '' as 'female' | 'male' | '',
-    phone: ''
+    age: '',
+    memo: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -25,7 +27,18 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
       setFormData({
         name: customer.name || '',
         phone: customer.phone || '',
-        gender: customer.gender || ''
+        gender: customer.gender || '',
+        age: customer.age?.toString() || '',
+        memo: customer.memo || '',
+      });
+    } else {
+      // 새 고객인 경우 폼 초기화
+      setFormData({
+        name: '',
+        phone: '',
+        gender: '',
+        age: '',
+        memo: '',
       });
     }
   }, [customer]);
@@ -36,42 +49,44 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
     setError('');
 
     try {
+      // 필수 필드 검증
       if (!formData.name.trim()) {
         setError(t('customers.nameRequired'));
-        return;
-      }
-
-      if (!formData.gender) {
-        setError(t('customers.genderRequired'));
+        setLoading(false);
         return;
       }
 
       if (!formData.phone.trim()) {
         setError(t('customers.phoneRequired'));
+        setLoading(false);
         return;
       }
 
+      // 데이터 정리 (빈 값은 undefined로 처리)
       const customerData = {
         name: formData.name.trim(),
         phone: formData.phone.trim(),
         gender: formData.gender || undefined,
-        birthDate: '',
-        memo: ''
+        age: formData.age && formData.age.trim() ? parseInt(formData.age, 10) : undefined,
+        memo: formData.memo.trim() || undefined,
       };
 
       let savedCustomer: Customer;
+      
       if (customer) {
+        // 기존 고객 수정
         await customerService.update(customer.id, customerData);
         const updatedCustomer = await customerService.getById(customer.id);
         if (!updatedCustomer) {
-          throw new Error('고객 업데이트 실패');
+          throw new Error('고객 업데이트 후 데이터를 가져올 수 없습니다.');
         }
         savedCustomer = updatedCustomer;
       } else {
+        // 새 고객 생성
         const newId = await customerService.create(customerData);
         const newCustomer = await customerService.getById(newId);
         if (!newCustomer) {
-          throw new Error('고객 생성 실패');
+          throw new Error('고객 생성 후 데이터를 가져올 수 없습니다.');
         }
         savedCustomer = newCustomer;
       }
@@ -85,7 +100,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -113,7 +128,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="name">{t('customers.name')}</label>
+            <label htmlFor="name">{t('customers.name')}*</label>
             <input
               type="text"
               id="name"
@@ -121,11 +136,25 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
               value={formData.name}
               onChange={handleChange}
               required
+              placeholder="고객 이름을 입력하세요"
             />
           </div>
 
           <div className="form-group">
-            <label>{t('customers.gender')}</label>
+            <label htmlFor="phone">{t('customers.phone')}*</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+              placeholder="연락처를 입력하세요"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>{t('customers.gender')} <span className="optional-text">({t('common.optional')})</span></label>
             <div className="radio-group">
               <label className="radio-option">
                 <input
@@ -134,7 +163,6 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
                   value="female"
                   checked={formData.gender === 'female'}
                   onChange={handleChange}
-                  required
                 />
                 <span className="radio-label">{t('customers.genders.female')}</span>
               </label>
@@ -145,7 +173,6 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
                   value="male"
                   checked={formData.gender === 'male'}
                   onChange={handleChange}
-                  required
                 />
                 <span className="radio-label">{t('customers.genders.male')}</span>
               </label>
@@ -153,14 +180,28 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
           </div>
 
           <div className="form-group">
-            <label htmlFor="phone">{t('customers.phone')}</label>
+            <label htmlFor="age">{t('customers.age')} <span className="optional-text">({t('common.optional')})</span></label>
             <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
+              type="number"
+              id="age"
+              name="age"
+              value={formData.age}
               onChange={handleChange}
-              required
+              min="1"
+              max="120"
+              placeholder="나이를 입력하세요"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="memo">{t('customers.memo')} <span className="optional-text">({t('common.optional')})</span></label>
+            <textarea
+              id="memo"
+              name="memo"
+              value={formData.memo}
+              onChange={handleChange}
+              rows={3}
+              placeholder="메모를 입력하세요"
             />
           </div>
 

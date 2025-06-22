@@ -41,21 +41,45 @@ export const customerService = {
   },
 
   async create(customer: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
-    const now = new Date();
-    const docRef = await addDoc(collection(db, 'customers'), {
-      ...customer,
-      createdAt: Timestamp.fromDate(now),
-      updatedAt: Timestamp.fromDate(now)
-    });
-    return docRef.id;
+    try {
+      const now = new Date();
+      const customerData = {
+        ...customer,
+        createdAt: Timestamp.fromDate(now),
+        updatedAt: Timestamp.fromDate(now)
+      };
+      
+      // undefined 값들을 제거하여 Firestore에 저장
+      const cleanData = Object.fromEntries(
+        Object.entries(customerData).filter(([_, value]) => value !== undefined)
+      );
+      
+      const docRef = await addDoc(collection(db, 'customers'), cleanData);
+      return docRef.id;
+    } catch (error) {
+      console.error('고객 생성 실패:', error);
+      throw new Error('고객 생성에 실패했습니다.');
+    }
   },
 
   async update(id: string, customer: Partial<Customer>): Promise<void> {
-    const docRef = doc(db, 'customers', id);
-    await updateDoc(docRef, {
-      ...customer,
-      updatedAt: Timestamp.fromDate(new Date())
-    });
+    try {
+      const docRef = doc(db, 'customers', id);
+      const updateData = {
+        ...customer,
+        updatedAt: Timestamp.fromDate(new Date())
+      };
+      
+      // undefined 값들을 제거하여 Firestore에 저장
+      const cleanData = Object.fromEntries(
+        Object.entries(updateData).filter(([_, value]) => value !== undefined)
+      );
+      
+      await updateDoc(docRef, cleanData);
+    } catch (error) {
+      console.error('고객 업데이트 실패:', error);
+      throw new Error('고객 업데이트에 실패했습니다.');
+    }
   },
 
   async delete(id: string): Promise<void> {

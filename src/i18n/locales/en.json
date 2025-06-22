@@ -27,7 +27,8 @@
     "products": "Products",
     "settings": "Settings",
     "beautitouch": "BeautiTouch",
-    "adminSystem": "Admin System"
+    "adminSystem": "Admin System",
+    "other": "Other"
   },
   "reservations": {
     "title": "Reservation Management",
@@ -37,6 +38,8 @@
     "product": "Product/Service",
     "date": "Date",
     "time": "Time",
+    "hour": "Hour",
+    "minute": "Minute",
     "price": "Price",
     "status": "Reservation Status",
     "memo": "Memo",
@@ -44,6 +47,7 @@
     "selectProduct": "Select Product",
     "selectTime": "Select Time",
     "selectCustomerAndProduct": "Please select both customer and product.",
+    "timeRequired": "Please enter the time.",
     "confirmed": "Confirmed",
     "completed": "Completed",
     "cancelled": "Cancelled",
@@ -69,6 +73,7 @@
     "phone": "Phone",
     "gender": "Gender",
     "birthDate": "Birth Date",
+    "age": "Age",
     "memo": "Memo",
     "registrationDate": "Registration Date",
     "reservationHistory": "Reservation History",
@@ -82,11 +87,11 @@
     "basicInfoMessage": "Enter basic information. You can add detailed information on the customer detail page.",
     "nameRequired": "Name is required.",
     "genderRequired": "Gender is required.",
-    "phoneRequired": "Phone is required.",
+    "phoneRequired": "Phone number is required.",
     "customerNotFound": "Customer not found.",
-    "basicInfo": "Basic Information",
-    "detailInfo": "Detailed Information",
-    "chartInfo": "Chart Information",
+    "basicInfo": "Basic Info",
+    "detailInfo": "Detailed Info",
+    "chartInfo": "Chart Info",
     "skinType": "Skin Type",
     "selectSkinType": "Select skin type",
     "skinTypes": {
@@ -106,7 +111,9 @@
     "noReservations": "No reservation history.",
     "backToList": "Back to List",
     "createChart": "Create Chart",
-    "viewChart": "View Chart"
+    "viewChart": "View Chart",
+    "lastVisit": "Last Visit",
+    "nextVisit": "Next Visit"
   },
   "products": {
     "title": "Product/Service Management",
@@ -130,7 +137,9 @@
   "settings": {
     "title": "Settings",
     "language": "Language",
+    "languageDescription": "Select the display language for the application.",
     "currency": "Currency",
+    "currencyDescription": "Select the currency to use for price display.",
     "businessType": "Business Type",
     "businessTypeDescription": "Set the default business type that will be selected when entering customer chart information.",
     "languages": {
@@ -164,13 +173,29 @@
     "networkError": "Network error occurred.",
     "notFound": "Not found."
   },
+  "calendar": {
+    "days": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    }
+  },
   "chart": {
+    "title": "Chart",
+    "createChart": "Create Chart",
     "type": {
+      "label": "Chart Type",
       "eyelash": "Eyelash",
       "waxing": "Waxing",
       "nail": "Nail",
       "skin": "Skin",
-      "massage": "Massage"
+      "massage": "Massage",
+      "waxingPain": "Pain Level",
+      "waxingAftercare": "Aftercare"
     },
     "fields": {
       "eyelashType": "Eyelash Type",
@@ -184,13 +209,15 @@
       "waxingSkin": "Skin Condition",
       "waxingProduct": "Waxing Product",
       "waxingPain": "Pain Level",
+      "waxingAftercare": "Aftercare",
       "nailType": "Nail Type",
       "nailColor": "Nail Color",
       "nailBaseTop": "Base/Top",
       "nailCondition": "Nail Condition",
       "nailFeedback": "Feedback",
-      "skinTypeDetail": "Skin Type",
-      "skinPurpose": "Purpose",
+      "skinType": "Skin Type",
+      "skinTypeDetail": "Detailed Skin Type",
+      "skinPurpose": "Purpose of Treatment",
       "skinTrouble": "Skin Trouble",
       "skinSensitivity": "Sensitivity",
       "skinFeedback": "Feedback",
@@ -224,6 +251,11 @@
         "normal": "Normal",
         "none": "None"
       },
+      "waxingAftercare": {
+        "sensitive": "Sensitive",
+        "normal": "Normal",
+        "none": "None"
+      },
       "nailType": {
         "care": "Care",
         "gel": "Gel",
@@ -234,6 +266,13 @@
         "thin": "Thin",
         "split": "Split",
         "healthy": "Healthy"
+      },
+      "skinType": {
+        "normal": "Normal",
+        "dry": "Dry",
+        "oily": "Oily",
+        "combination": "Combination",
+        "sensitive": "Sensitive"
       },
       "skinTypeDetail": {
         "oily": "Oily",

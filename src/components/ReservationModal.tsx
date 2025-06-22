@@ -3,7 +3,7 @@ import { X, UserPlus, ChevronDown, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { format, parseISO } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
-import type { Customer, Product, Reservation } from '../types';
+import type { Customer, Product, Reservation, ChartType } from '../types';
 import { customerService, productService, reservationService } from '../services/firestore';
 import CustomerModal from './CustomerModal';
 import { useCurrencyFormat } from '../utils/currency';
@@ -11,30 +11,33 @@ import { useCurrencyFormat } from '../utils/currency';
 interface ReservationModalProps {
   reservation: Reservation | null;
   initialDate: Date | null;
+  initialCustomerId?: string;
   onClose: () => void;
-  onSave: (reservation: Reservation) => void;
+  onSave: (reservation: Reservation, action?: 'close' | 'bookNext') => void;
   onDelete?: (reservationId: string) => void;
 }
 
-const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initialDate, onClose, onSave, onDelete }) => {
+const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initialDate, initialCustomerId, onClose, onSave, onDelete }) => {
   const { t } = useTranslation();
   const { formatCurrency } = useCurrencyFormat();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    customerId: reservation?.customerId || '',
+    customerId: reservation?.customerId || initialCustomerId || '',
     productId: reservation?.productId || '',
     date: reservation?.date ? format(reservation.date, 'yyyy-MM-dd') : (initialDate ? format(initialDate, 'yyyy-MM-dd') : ''),
     time: reservation?.time || '',
     status: reservation?.status || 'confirmed',
     memo: reservation?.memo || '',
-    price: reservation?.price || 0
+    price: reservation?.price || 0,
   });
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false);
+  const [amPm, setAmPm] = useState<string>('');
+  const [hour, setHour] = useState<string>('');
+  const [minute, setMinute] = useState<string>('');
 
   // 5분 단위 시간 옵션 생성 (AM이 먼저)
   const generateTimeOptions = () => {
@@ -80,10 +83,51 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
         time: reservation.time || '',
         status: reservation.status || 'confirmed',
         memo: reservation.memo || '',
-        price: reservation.price || 0
+        price: reservation.price || 0,
       });
     }
   }, [reservation]);
+
+  useEffect(() => {
+    // 기존 예약 수정 시 값 세팅
+    if (formData.time) {
+      const [h, m] = formData.time.split(':');
+      let hNum = parseInt(h, 10);
+      let ampm = 'AM';
+      if (hNum === 0) {
+        setHour('12');
+        setAmPm('AM');
+      } else if (hNum === 12) {
+        setHour('12');
+        setAmPm('PM');
+      } else if (hNum > 12) {
+        setHour((hNum - 12).toString());
+        setAmPm('PM');
+      } else {
+        setHour(hNum.toString());
+        setAmPm('AM');
+      }
+      setMinute(m);
+    } else {
+      setAmPm('');
+      setHour('');
+      setMinute('');
+    }
+  }, [formData.time]);
+
+  useEffect(() => {
+    // 세 값이 모두 선택되면 24시간제로 변환하여 formData.time에 저장
+    if (amPm && hour && minute) {
+      let h = parseInt(hour, 10);
+      if (amPm === 'AM') {
+        if (h === 12) h = 0;
+      } else {
+        if (h !== 12) h += 12;
+      }
+      const timeValue = `${h.toString().padStart(2, '0')}:${minute}`;
+      setFormData(prev => ({ ...prev, time: timeValue }));
+    }
+  }, [amPm, hour, minute]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -94,17 +138,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
       setSelectedProduct(product || null);
       setFormData(prev => ({ ...prev, price: product?.price || 0 }));
     }
-  };
-
-  const handleTimeSelect = (timeValue: string) => {
-    setFormData(prev => ({ ...prev, time: timeValue }));
-    setIsTimeDropdownOpen(false);
-  };
-
-  const getDisplayTime = (timeValue: string) => {
-    if (!timeValue) return t('reservations.selectTime');
-    const timeOption = timeOptions.find(option => option.value === timeValue);
-    return timeOption ? timeOption.label : timeValue;
   };
 
   const handleCustomerCreated = (newCustomer: Customer) => {
@@ -141,14 +174,25 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    await saveReservation();
+  };
 
+  const saveReservation = async () => {
+    setLoading(true);
     try {
       const selectedCustomer = customers.find(c => c.id === formData.customerId);
       const selectedProduct = products.find(p => p.id === formData.productId);
 
       if (!selectedCustomer || !selectedProduct) {
         alert(t('reservations.selectCustomerAndProduct'));
+        setLoading(false);
+        return;
+      }
+
+      // 시간 입력 검증
+      if (!formData.time || formData.time.trim() === '') {
+        alert(t('reservations.timeRequired'));
+        setLoading(false);
         return;
       }
 
@@ -161,7 +205,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
         date: new Date(formData.date),
         time: formData.time,
         status: formData.status,
-        memo: formData.memo
+        memo: formData.memo,
       };
 
       let savedReservation: Reservation;
@@ -181,7 +225,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
         savedReservation = newReservation;
       }
 
-      onSave(savedReservation);
+      onSave(savedReservation, 'close');
     } catch (error) {
       console.error('예약 저장 실패:', error);
       alert(t('reservations.saveError'));
@@ -205,28 +249,30 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="customer">{t('reservations.customer')}</label>
-            <select
-              id="customer"
-              name="customerId"
-              value={formData.customerId}
-              onChange={handleChange}
-              required
-            >
-              <option value="">{t('reservations.selectCustomer')}</option>
-              {customers.map(customer => (
-                <option key={customer.id} value={customer.id}>
-                  {customer.name} ({customer.phone})
-                </option>
-              ))}
-            </select>
-            <button 
-              type="button" 
-              onClick={() => setIsCustomerModalOpen(true)} 
-              className="btn btn-secondary reservation-modal-add-customer-btn"
-            >
-              <UserPlus style={{ width: '1rem', height: '1rem' }} />
-              {t('customers.newCustomer')}
-            </button>
+            <div className="customer-select-group">
+              <select
+                id="customer"
+                name="customerId"
+                value={formData.customerId}
+                onChange={handleChange}
+                required
+              >
+                <option value="">{t('reservations.selectCustomer')}</option>
+                {customers.map(customer => (
+                  <option key={customer.id} value={customer.id}>
+                    {customer.name} ({customer.phone})
+                  </option>
+                ))}
+              </select>
+              <button 
+                type="button" 
+                onClick={() => setIsCustomerModalOpen(true)} 
+                className="btn btn-secondary reservation-modal-add-customer-btn"
+              >
+                <UserPlus style={{ width: '1rem', height: '1rem' }} />
+                {t('customers.newCustomer')}
+              </button>
+            </div>
           </div>
 
           <div className="form-group">
@@ -262,36 +308,25 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
 
             <div className="form-group">
               <label htmlFor="time">{t('reservations.time')}</label>
-              <div className="reservation-modal-time-select">
-                <button
-                  type="button"
-                  onClick={() => setIsTimeDropdownOpen(!isTimeDropdownOpen)}
-                  className="reservation-modal-time-btn"
-                >
-                  <span>{getDisplayTime(formData.time)}</span>
-                  <ChevronDown style={{ width: '1rem', height: '1rem' }} />
-                </button>
-                
-                {isTimeDropdownOpen && (
-                  <div className="reservation-modal-time-dropdown">
-                    {timeOptions.map((option) => (
-                      <button
-                        key={option.value}
-                        type="button"
-                        onClick={() => handleTimeSelect(option.value)}
-                        className="reservation-modal-time-option"
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = '#F3F4F6';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
+              <div className="reservation-modal-time-select" style={{ display: 'flex', gap: '0.5rem' }}>
+                <select value={amPm} onChange={e => setAmPm(e.target.value)} style={{ width: 70 }} required>
+                  <option value="">AM/PM</option>
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+                <select value={hour} onChange={e => setHour(e.target.value)} style={{ width: 70 }} required>
+                  <option value="">{t('reservations.hour')}</option>
+                  {[...Array(12)].map((_, i) => (
+                    <option key={i+1} value={(i+1).toString()}>{i+1}</option>
+                  ))}
+                </select>
+                <select value={minute} onChange={e => setMinute(e.target.value)} style={{ width: 70 }} required>
+                  <option value="">{t('reservations.minute')}</option>
+                  {[...Array(12)].map((_, i) => {
+                    const val = (i*5).toString().padStart(2, '0');
+                    return <option key={val} value={val}>{val}</option>;
+                  })}
+                </select>
               </div>
             </div>
           </div>
@@ -300,18 +335,15 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
             <label htmlFor="price">{t('reservations.price')}</label>
             <div className="price-input-wrapper">
               <input
-                type="number"
+                type="text"
                 id="price"
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
-                min="0"
-                step="1000"
-                placeholder="0"
                 required
                 className="price-input"
               />
-              <span className="price-unit">원</span>
+              <span className="price-unit">{t('settings.currencies.KRW').split(' ')[0]}</span>
             </div>
           </div>
 
@@ -324,7 +356,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
               onChange={handleChange}
             >
               <option value="confirmed">{t('reservations.statusConfirmed')}</option>
-              <option value="completed">{t('reservations.statusCompleted')}</option>
               <option value="cancelled">{t('reservations.statusCancelled')}</option>
             </select>
           </div>
@@ -351,7 +382,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                 className="btn btn-chart"
               >
                 <FileText style={{ width: '1rem', height: '1rem' }} />
-                차트 작성
+                {t('customers.createChart')}
               </button>
             )}
             {reservation && onDelete && (

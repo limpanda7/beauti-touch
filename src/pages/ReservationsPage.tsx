@@ -32,8 +32,9 @@ const ReservationsPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingReservation, setEditingReservation] = useState<Reservation | null>(null);
   const [selectedDateForModal, setSelectedDateForModal] = useState<Date | null>(null);
+  const [initialCustomerIdForModal, setInitialCustomerIdForModal] = useState<string | undefined>(undefined);
 
-  const { dateRange, headerText } = useMemo(() => {
+  const getDateRangeAndHeader = useMemo(() => {
     let start: Date;
     let end: Date;
     let text: string;
@@ -42,18 +43,18 @@ const ReservationsPage: React.FC = () => {
       case 'week':
         start = startOfWeek(currentDate, { weekStartsOn: 0 }); // Sunday
         end = endOfWeek(currentDate, { weekStartsOn: 0 });
-        text = `${format(start, 'yyyy년 M월 d일')} - ${format(end, 'M월 d일')}`;
+        text = `${format(start, 'yyyy MMM d', { locale: ko })} - ${format(end, 'MMM d', { locale: ko })}`;
         break;
       case 'day':
         start = currentDate;
         end = currentDate;
-        text = format(currentDate, 'yyyy년 M월 d일 (eee)', { locale: ko });
+        text = format(currentDate, 'yyyy MMM d (eee)', { locale: ko });
         break;
       case 'month':
       default:
         start = startOfMonth(currentDate);
         end = endOfMonth(currentDate);
-        text = format(currentDate, 'yyyy년 MMMM', { locale: ko });
+        text = format(currentDate, 'yyyy MMMM', { locale: ko });
         break;
     }
     
@@ -65,12 +66,12 @@ const ReservationsPage: React.FC = () => {
 
   useEffect(() => {
     loadReservations();
-  }, [dateRange]);
+  }, [getDateRangeAndHeader]);
 
   const loadReservations = async () => {
     try {
       setLoading(true);
-      const data = await reservationService.getByDateRange(dateRange.start, dateRange.end);
+      const data = await reservationService.getByDateRange(getDateRangeAndHeader.dateRange.start, getDateRangeAndHeader.dateRange.end);
       setReservations(data);
     } catch (error) {
       console.error('예약 목록을 불러오는데 실패했습니다:', error);
@@ -82,6 +83,7 @@ const ReservationsPage: React.FC = () => {
   const handleOpenModal = (reservation: Reservation | null, date?: Date) => {
     setEditingReservation(reservation);
     setSelectedDateForModal(date || reservation?.date || currentDate);
+    setInitialCustomerIdForModal(undefined);
     setIsModalOpen(true);
   };
   
@@ -89,6 +91,11 @@ const ReservationsPage: React.FC = () => {
     setIsModalOpen(false);
     setEditingReservation(null);
     setSelectedDateForModal(null);
+  };
+
+  const handleSaveModal = (savedReservation: Reservation) => {
+    handleCloseModal();
+    loadReservations();
   };
 
   const handleDelete = async (id: string) => {
@@ -129,7 +136,7 @@ const ReservationsPage: React.FC = () => {
     const startDate = startOfWeek(monthStart, { weekStartsOn: 0 });
     const endDate = endOfWeek(monthEnd, { weekStartsOn: 0 });
     const days = eachDayOfInterval({ start: startDate, end: endDate });
-    const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+    const dayNames = [t('calendar.days.sun'), t('calendar.days.mon'), t('calendar.days.tue'), t('calendar.days.wed'), t('calendar.days.thu'), t('calendar.days.fri'), t('calendar.days.sat')];
 
     return (
       <div className="calendar">
@@ -141,22 +148,20 @@ const ReservationsPage: React.FC = () => {
           return (
             <div
               key={index}
-              className={`calendar-day ${!isSameMonth(day, currentDate) ? 'other-month' : ''}`}
+              className={`calendar-day ${!isSameMonth(day, currentDate) ? 'other-month' : ''} ${isSameDay(day, new Date()) ? 'today' : ''}`}
             >
-              <div className={`day-number ${isSameDay(day, new Date()) ? 'today' : ''}`}>
+              <div className="day-number">
                 {format(day, 'd')}
               </div>
               <div style={{ marginTop: '0.25rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                 {reservationsForDay.map(res => (
                   <div 
                     key={res.id} 
-                    className={`reservation-item ${res.status === 'cancelled' ? 'cancelled' : ''}`} 
+                    className={`reservation-item ${res.status === 'cancelled' ? 'cancelled' : ''} ${res.status === 'completed' ? 'completed' : ''}`} 
                     onClick={() => handleOpenModal(res)}
                   >
-                    <p className="time">{res.time}</p>
-                    <p>{res.customerName}</p>
-                    <p style={{ color: '#6B7280' }}>{res.productName}</p>
-                    <p className="price">{formatCurrency(res.price)}</p>
+                    <p className="time">{res.time} {res.customerName}</p>
+                    <p className="product-price">{res.productName} - {formatCurrency(res.price)}</p>
                   </div>
                 ))}
               </div>
@@ -173,27 +178,29 @@ const ReservationsPage: React.FC = () => {
     
     return (
       <div className="calendar">
-        {days.map((day, index) => (
-          <div key={index} className="calendar-header">
-            {format(day, 'eee, d', { locale: ko })}
-          </div>
-        ))}
         {days.map((day, index) => {
           const reservationsForDay = reservations.filter(r => isSameDay(r.date, day));
+          const isToday = isSameDay(day, new Date());
+          
           return (
-            <div key={index} className="calendar-day" style={{ minHeight: '200px' }}>
-              {reservationsForDay.map(res => (
-                <div 
-                  key={res.id} 
-                  className={`reservation-item ${res.status === 'cancelled' ? 'cancelled' : ''}`} 
-                  onClick={() => handleOpenModal(res)}
-                >
-                  <p className="time">{res.time}</p>
-                  <p>{res.customerName}</p>
-                  <p style={{ fontSize: '0.75rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{res.productName}</p>
-                  <p className="price">{formatCurrency(res.price)}</p>
-                </div>
-              ))}
+            <div key={index} className={`week-day-container ${isToday ? 'today' : ''}`}>
+              <div className="calendar-header">
+                {format(day, 'eee, d', { locale: ko })}
+              </div>
+              <div className="calendar-day" style={{ minHeight: '200px' }}>
+                {reservationsForDay.map(res => (
+                  <div 
+                    key={res.id} 
+                    className={`reservation-item ${res.status === 'cancelled' ? 'cancelled' : ''} ${res.status === 'completed' ? 'completed' : ''}`} 
+                    onClick={() => handleOpenModal(res)}
+                  >
+                    <p className="time">{res.time}</p>
+                    <p>{res.customerName}</p>
+                    <p style={{ fontSize: '0.75rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{res.productName}</p>
+                    <p className="price">{formatCurrency(res.price)}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           );
         })}
@@ -207,7 +214,7 @@ const ReservationsPage: React.FC = () => {
         <div className="reservations-day-empty">{t('reservations.noReservations')}</div>
       ) : (
         reservations.map(reservation => (
-          <div key={reservation.id} className="reservations-day-item">
+          <div key={reservation.id} className={`reservations-day-item ${reservation.status === 'completed' ? 'completed' : ''}`}>
             <div>
               <p className="reservations-day-item-time">{reservation.time}</p>
               <p className="reservations-day-item-customer">{reservation.customerName}</p>
@@ -264,7 +271,7 @@ const ReservationsPage: React.FC = () => {
             >
               <ChevronLeft style={{ width: '1.25rem', height: '1.25rem' }} />
             </button>
-            <h2 className="reservations-header-title">{headerText}</h2>
+            <h2 className="reservations-header-title">{getDateRangeAndHeader.headerText}</h2>
             <button
               onClick={() => changeDate('next')}
               className="btn btn-icon"
@@ -309,13 +316,12 @@ const ReservationsPage: React.FC = () => {
         <ReservationModal
           reservation={editingReservation}
           initialDate={selectedDateForModal}
+          initialCustomerId={initialCustomerIdForModal}
           onClose={handleCloseModal}
-          onSave={() => {
-            handleCloseModal();
-            loadReservations();
-          }}
+          onSave={handleSaveModal}
           onDelete={async (id: string) => {
             await reservationService.delete(id);
+            handleCloseModal();
             await loadReservations();
           }}
         />

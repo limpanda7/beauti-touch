@@ -27,7 +27,8 @@
     "products": "Gestión de Productos",
     "settings": "Configuración",
     "beautitouch": "BeautiTouch",
-    "adminSystem": "Sistema Administrativo"
+    "adminSystem": "Sistema Administrativo",
+    "other": "Otro"
   },
   "reservations": {
     "title": "Gestión de Reservas",
@@ -37,13 +38,16 @@
     "product": "Producto/Servicio",
     "date": "Fecha",
     "time": "Hora",
+    "hour": "Hora",
+    "minute": "Minuto",
     "price": "Precio",
     "status": "Estado de Reserva",
-    "memo": "Nota",
+    "memo": "Memo",
     "selectCustomer": "Seleccionar Cliente",
     "selectProduct": "Seleccionar Producto",
     "selectTime": "Seleccionar Hora",
-    "selectCustomerAndProduct": "Por favor, seleccione cliente y producto.",
+    "selectCustomerAndProduct": "Por favor seleccione cliente y producto.",
+    "timeRequired": "Por favor ingrese la hora.",
     "confirmed": "Confirmado",
     "completed": "Completado",
     "cancelled": "Cancelado",
@@ -69,6 +73,7 @@
     "phone": "Teléfono",
     "gender": "Género",
     "birthDate": "Fecha de Nacimiento",
+    "age": "Edad",
     "memo": "Memo",
     "registrationDate": "Fecha de Registro",
     "reservationHistory": "Historial de Reservas",
@@ -81,6 +86,8 @@
     "noMemo": "No hay memo escrito.",
     "basicInfoMessage": "Ingrese información básica. Puede agregar información detallada en la página de detalles del cliente.",
     "nameRequired": "El nombre es requerido.",
+    "genderRequired": "El género es requerido.",
+    "phoneRequired": "El número de teléfono es requerido.",
     "customerNotFound": "Cliente no encontrado.",
     "basicInfo": "Información Básica",
     "detailInfo": "Información Detallada",
@@ -104,7 +111,9 @@
     "noReservations": "No hay historial de reservas.",
     "backToList": "Volver a la Lista",
     "createChart": "Crear Gráfico",
-    "viewChart": "Ver Gráfico"
+    "viewChart": "Ver Gráfico",
+    "lastVisit": "Última Visita",
+    "nextVisit": "Próxima Visita"
   },
   "products": {
     "title": "Gestión de Productos/Servicios",
@@ -128,7 +137,9 @@
   "settings": {
     "title": "Configuración",
     "language": "Idioma",
+    "languageDescription": "Seleccione el idioma de visualización para la aplicación.",
     "currency": "Moneda",
+    "currencyDescription": "Seleccione la moneda a usar para mostrar precios.",
     "businessType": "Tipo de Negocio",
     "businessTypeDescription": "Establezca el tipo de negocio predeterminado que se seleccionará al ingresar información del gráfico del cliente.",
     "languages": {
@@ -162,13 +173,29 @@
     "networkError": "Ocurrió un error de red.",
     "notFound": "No encontrado."
   },
+  "calendar": {
+    "days": {
+      "sun": "Dom",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb"
+    }
+  },
   "chart": {
+    "title": "Gráfico",
+    "createChart": "Crear Gráfico",
     "type": {
+      "label": "Tipo de Gráfico",
       "eyelash": "Pestañas",
       "waxing": "Depilación",
       "nail": "Uñas",
       "skin": "Piel",
-      "massage": "Masaje"
+      "massage": "Masaje",
+      "waxingPain": "Nivel de Dolor",
+      "waxingAftercare": "Cuidado Posterior"
     },
     "fields": {
       "eyelashType": "Tipo de Pestañas",
@@ -182,13 +209,15 @@
       "waxingSkin": "Condición de la Piel",
       "waxingProduct": "Producto de Depilación",
       "waxingPain": "Nivel de Dolor",
+      "waxingAftercare": "Cuidado Posterior",
       "nailType": "Tipo de Uñas",
       "nailColor": "Color de Uñas",
       "nailBaseTop": "Base/Top",
       "nailCondition": "Condición de Uñas",
       "nailFeedback": "Comentarios",
-      "skinTypeDetail": "Tipo de Piel",
-      "skinPurpose": "Propósito",
+      "skinType": "Tipo de Piel",
+      "skinTypeDetail": "Tipo de Piel Detallado",
+      "skinPurpose": "Propósito del Tratamiento",
       "skinTrouble": "Problemas de Piel",
       "skinSensitivity": "Sensibilidad",
       "skinFeedback": "Comentarios",
@@ -222,6 +251,11 @@
         "normal": "Normal",
         "none": "Ninguno"
       },
+      "waxingAftercare": {
+        "sensitive": "Sensible",
+        "normal": "Normal",
+        "none": "Ninguno"
+      },
       "nailType": {
         "care": "Cuidado",
         "gel": "Gel",
@@ -232,6 +266,13 @@
         "thin": "Delgado",
         "split": "Partido",
         "healthy": "Saludable"
+      },
+      "skinType": {
+        "normal": "Normal",
+        "dry": "Seco",
+        "oily": "Graso",
+        "combination": "Mixto",
+        "sensitive": "Sensible"
       },
       "skinTypeDetail": {
         "oily": "Graso",

@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Save, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type { Customer, Reservation, ChartType, ChartData, ChartCommon } from '../types';
+import type { Customer, Reservation, ChartType, ChartData } from '../types';
 import { customerService, reservationService } from '../services/firestore';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { useSettings } from '../contexts/SettingsContext';
 
 const ChartPage: React.FC = () => {
   const { t } = useTranslation();
   const { reservationId } = useParams<{ reservationId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const { settings } = useSettings();
   
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [reservation, setReservation] = useState<Reservation | null>(null);
@@ -20,7 +22,6 @@ const ChartPage: React.FC = () => {
   // 차트 관련 상태
   const [chartType, setChartType] = useState<ChartType>('');
   const [chartData, setChartData] = useState<ChartData>({});
-  const [chartCommon, setChartCommon] = useState<ChartCommon>({});
 
   // 차트 타입 옵션
   const chartTypeOptions = [
@@ -58,7 +59,8 @@ const ChartPage: React.FC = () => {
       { name: 'nailFeedback', label: t('chart.fields.nailFeedback') },
     ],
     skin: [
-      { name: 'skinTypeDetail', label: t('chart.fields.skinTypeDetail'), type: 'select', options: ['oily', 'dry', 'combination', 'sensitive'] },
+      { name: 'skinType', label: t('chart.fields.skinType'), type: 'select', options: ['normal', 'dry', 'oily', 'combination', 'sensitive'] },
+      { name: 'skinTypeDetail', label: t('chart.fields.skinTypeDetail') },
       { name: 'skinPurpose', label: t('chart.fields.skinPurpose') },
       { name: 'skinTrouble', label: t('chart.fields.skinTrouble') },
       { name: 'skinSensitivity', label: t('chart.fields.skinSensitivity'), type: 'select', options: ['tingle', 'none'] },
@@ -73,14 +75,6 @@ const ChartPage: React.FC = () => {
     '': [],
   };
 
-  // 차트 공통 필드
-  const chartCommonFields: { name: keyof ChartCommon; label: string }[] = [
-    { name: 'visitCycle', label: t('chart.fields.visitCycle') },
-    { name: 'usedDevice', label: t('chart.fields.usedDevice') },
-    { name: 'usedProduct', label: t('chart.fields.usedProduct') },
-    { name: 'caution', label: t('chart.fields.caution') },
-  ];
-
   useEffect(() => {
     loadData();
   }, [reservationId]);
@@ -93,9 +87,8 @@ const ChartPage: React.FC = () => {
       const reservationData = await reservationService.getById(reservationId);
       if (reservationData) {
         setReservation(reservationData);
-        setChartType(reservationData.chartType || '');
+        setChartType(reservationData.chartType || settings.businessType || '');
         setChartData(reservationData.chartData || {});
-        setChartCommon(reservationData.chartCommon || {});
         
         // 고객 정보도 로드
         const customerData = await customerService.getById(reservationData.customerId);
@@ -125,10 +118,6 @@ const ChartPage: React.FC = () => {
     if (chartType && chartFieldDefs[chartType]?.some(field => field.name === name)) {
       setChartData(prev => ({ ...prev, [name]: value }));
     }
-    // 차트 공통 필드들
-    else if (chartCommonFields.some(field => field.name === name)) {
-      setChartCommon(prev => ({ ...prev, [name]: value }));
-    }
   };
 
   const handleSave = async () => {
@@ -139,7 +128,7 @@ const ChartPage: React.FC = () => {
       await reservationService.update(reservation.id, {
         chartType,
         chartData,
-        chartCommon,
+        status: 'completed',
       });
       alert(t('common.saveSuccess'));
       navigate(-1); // 이전 페이지로 돌아가기
@@ -183,7 +172,7 @@ const ChartPage: React.FC = () => {
           </button>
         </div>
         <div className="chart-page-header-center">
-          <h1 className="chart-page-title">차트 작성</h1>
+          <h1 className="chart-page-title">{t('chart.createChart')}</h1>
           <p className="chart-page-subtitle">
             {customer.name} - {new Date(reservation.date).toLocaleDateString('ko-KR')} {reservation.time}
           </p>
@@ -208,7 +197,7 @@ const ChartPage: React.FC = () => {
 
       {/* 고객 정보 섹션 */}
       <div className="chart-page-customer-info">
-        <h2 className="chart-page-section-title">고객 정보</h2>
+        <h2 className="chart-page-section-title">{t('customers.customerInfo')}</h2>
         <div className="chart-page-customer-grid">
           <div className="chart-page-customer-section">
             <h3 className="chart-page-subsection-title">{t('customers.basicInfo')}</h3>
@@ -235,20 +224,9 @@ const ChartPage: React.FC = () => {
           </div>
           
           <div className="chart-page-customer-section">
-            <h3 className="chart-page-subsection-title">{t('customers.detailInfo')}</h3>
+            <h3 className="chart-page-subsection-title">{t('customers.memo')}</h3>
             <div className="chart-page-info-list">
-              <div className="chart-page-info-item">
-                <span className="chart-page-info-label">{t('customers.skinType')}:</span>
-                <span className="chart-page-info-value">
-                  {customer?.skinType ? t(`customers.skinTypes.${customer.skinType}`) : '-'}
-                </span>
-              </div>
-              <div className="chart-page-info-item">
-                <span className="chart-page-info-label">{t('customers.allergies')}:</span>
-                <span className="chart-page-info-value">{customer?.allergies || '-'}</span>
-              </div>
-              <div className="chart-page-info-item">
-                <span className="chart-page-info-label">{t('customers.memo')}:</span>
+              <div className="chart-page-info-item full-width">
                 <span className="chart-page-info-value">{customer?.memo || '-'}</span>
               </div>
             </div>
@@ -256,79 +234,56 @@ const ChartPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 차트 정보 섹션 */}
-      <div className="chart-page-chart-section">
-        <h2 className="chart-page-section-title">차트 정보</h2>
-        
-        <div className="chart-page-form">
-          <div className="form-group">
-            <label htmlFor="chartType">업종(시술 종류)</label>
+      {/* 차트 입력 섹션 */}
+      <div className="chart-page-chart-info">
+        <div className="chart-page-section-header">
+          <h2 className="chart-page-section-title">{t('chart.title')}</h2>
+          <div className="chart-page-type-select">
+            <label htmlFor="chartType">{t('chart.type.label')}:</label>
             <select
               id="chartType"
-              name="chartType"
               value={chartType}
               onChange={handleChartTypeChange}
             >
-              {chartTypeOptions.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              {chartTypeOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
               ))}
             </select>
           </div>
+        </div>
 
-          {/* 업종별 세부 입력란 */}
-          {chartType && (
-            <div className="chart-page-fields">
-              <h3 className="chart-page-subsection-title">세부 정보</h3>
-              <div className="chart-page-fields-grid">
-                {chartFieldDefs[chartType].map(field => (
-                  <div key={field.name} className="form-group">
-                    <label htmlFor={field.name}>{field.label}</label>
-                    {field.type === 'select' ? (
-                      <select
-                        id={field.name}
-                        name={field.name}
-                        value={chartData[field.name] || ''}
-                        onChange={handleChartDataChange}
-                      >
-                        <option value="">-</option>
-                        {field.options?.map(opt => (
-                          <option key={opt} value={opt}>{t(`chart.options.${field.name}.${opt}`)}</option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        type="text"
-                        id={field.name}
-                        name={field.name}
-                        value={chartData[field.name] || ''}
-                        onChange={handleChartDataChange}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* 공통 항목 */}
-          <div className="chart-page-fields">
-            <h3 className="chart-page-subsection-title">공통 정보</h3>
-            <div className="chart-page-fields-grid">
-              {chartCommonFields.map(field => (
-                <div key={field.name} className="form-group">
-                  <label htmlFor={field.name}>{field.label}</label>
+        {chartType && (
+          <div className="chart-page-fields-grid">
+            {chartFieldDefs[chartType].map(field => (
+              <div key={field.name} className="form-group">
+                <label htmlFor={field.name}>{field.label}</label>
+                {field.type === 'select' ? (
+                  <select
+                    id={field.name}
+                    name={field.name}
+                    value={chartData[field.name] as string || ''}
+                    onChange={handleChartDataChange}
+                  >
+                    <option value="">-</option>
+                    {field.options?.map(opt => (
+                      <option key={opt} value={opt}>{t(`chart.options.${field.name}.${opt}`, opt)}</option>
+                    ))}
+                  </select>
+                ) : (
                   <input
                     type="text"
                     id={field.name}
                     name={field.name}
-                    value={chartCommon[field.name] || ''}
+                    value={chartData[field.name] as string || ''}
                     onChange={handleChartDataChange}
                   />
-                </div>
-              ))}
-            </div>
+                )}
+              </div>
+            ))}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

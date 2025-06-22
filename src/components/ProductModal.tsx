@@ -126,12 +126,11 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave })
               </label>
               <div className="product-modal-input-group">
                 <input
-                  type="number"
+                  type="text"
                   id="price"
                   name="price"
                   value={formData.price}
-                  onChange={handleNumberChange}
-                  min="0"
+                  onChange={handleChange}
                   className="product-modal-input"
                   required
                 />
