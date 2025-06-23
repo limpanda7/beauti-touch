@@ -49,8 +49,27 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
     
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
+    // 모바일에서 키보드가 올라올 때 뷰포트 높이 조정
+    const handleViewportChange = () => {
+      if (isMobile) {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      }
+    };
+
+    if (isMobile) {
+      window.addEventListener('resize', handleViewportChange);
+      handleViewportChange();
+    }
+    
+    return () => {
+      window.removeEventListener('resize', checkScreenSize);
+      if (isMobile) {
+        window.removeEventListener('resize', handleViewportChange);
+        document.documentElement.style.removeProperty('--vh');
+      }
+    };
+  }, [isMobile]);
 
   // 상품의 시간을 포맷팅하는 함수
   const formatProductDuration = (duration: number): string => {
@@ -167,6 +186,18 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
     }
   };
 
+  // 모바일에서 입력 필드 포커스 시 자동 스크롤
+  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    if (isMobile) {
+      setTimeout(() => {
+        e.target.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+      }, 300);
+    }
+  };
+
   const handleCustomerCreated = (newCustomer: Customer) => {
     setCustomers(prev => [...prev, newCustomer]);
     setFormData(prev => ({ ...prev, customerId: newCustomer.id }));
@@ -262,8 +293,20 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
+    <div 
+      className={`modal-overlay ${isMobile ? 'reservation-modal-page' : ''}`} 
+      onClick={onClose}
+      style={{ 
+        touchAction: isMobile ? 'pan-y' : 'auto' // 모바일에서 수직 스크롤만 허용
+      }}
+    >
+      <div 
+        className="modal-content" 
+        onClick={e => e.stopPropagation()}
+        style={{
+          touchAction: isMobile ? 'pan-y' : 'auto'
+        }}
+      >
         <div className="reservation-modal-header">
           <h2 className="reservation-modal-title">
             {reservation ? t('reservations.editReservation') : t('reservations.newReservation')}
@@ -282,6 +325,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                 name="customerId"
                 value={formData.customerId}
                 onChange={handleChange}
+                onFocus={handleInputFocus}
                 required
               >
                 <option value="">{t('reservations.selectCustomer')}</option>
@@ -309,6 +353,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
               name="productId"
               value={formData.productId}
               onChange={handleChange}
+              onFocus={handleInputFocus}
               required
             >
               <option value="">{t('reservations.selectProduct')}</option>
@@ -331,6 +376,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                   name="date"
                   value={formData.date}
                   onChange={handleChange}
+                  onFocus={handleInputFocus}
                   required
                 />
               </div>
@@ -338,17 +384,17 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
               <div className="form-group">
                 <label htmlFor="time">{t('reservations.time')}</label>
                 <div className="reservation-modal-time-select" style={{ display: 'flex', gap: '0.5rem' }}>
-                  <select value={amPm} onChange={e => setAmPm(e.target.value)} style={{ width: 70 }} required>
+                  <select value={amPm} onChange={e => setAmPm(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }} required>
                     <option value="AM">AM</option>
                     <option value="PM">PM</option>
                   </select>
-                  <select value={hour} onChange={e => setHour(e.target.value)} style={{ width: 70 }} required>
+                  <select value={hour} onChange={e => setHour(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }} required>
                     <option value="">{t('reservations.hour')}</option>
                     {[...Array(12)].map((_, i) => (
                       <option key={i+1} value={(i+1).toString()}>{i+1}</option>
                     ))}
                   </select>
-                  <select value={minute} onChange={e => setMinute(e.target.value)} style={{ width: 70 }} required>
+                  <select value={minute} onChange={e => setMinute(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }} required>
                     <option value="">{t('reservations.minute')}</option>
                     {[...Array(12)].map((_, i) => {
                       const val = (i*5).toString().padStart(2, '0');
@@ -369,6 +415,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                   name="date"
                   value={formData.date}
                   onChange={handleChange}
+                  onFocus={handleInputFocus}
                   required
                 />
               </div>
@@ -376,17 +423,17 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
               <div className="form-group">
                 <label htmlFor="time">{t('reservations.time')}</label>
                 <div className="reservation-modal-time-select" style={{ display: 'flex', gap: '0.5rem' }}>
-                  <select value={amPm} onChange={e => setAmPm(e.target.value)} style={{ width: 70 }} required>
+                  <select value={amPm} onChange={e => setAmPm(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }} required>
                     <option value="AM">AM</option>
                     <option value="PM">PM</option>
                   </select>
-                  <select value={hour} onChange={e => setHour(e.target.value)} style={{ width: 70 }} required>
+                  <select value={hour} onChange={e => setHour(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }} required>
                     <option value="">{t('reservations.hour')}</option>
                     {[...Array(12)].map((_, i) => (
                       <option key={i+1} value={(i+1).toString()}>{i+1}</option>
                     ))}
                   </select>
-                  <select value={minute} onChange={e => setMinute(e.target.value)} style={{ width: 70 }} required>
+                  <select value={minute} onChange={e => setMinute(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }} required>
                     <option value="">{t('reservations.minute')}</option>
                     {[...Array(12)].map((_, i) => {
                       const val = (i*5).toString().padStart(2, '0');
@@ -407,6 +454,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
+                onFocus={handleInputFocus}
                 pattern="[0-9]*"
                 inputMode="numeric"
                 required
@@ -425,6 +473,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
+                onFocus={handleInputFocus}
               >
                 <option value="confirmed">{t('reservations.statusConfirmed')}</option>
                 <option value="noshow">{t('reservations.statusNoshow')}</option>
@@ -440,6 +489,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
               name="memo"
               value={formData.memo}
               onChange={handleChange}
+              onFocus={handleInputFocus}
               rows={3}
             />
           </div>
