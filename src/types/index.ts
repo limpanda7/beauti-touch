@@ -39,7 +39,7 @@ export interface Reservation {
   productName: string;
   date: Date;
   time: string; // HH:mm 형식
-  status: 'confirmed' | 'completed' | 'cancelled';
+  status: 'confirmed' | 'completed' | 'noshow' | 'cancelled';
   price: number;
   memo?: string;
   createdAt: Date;

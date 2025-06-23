@@ -349,18 +349,22 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="status">{t('reservations.status')}</label>
-            <select
-              id="status"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-            >
-              <option value="confirmed">{t('reservations.statusConfirmed')}</option>
-              <option value="cancelled">{t('reservations.statusCancelled')}</option>
-            </select>
-          </div>
+          {
+            reservation &&
+            <div className="form-group">
+              <label htmlFor="status">{t('reservations.status')}</label>
+              <select
+                id="status"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+              >
+                <option value="confirmed">{t('reservations.statusConfirmed')}</option>
+                <option value="noshow">{t('reservations.statusNoshow')}</option>
+                <option value="cancelled">{t('reservations.statusCancelled')}</option>
+              </select>
+            </div>
+          }
 
           <div className="form-group">
             <label htmlFor="memo">{t('reservations.memo')}</label>

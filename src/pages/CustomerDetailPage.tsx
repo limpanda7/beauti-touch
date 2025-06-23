@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit, Trash2, Plus, Save, X, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 import type { Customer, Reservation } from '../types';
 import { customerService, reservationService } from '../services/firestore';
 import CustomerModal from '../components/CustomerModal';
@@ -153,6 +155,7 @@ const CustomerDetailPage: React.FC = () => {
 
   // 예약 상태 라벨 다국어 처리 및 상태값 제한
   const reservationStatusLabel = (status: string) => {
+    if (status === 'noshow') return t('reservations.statusNoshow');
     if (status === 'cancelled') return t('reservations.statusCancelled');
     return t('reservations.statusConfirmed');
   };
@@ -314,7 +317,7 @@ const CustomerDetailPage: React.FC = () => {
               {reservations.map(reservation => (
                 <div key={reservation.id} className="customer-detail-reservation-item">
                   <div>
-                    <p className="customer-detail-reservation-date">{new Date(reservation.date).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })} - {reservation.time}</p>
+                    <p className="customer-detail-reservation-date">{format(new Date(reservation.date), 'yyyy.MM.dd (eee)', { locale: ko })} - {reservation.time}</p>
                     <p className="customer-detail-reservation-product">{reservation.productName}</p>
                     {/* 차트 정보 표시 */}
                     {reservation.chartType && (

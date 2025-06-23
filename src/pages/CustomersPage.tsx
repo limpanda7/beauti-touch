@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 import type { Customer } from '../types';
 import { customerService, reservationService } from '../services/firestore';
 import CustomerModal from '../components/CustomerModal';
@@ -144,8 +146,8 @@ const CustomersPage: React.FC = () => {
                 <tr key={customer.id} className="customers-table-row-pointer" onClick={() => handleRowClick(customer.id)}>
                   <td className="name">{customer.name}</td>
                   <td>{customer.phone}</td>
-                  <td>{customer.lastVisit ? new Date(customer.lastVisit).toLocaleDateString() : '-'}</td>
-                  <td>{customer.nextVisit ? new Date(customer.nextVisit).toLocaleDateString() : '-'}</td>
+                  <td>{customer.lastVisit ? format(customer.lastVisit, 'yyyy.MM.dd', { locale: ko }) : '-'}</td>
+                  <td>{customer.nextVisit ? format(customer.nextVisit, 'yyyy.MM.dd', { locale: ko }) : '-'}</td>
                 </tr>
               ))
             ) : (

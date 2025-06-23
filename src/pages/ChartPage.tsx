@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Save, X } from 'lucide-react';
+import { ArrowLeft, Save, X, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 import type { Customer, Reservation, ChartType, ChartData } from '../types';
 import { customerService, reservationService } from '../services/firestore';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -174,7 +176,7 @@ const ChartPage: React.FC = () => {
         <div className="chart-page-header-center">
           <h1 className="chart-page-title">{t('chart.createChart')}</h1>
           <p className="chart-page-subtitle">
-            {customer.name} - {new Date(reservation.date).toLocaleDateString('ko-KR')} {reservation.time}
+            {customer.name} - {format(new Date(reservation.date), 'yyyy.MM.dd', { locale: ko })} {reservation.time}
           </p>
         </div>
         <div className="chart-page-btn-group">
