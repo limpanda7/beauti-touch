@@ -1087,7 +1087,7 @@ body {
   background-color: $white;
   border-top: 1px solid $gray-200;
   display: flex;
-  z-index: 1000;
+  z-index: 100; // z-index를 낮춤
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   
   .mobile-nav-item {
@@ -1323,9 +1323,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 99999;
   padding: 1rem;
   overflow-y: auto;
+  transform: translateZ(0); // 새로운 stacking context 생성
 }
 
 .modal-content {
@@ -1336,18 +1337,21 @@ body {
   width: 100%;
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
-  z-index: 1001;
+  z-index: 100000;
   position: relative;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   margin: auto;
+  transform: translateZ(0); // 새로운 stacking context 생성
 }
 
 // Nested modal (for CustomerModal inside ReservationModal)
 .modal-overlay .modal-overlay {
-  z-index: 2000;
+  z-index: 999999;
+  transform: translateZ(0); // 새로운 stacking context 생성
   
   .modal-content {
-    z-index: 2001;
+    z-index: 1000000;
+    transform: translateZ(0); // 새로운 stacking context 생성
   }
 }
 
@@ -3077,5 +3081,138 @@ body {
         }
       }
     }
+  }
+} 
+
+// 모바일에서 예약 모달 스타일 개선
+@media (max-width: 767px) {
+  .reservation-modal-grid {
+    display: block;
+    gap: 0;
+  }
+  
+  .reservation-modal-time-select {
+    display: flex;
+    gap: 0.5rem;
+    
+    select {
+      flex: 1;
+      min-width: 0;
+      padding: 0.75rem 0.5rem;
+      font-size: 0.875rem; // 1rem에서 0.875rem으로 변경
+      border: 1px solid #D1D5DB;
+      border-radius: 0.375rem;
+      background-color: white;
+      
+      &:focus {
+        outline: none;
+        border-color: #3B82F6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+    }
+  }
+  
+  .reservation-modal-btn-group {
+    flex-direction: column;
+    gap: 0.5rem;
+    
+    .btn {
+      width: 100%;
+      justify-content: center;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem; // 1rem에서 0.875rem으로 변경
+    }
+  }
+  
+  // 모바일에서 날짜 입력 필드 개선
+  .form-group input[type="date"] {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.875rem; // 1rem에서 0.875rem으로 변경
+    border: 1px solid #D1D5DB;
+    border-radius: 0.375rem;
+    background-color: white;
+    
+    &:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+  }
+  
+  // 모바일에서 상품 선택 드롭다운 개선
+  .form-group select {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.875rem; // 1rem에서 0.875rem으로 변경
+    border: 1px solid #D1D5DB;
+    border-radius: 0.375rem;
+    background-color: white;
+    
+    &:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+  }
+  
+  // 모바일에서 모달 내 모든 텍스트 요소의 폰트 크기 통일
+  .modal-content {
+    font-size: 0.875rem; // 기본 폰트 크기 설정
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 1.125rem; // 제목 폰트 크기 제한
+    }
+    
+    label {
+      font-size: 0.875rem; // 라벨 폰트 크기
+    }
+    
+    input, select, textarea {
+      font-size: 0.875rem; // 입력 필드 폰트 크기
+    }
+    
+    button {
+      font-size: 0.875rem; // 버튼 폰트 크기
+    }
+    
+    p, span, div {
+      font-size: 0.875rem; // 일반 텍스트 폰트 크기
+    }
+  }
+  
+  // 모바일에서 자동 확대 방지
+  .modal-content input[type="text"],
+  .modal-content input[type="email"],
+  .modal-content input[type="tel"],
+  .modal-content input[type="number"],
+  .modal-content input[type="date"],
+  .modal-content input[type="time"],
+  .modal-content select,
+  .modal-content textarea {
+    font-size: 0.875rem !important; // 강제로 폰트 크기 고정
+    transform: scale(1); // 확대 방지
+    -webkit-text-size-adjust: 100%; // iOS에서 자동 확대 방지
+    -moz-text-size-adjust: 100%; // Firefox에서 자동 확대 방지
+    -ms-text-size-adjust: 100%; // IE에서 자동 확대 방지
+  }
+  
+  .modal-overlay {
+    z-index: 99999; // 네비게이션 바(100)보다 훨씬 높은 z-index
+    padding: 0.5rem;
+    align-items: center; // 중앙 정렬로 변경
+    padding-top: 1rem; // 상단 여백 줄임
+    padding-bottom: 1rem; // 하단 여백 줄임
+    transform: translateZ(0); // 새로운 stacking context 생성
+  }
+  
+  .modal-content {
+    max-height: calc(100vh - 2rem); // 전체 화면 높이에서 패딩만 제외
+    margin: 0;
+    width: 100%;
+    max-width: none;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    overflow-y: auto; // 내용이 많을 때 스크롤 가능
+    z-index: 100000; // 모달 콘텐츠도 높은 z-index 설정
+    transform: translateZ(0); // 새로운 stacking context 생성
   }
 } 

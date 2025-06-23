@@ -156,7 +156,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
           </div>
 
           <div className="form-group">
-            <label>{t('customers.gender')} <span className="optional-text">({t('common.optional')})</span></label>
+            <label>{t('customers.gender')}</label>
             <div className="radio-group">
               <label className="radio-option">
                 <input
@@ -182,7 +182,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
           </div>
 
           <div className="form-group">
-            <label htmlFor="age">{t('customers.age')} <span className="optional-text">({t('common.optional')})</span></label>
+            <label htmlFor="age">{t('customers.age')}</label>
             <input
               type="text"
               id="age"
@@ -196,7 +196,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
           </div>
           
           <div className="form-group">
-            <label htmlFor="memo">{t('customers.memo')} <span className="optional-text">({t('common.optional')})</span></label>
+            <label htmlFor="memo">{t('customers.memo')}</label>
             <textarea
               id="memo"
               name="memo"

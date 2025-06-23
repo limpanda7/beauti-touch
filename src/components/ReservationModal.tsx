@@ -38,6 +38,33 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
   const [amPm, setAmPm] = useState<string>('');
   const [hour, setHour] = useState<string>('');
   const [minute, setMinute] = useState<string>('');
+  const [isMobile, setIsMobile] = useState(false);
+
+  // 모바일 감지
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  // 상품의 시간을 포맷팅하는 함수
+  const formatProductDuration = (duration: number): string => {
+    const hours = Math.floor(duration / 60);
+    const minutes = duration % 60;
+    
+    if (hours > 0 && minutes > 0) {
+      return `${hours}시간 ${minutes}분`;
+    } else if (hours > 0) {
+      return `${hours}시간`;
+    } else {
+      return `${minutes}분`;
+    }
+  };
 
   // 5분 단위 시간 옵션 생성 (AM이 먼저)
   const generateTimeOptions = () => {
@@ -287,49 +314,89 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
               <option value="">{t('reservations.selectProduct')}</option>
               {products.map(product => (
                 <option key={product.id} value={product.id}>
-                  {product.name} - {formatCurrency(product.price)}
+                  {product.name} - {product.duration ? formatProductDuration(product.duration) : '시간 미설정'}
                 </option>
               ))}
             </select>
           </div>
 
-          <div className="reservation-modal-grid">
-            <div className="form-group">
-              <label htmlFor="date">{t('reservations.date')}</label>
-              <input
-                type="date"
-                id="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                required
-              />
-            </div>
+          {isMobile ? (
+            // 모바일: 날짜와 시간을 별도 행으로 표시
+            <>
+              <div className="form-group">
+                <label htmlFor="date">{t('reservations.date')}</label>
+                <input
+                  type="date"
+                  id="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="time">{t('reservations.time')}</label>
-              <div className="reservation-modal-time-select" style={{ display: 'flex', gap: '0.5rem' }}>
-                <select value={amPm} onChange={e => setAmPm(e.target.value)} style={{ width: 70 }} required>
-                  <option value="">AM/PM</option>
-                  <option value="AM">AM</option>
-                  <option value="PM">PM</option>
-                </select>
-                <select value={hour} onChange={e => setHour(e.target.value)} style={{ width: 70 }} required>
-                  <option value="">{t('reservations.hour')}</option>
-                  {[...Array(12)].map((_, i) => (
-                    <option key={i+1} value={(i+1).toString()}>{i+1}</option>
-                  ))}
-                </select>
-                <select value={minute} onChange={e => setMinute(e.target.value)} style={{ width: 70 }} required>
-                  <option value="">{t('reservations.minute')}</option>
-                  {[...Array(12)].map((_, i) => {
-                    const val = (i*5).toString().padStart(2, '0');
-                    return <option key={val} value={val}>{val}</option>;
-                  })}
-                </select>
+              <div className="form-group">
+                <label htmlFor="time">{t('reservations.time')}</label>
+                <div className="reservation-modal-time-select" style={{ display: 'flex', gap: '0.5rem' }}>
+                  <select value={amPm} onChange={e => setAmPm(e.target.value)} style={{ width: 70 }} required>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                  </select>
+                  <select value={hour} onChange={e => setHour(e.target.value)} style={{ width: 70 }} required>
+                    <option value="">{t('reservations.hour')}</option>
+                    {[...Array(12)].map((_, i) => (
+                      <option key={i+1} value={(i+1).toString()}>{i+1}</option>
+                    ))}
+                  </select>
+                  <select value={minute} onChange={e => setMinute(e.target.value)} style={{ width: 70 }} required>
+                    <option value="">{t('reservations.minute')}</option>
+                    {[...Array(12)].map((_, i) => {
+                      const val = (i*5).toString().padStart(2, '0');
+                      return <option key={val} value={val}>{val}</option>;
+                    })}
+                  </select>
+                </div>
+              </div>
+            </>
+          ) : (
+            // 데스크탑: 기존 그리드 레이아웃 유지
+            <div className="reservation-modal-grid">
+              <div className="form-group">
+                <label htmlFor="date">{t('reservations.date')}</label>
+                <input
+                  type="date"
+                  id="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="time">{t('reservations.time')}</label>
+                <div className="reservation-modal-time-select" style={{ display: 'flex', gap: '0.5rem' }}>
+                  <select value={amPm} onChange={e => setAmPm(e.target.value)} style={{ width: 70 }} required>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                  </select>
+                  <select value={hour} onChange={e => setHour(e.target.value)} style={{ width: 70 }} required>
+                    <option value="">{t('reservations.hour')}</option>
+                    {[...Array(12)].map((_, i) => (
+                      <option key={i+1} value={(i+1).toString()}>{i+1}</option>
+                    ))}
+                  </select>
+                  <select value={minute} onChange={e => setMinute(e.target.value)} style={{ width: 70 }} required>
+                    <option value="">{t('reservations.minute')}</option>
+                    {[...Array(12)].map((_, i) => {
+                      const val = (i*5).toString().padStart(2, '0');
+                      return <option key={val} value={val}>{val}</option>;
+                    })}
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="form-group">
             <label htmlFor="price">{t('reservations.price')}</label>
@@ -378,9 +445,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
           </div>
 
           <div className="reservation-modal-btn-group">
-            <button type="button" onClick={onClose} className="btn btn-secondary">
-              {t('common.cancel')}
-            </button>
             {reservation && (
               <button 
                 type="button" 
