@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Plus, Search, Edit, Trash2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Plus, Search, Edit, Trash2, Phone, Calendar, User } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -20,11 +20,29 @@ const CustomersPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     loadCustomers();
+    checkMobileView();
+    window.addEventListener('resize', checkMobileView);
+    
+    return () => window.removeEventListener('resize', checkMobileView);
   }, []);
+
+  useEffect(() => {
+    const action = searchParams.get('action');
+    if (action === 'new') {
+      handleOpenModal();
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams]);
+
+  const checkMobileView = () => {
+    setIsMobile(window.innerWidth <= 900);
+  };
 
   const loadCustomers = async () => {
     try {
@@ -94,76 +112,154 @@ const CustomersPage: React.FC = () => {
   const handleCustomerCreated = (newCustomer: Customer) => {
     setCustomers(prev => [newCustomer, ...prev]);
     setIsModalOpen(false);
-    // 새로 생성된 고객의 상세 페이지로 이동
     navigate(`/customers/${newCustomer.id}`);
   };
 
-  return (
-    <div className="content-wrapper">
-      <div className="page-header">
-        <h1>{t('customers.title')}</h1>
-        <button
-          onClick={handleOpenModal}
-          className="btn btn-primary"
-        >
-          <Plus style={{ width: '1rem', height: '1rem' }} />
-          {t('customers.newCustomer')}
-        </button>
+  const renderMobileCustomerCard = (customer: CustomerWithVisitDate) => (
+    <div 
+      key={customer.id} 
+      className="customer-card"
+      onClick={() => handleRowClick(customer.id)}
+    >
+      <div className="customer-card-header">
+        <div className="customer-card-name">
+          <User className="customer-card-icon" />
+          {customer.name}
+        </div>
+        <div className="customer-card-id">
+          {customer.id.length === 4 && /^\d{4}$/.test(customer.id) ? customer.id : customer.id.slice(0, 4)}
+        </div>
       </div>
+      
+      <div className="customer-card-phone">
+        <Phone className="customer-card-icon" />
+        {customer.phone}
+      </div>
+      
+      <div className="customer-card-visits">
+        <div className="customer-card-visit-item">
+          <Calendar className="customer-card-icon" />
+          <span className="customer-card-visit-label">{t('customers.lastVisit')}:</span>
+          <span className="customer-card-visit-date">
+            {customer.lastVisit ? format(customer.lastVisit, 'yyyy.MM.dd', { locale: ko }) : '-'}
+          </span>
+        </div>
+        <div className="customer-card-visit-item">
+          <Calendar className="customer-card-icon" />
+          <span className="customer-card-visit-label">{t('customers.nextVisit')}:</span>
+          <span className="customer-card-visit-date">
+            {customer.nextVisit ? format(customer.nextVisit, 'yyyy.MM.dd', { locale: ko }) : '-'}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 
-      <div className="table-container">
-        <div className="customers-search-bar">
-          <div className="customers-search-input-wrapper">
-            <Search className="customers-search-icon" />
+  const renderDesktopTable = () => (
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>{t('customers.name')}</th>
+          <th>{t('customers.phone')}</th>
+          <th>{t('customers.lastVisit')}</th>
+          <th>{t('customers.nextVisit')}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {loading ? (
+          <tr>
+            <td colSpan={5} className="customers-table-empty">
+              <LoadingSpinner text={t('common.loading')} />
+            </td>
+          </tr>
+        ) : filteredCustomers.length > 0 ? (
+          filteredCustomers.map(customer => (
+            <tr key={customer.id} className="customers-table-row-pointer" onClick={() => handleRowClick(customer.id)}>
+              <td className="customer-id">
+                {customer.id.length === 4 && /^\d{4}$/.test(customer.id) ? customer.id : customer.id.slice(0, 4)}
+              </td>
+              <td className="name">{customer.name}</td>
+              <td>{customer.phone}</td>
+              <td>{customer.lastVisit ? format(customer.lastVisit, 'yyyy.MM.dd', { locale: ko }) : '-'}</td>
+              <td>{customer.nextVisit ? format(customer.nextVisit, 'yyyy.MM.dd', { locale: ko }) : '-'}</td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={5} className="customers-table-empty">
+              {searchTerm ? t('customers.noSearchResults') : t('customers.noCustomers')}
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  );
+
+  return (
+    <div className="content-wrapper customers-page">
+      {!isMobile && (
+        <div className="page-header">
+          <h1>{t('customers.title')}</h1>
+          <button
+            onClick={handleOpenModal}
+            className="btn btn-primary"
+          >
+            <Plus style={{ width: '1rem', height: '1rem' }} />
+            {t('customers.newCustomer')}
+          </button>
+        </div>
+      )}
+
+      {isMobile && (
+        <div className="mobile-search-container">
+          <div className="search-container">
+            <Search className="search-icon" />
             <input
               type="text"
               placeholder={t('customers.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="customers-search-input"
+              className="search-input"
             />
           </div>
         </div>
+      )}
 
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>{t('customers.name')}</th>
-              <th>{t('customers.phone')}</th>
-              <th>{t('customers.lastVisit')}</th>
-              <th>{t('customers.nextVisit')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={5} className="customers-table-empty">
-                  <LoadingSpinner text={t('common.loading')} />
-                </td>
-              </tr>
-            ) : filteredCustomers.length > 0 ? (
-              filteredCustomers.map(customer => (
-                <tr key={customer.id} className="customers-table-row-pointer" onClick={() => handleRowClick(customer.id)}>
-                  <td className="customer-id">
-                    {customer.id.length === 4 && /^\d{4}$/.test(customer.id) ? customer.id : customer.id.slice(0, 4)}
-                  </td>
-                  <td className="name">{customer.name}</td>
-                  <td>{customer.phone}</td>
-                  <td>{customer.lastVisit ? format(customer.lastVisit, 'yyyy.MM.dd', { locale: ko }) : '-'}</td>
-                  <td>{customer.nextVisit ? format(customer.nextVisit, 'yyyy.MM.dd', { locale: ko }) : '-'}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={5} className="customers-table-empty">
-                  {searchTerm ? t('customers.noSearchResults') : t('customers.noCustomers')}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      {!isMobile && (
+        <>
+          <div className="search-container">
+            <Search className="search-icon" />
+            <input
+              type="text"
+              placeholder={t('customers.searchPlaceholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
+
+          <div className="table-container">
+            {renderDesktopTable()}
+          </div>
+        </>
+      )}
+
+      {isMobile && (
+        <div className="customers-mobile-container">
+          {loading ? (
+            <div className="customers-mobile-empty">
+              <LoadingSpinner text={t('common.loading')} />
+            </div>
+          ) : filteredCustomers.length > 0 ? (
+            filteredCustomers.map(customer => renderMobileCustomerCard(customer))
+          ) : (
+            <div className="customers-mobile-empty">
+              {searchTerm ? t('customers.noSearchResults') : t('customers.noCustomers')}
+            </div>
+          )}
+        </div>
+      )}
 
       {isModalOpen && (
         <CustomerModal

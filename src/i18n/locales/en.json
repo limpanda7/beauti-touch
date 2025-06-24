@@ -7,6 +7,7 @@
     "deleting": "Deleting...",
     "edit": "Edit",
     "add": "Add",
+    "addNew": "Add New",
     "search": "Search",
     "loading": "Loading...",
     "loadingData": "Loading data...",
@@ -31,8 +32,9 @@
     "products": "Products",
     "settings": "Settings",
     "beauti-touch": "Beauti-Touch",
-    "adminSystem": "Admin System",
-    "other": "Other"
+    "adminSystem": "Beauty at Your Fingertips",
+    "other": "Other",
+    "pageTitle": "Beauti-Touch: Beauty at Your Fingertips"
   },
   "reservations": {
     "title": "Reservation Management",

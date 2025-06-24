@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import {
   format,
   startOfWeek,
@@ -38,6 +39,7 @@ const ReservationsPage: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showSwipeHint, setShowSwipeHint] = useState(false);
   const [selectedDay, setSelectedDay] = useState(new Date());
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // 스와이프 제스처를 위한 터치 이벤트 처리
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -218,7 +220,7 @@ const ReservationsPage: React.FC = () => {
 
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 1200);
+      setIsMobile(window.innerWidth < 900);
     };
 
     checkScreenSize();
@@ -341,7 +343,7 @@ const ReservationsPage: React.FC = () => {
                         <span className="event-time">{getReservationTimeRange(res)}</span>
                         <span className="event-customer">{res.customerName}</span>
                         <span className="event-product">
-                          {res.productName} - {productsMap.get(res.productId)?.duration ? formatProductDuration(productsMap.get(res.productId)!.duration) : t('reservations.timeNotSet')}
+                          {res.productName}
                         </span>
                       </div>
                     ))}
@@ -507,6 +509,16 @@ const ReservationsPage: React.FC = () => {
     </div>
   );
 
+  // URL 파라미터 처리
+  useEffect(() => {
+    const action = searchParams.get('action');
+    if (action === 'new') {
+      handleOpenModal(null);
+      // URL에서 action 파라미터 제거
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams]);
+
   if (view === null) {
     return (
       <div className="content-wrapper">
@@ -517,16 +529,19 @@ const ReservationsPage: React.FC = () => {
 
   return (
     <div className="content-wrapper">
-      <div className="page-header">
-        <h1>{t('reservations.title')}</h1>
-        <button
-          onClick={() => handleOpenModal(null)}
-          className="btn btn-primary"
-        >
-          <Plus style={{ width: '1rem', height: '1rem' }} />
-          {t('reservations.newReservation')}
-        </button>
-      </div>
+      {/* 모바일에서는 헤더 숨김 */}
+      {!isMobile && (
+        <div className="page-header">
+          <h1>{t('reservations.title')}</h1>
+          <button
+            onClick={() => handleOpenModal(null)}
+            className="btn btn-primary"
+          >
+            <Plus style={{ width: '1rem', height: '1rem' }} />
+            {t('reservations.newReservation')}
+          </button>
+        </div>
+      )}
 
       <div className={`card ${view === 'month' || view === 'week' ? 'calendar-card' : ''}`}>
         <div className="page-header">

@@ -43,23 +43,15 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
     
     if (isSubmitting) return;
 
-    // 새 고객인 경우 폼 초기화
-    if (!customer) {
-      setFormData({
-        name: '',
-        phone: '',
-        memo: '',
-      });
-    }
-
     // 필수 필드 검증
     if (!formData.name.trim() || !formData.phone.trim()) {
       setError(t('errors.requiredFields'));
       return;
     }
 
-    // 전화번호 형식 검증 (4자리 숫자)
-    if (!/^\d{4}$/.test(formData.phone)) {
+    // 전화번호 형식 검증 (숫자만 허용, 최소 4자리)
+    const cleanedPhone = formData.phone.replace(/\D/g, ''); // 숫자만 추출
+    if (cleanedPhone.length < 4) {
       setError(t('customers.phoneRequired'));
       return;
     }
@@ -75,7 +67,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
         const updatedData = {
           ...customer,
           name: formData.name,
-          phone: formData.phone,
+          phone: cleanedPhone.slice(-4), // 뒤 4자리만 저장
           memo: formData.memo,
         };
         
@@ -89,7 +81,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
         // 새 고객 생성
         const newCustomerData = {
           name: formData.name,
-          phone: formData.phone,
+          phone: cleanedPhone.slice(-4), // 뒤 4자리만 저장
           memo: formData.memo,
         };
         
@@ -158,7 +150,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
               value={formData.phone}
               onChange={handleChange}
               required
-              pattern="[0-9]*"
+              placeholder="01012345678 (뒤 4자리만 저장)"
               inputMode="numeric"
             />
           </div>

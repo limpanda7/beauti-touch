@@ -43,6 +43,110 @@
   color: #6B7280;
 }
 
+// 모바일 고객 카드 스타일
+.customers-mobile-container {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  
+  .customers-mobile-empty {
+    text-align: center;
+    padding: 2rem;
+    color: $gray-500;
+  }
+}
+
+.customers-mobile-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.customer-card {
+  background-color: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+
+  &:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.customer-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.customer-card-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: #111827;
+}
+
+.customer-card-id {
+  background-color: #F3F4F6;
+  color: #6B7280;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.customer-card-phone {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.customer-card-visits {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.customer-card-visit-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.customer-card-visit-label {
+  color: #6B7280;
+  font-weight: 500;
+  min-width: 4rem;
+}
+
+.customer-card-visit-date {
+  color: #111827;
+  font-weight: 500;
+}
+
+.customer-card-icon {
+  width: 1rem;
+  height: 1rem;
+  color: #6B7280;
+  flex-shrink: 0;
+}
+
 // CustomerDetailPage 스타일
 .customer-detail-page {
   padding: 1.5rem;
@@ -492,4 +596,48 @@
   gap: 0.75rem;
   justify-content: flex-end;
   margin-top: 1.5rem;
+}
+
+// 모바일 검색 컨테이너
+.mobile-search-container {
+  padding: 1rem;
+  background: white;
+  border-bottom: 1px solid #E5E7EB;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  
+  .search-container {
+    position: relative;
+    
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6B7280;
+      width: 1rem;
+      height: 1rem;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+      border: 1px solid #D1D5DB;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      background: #F9FAFB;
+      
+      &:focus {
+        outline: none;
+        border-color: #3B82F6;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+      
+      &::placeholder {
+        color: #9CA3AF;
+      }
+    }
+  }
 } 

@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, useLocation, Link } from 'react-router-dom';
-import { Menu, X, Calendar, Users, ClipboardList, Settings } from 'lucide-react';
+import { Outlet, useLocation, Link, useNavigate } from 'react-router-dom';
+import { Menu, X, Calendar, Users, ClipboardList, Settings, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
 import '../styles/main.scss';
 
 const Layout: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const location = useLocation();
+
+  // 페이지 타이틀 다국어 처리
+  useEffect(() => {
+    document.title = t('navigation.pageTitle');
+  }, [t]);
 
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 1200);
-      if (window.innerWidth >= 1200) {
+      setIsMobile(window.innerWidth < 900);
+      if (window.innerWidth >= 900) {
         setIsSidebarOpen(false);
         setIsClosing(false);
       }
@@ -25,6 +32,23 @@ const Layout: React.FC = () => {
     window.addEventListener('resize', checkScreenSize);
     
     return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  useEffect(() => {
+    const checkModalOpen = () => {
+      const modalOverlay = document.querySelector('.modal-overlay');
+      setIsModalOpen(!!modalOverlay);
+    };
+
+    checkModalOpen();
+
+    const observer = new MutationObserver(checkModalOpen);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   const toggleSidebar = () => {
@@ -52,6 +76,24 @@ const Layout: React.FC = () => {
   const handleOverlayClick = () => {
     if (isMobile && !isClosing) {
       closeSidebar();
+    }
+  };
+
+  const handleFloatingButtonClick = () => {
+    const currentPath = location.pathname;
+    
+    switch (currentPath) {
+      case '/reservations':
+        navigate('/reservations?action=new');
+        break;
+      case '/customers':
+        navigate('/customers?action=new');
+        break;
+      case '/products':
+        navigate('/products?action=new');
+        break;
+      default:
+        break;
     }
   };
 
@@ -102,6 +144,17 @@ const Layout: React.FC = () => {
             </Link>
           ))}
         </nav>
+      )}
+
+      {/* 모바일 플로팅 + 버튼 - 모달이 열려있지 않을 때만 표시 */}
+      {isMobile && !isModalOpen && (
+        <button 
+          className="floating-action-button"
+          onClick={handleFloatingButtonClick}
+          aria-label={t('common.addNew')}
+        >
+          <Plus size={24} />
+        </button>
       )}
     </div>
   );

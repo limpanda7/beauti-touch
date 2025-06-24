@@ -26,13 +26,14 @@
     "info": "Informação"
   },
   "navigation": {
-    "reservations": "Gestão de Reservas",
-    "customers": "Gestão de Clientes",
-    "products": "Gestão de Produtos",
+    "reservations": "Reservas",
+    "customers": "Clientes",
+    "products": "Produtos",
     "settings": "Configurações",
     "beauti-touch": "Beauti-Touch",
-    "adminSystem": "Sistema Administrativo",
-    "other": "Outro"
+    "adminSystem": "Toque de beleza",
+    "other": "Outro",
+    "pageTitle": "Beauti-Touch: Toque de beleza"
   },
   "reservations": {
     "title": "Gestão de Reservas",

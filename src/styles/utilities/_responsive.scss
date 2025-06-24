@@ -1,7 +1,7 @@
 @use '../base/variables' as *;
 
 // Responsive styles
-@media (max-width: 899px) {
+@media (max-width: 900px) {
   .layout {
     .main-content {
       margin-left: 0;
@@ -21,10 +21,105 @@
       }
     }
   }
-}
-
-// 모바일에서 예약관리 페이지 헤더 최적화
-@media (max-width: 1200px) {
+  
+  .mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: $white;
+    border-top: 1px solid $gray-200;
+    display: flex;
+    z-index: 100;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    
+    .mobile-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 0.25rem;
+      text-decoration: none;
+      color: $gray-500;
+      transition: all 0.2s ease;
+      min-height: 4rem;
+      
+      &:hover {
+        color: $primary-color;
+      }
+      
+      &.active {
+        color: $primary-color;
+        
+        svg {
+          transform: scale(1.1);
+        }
+      }
+      
+      svg {
+        margin-bottom: 0.25rem;
+        transition: transform 0.2s ease;
+      }
+      
+      span {
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .content-wrapper {
+    padding-bottom: 6rem !important; // 하단 네비게이션 바 높이(4rem) + 여유 공간(2rem)
+  }
+  
+  // 캘린더가 화면 높이를 꽉 채우도록 설정
+  .calendar-container {
+    height: calc(100vh - 14rem); // 헤더, 네비게이션 바, 패딩 등을 고려한 높이 (여유 공간 추가)
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; // 스크롤 방지
+    padding: 0; // 패딩 제거하여 캘린더가 전체 너비 사용
+    
+    .calendar-mobile-container,
+    .calendar-week-mobile-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden; // 스크롤 방지
+      padding: 0; // 패딩 제거
+      
+      .calendar-mobile,
+      .calendar-week-mobile {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden; // 스크롤 방지
+        border-radius: 0; // 모바일에서는 둥근 모서리 제거
+        box-shadow: none; // 모바일에서는 그림자 제거
+        
+        .calendar-mobile-grid,
+        .calendar-week-mobile-grid {
+          flex: 1;
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          overflow: hidden; // 스크롤 방지
+          
+          .calendar-mobile-day,
+          .calendar-week-mobile-day-slot {
+            height: auto;
+            min-height: 0;
+            flex: 1;
+            overflow: hidden; // 스크롤 방지
+          }
+        }
+      }
+    }
+  }
+  
+  // 모바일에서 예약관리 페이지 헤더 최적화
   .reservations-header {
     flex-direction: row;
     gap: 0.5rem;
@@ -96,7 +191,44 @@
       
       .btn-nav {
         margin: 0;
+        padding: 0.125rem;
+        min-width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 0.375rem;
+        background-color: $white;
+        border: 1px solid $gray-300;
+        color: $gray-700;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        
+        &:hover {
+          background-color: $primary-color;
+          border-color: $primary-color;
+          color: $white;
+          transform: translateY(-1px);
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+        }
+        
+        &:active {
+          transform: translateY(0);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        &:disabled {
+          background-color: $gray-200;
+          border-color: $gray-300;
+          color: $gray-500;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        svg {
+          width: 0.75rem !important;
+          height: 0.75rem !important;
+        }
       }
+      
       .reservations-header-title {
         margin: 0 0.15rem;
         font-size: 1.1rem;
@@ -135,6 +267,20 @@
     border-radius: 0;
     box-shadow: none;
     border: none;
+    height: calc(100vh - 10rem); // 헤더와 패딩을 고려한 높이 (여유 공간 추가)
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; // 스크롤 방지
+    
+    .page-header {
+      flex-shrink: 0;
+    }
+    
+    .calendar-container {
+      flex: 1;
+      height: auto;
+      overflow: hidden; // 스크롤 방지
+    }
   }
   
   .page-header {
@@ -142,16 +288,40 @@
     margin-bottom: 0.75rem;
   }
   
-  // 모바일 캘린더 최적화
+  // 모바일에서 reservations-day-item 글씨 크기 조정
+  .reservations-day-item {
+    padding: 0.75rem;
+    
+    .reservations-day-item-time {
+      font-size: 0.9rem;
+    }
+    
+    .reservations-day-item-customer {
+      font-size: 0.85rem;
+    }
+    
+    .reservations-day-item-product {
+      font-size: 0.8rem;
+    }
+    
+    .reservations-day-item-memo {
+      font-size: 0.75rem;
+    }
+    
+    .reservation-status {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.4rem;
+    }
+  }
+  
+  // 모바일 캘린더 최적화 - 왼쪽 짤림 방지
   .calendar-mobile {
-    border-radius: 0;
-    box-shadow: none;
-    margin: 0 -0.75rem;
+    margin: 0; // 마진 제거하여 왼쪽 짤림 방지
     
     .calendar-mobile-header {
       .calendar-mobile-day-name {
-        padding: 0.5rem 0.125rem;
-        font-size: 0.7rem;
+        padding: 0.375rem 0.0625rem;
+        font-size: 0.65rem;
       }
     }
     
@@ -204,52 +374,175 @@
     order: 3;
     justify-content: center;
   }
-}
-
-// 모바일 하단 네비게이션 바
-.mobile-bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: $white;
-  border-top: 1px solid $gray-200;
-  display: flex;
-  z-index: 100; // z-index를 낮춤
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   
-  .mobile-nav-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 0.25rem;
-    text-decoration: none;
-    color: $gray-500;
-    transition: all 0.2s ease;
-    min-height: 4rem;
+  // 고객관리 페이지 모바일 최적화
+  .customers-search-bar {
+    padding: 0.75rem;
+  }
+  
+  .customers-search-input {
+    max-width: none;
+    font-size: 1rem; // 모바일에서 더 큰 폰트
+    padding: 0.75rem 0.75rem 0.75rem 2.75rem;
+  }
+  
+  .customers-search-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    left: 0.875rem;
+  }
+  
+  .customer-card {
+    margin: 0;
+    border-radius: 0.375rem;
     
-    &:hover {
-      color: $primary-color;
+    &:first-child {
+      margin-top: 0;
     }
     
-    &.active {
-      color: $primary-color;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  .customer-card-header {
+    margin-bottom: 0.5rem;
+  }
+  
+  .customer-card-name {
+    font-size: 1rem;
+  }
+  
+  .customer-card-phone {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .customer-card-visits {
+    gap: 0.375rem;
+  }
+  
+  .customer-card-visit-item {
+    font-size: 0.8rem;
+  }
+  
+  .customer-card-visit-label {
+    min-width: 3.5rem;
+  }
+  
+  .customer-card-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+  
+  // 모바일에서 고객관리 페이지 테이블 숨김
+  .customers-page .table-container table {
+    display: none;
+  }
+  
+  // 모바일에서 페이지 헤더 최적화
+  .page-header {
+    padding: 0.75rem 0;
+    margin-bottom: 0.5rem;
+    
+    h1 {
+      font-size: 1.25rem;
+    }
+    
+    .btn {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
       
       svg {
-        transform: scale(1.1);
+        width: 0.875rem;
+        height: 0.875rem;
       }
     }
+  }
+}
+
+// 데스크탑 (901px 이상)
+@media (min-width: 901px) {
+  .sidebar {
+    display: block;
+  }
+  
+  // 데스크탑에서 모바일 하단 네비게이션 바 숨김
+  .mobile-bottom-nav {
+    display: none;
+  }
+  
+  // 데스크탑에서 모바일 카드 숨김
+  .customers-mobile-container {
+    display: none;
+  }
+  
+  .table-container table {
+    display: table;
+  }
+  
+  .customer-card {
+    display: none;
+  }
+  
+  // 데스크탑에서 캘린더 높이 설정
+  .calendar-container {
+    height: calc(100vh - 10rem); // 헤더와 패딩을 고려한 높이 (여유 공간 추가)
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; // 스크롤 방지
+    padding: 0; // 패딩 제거하여 캘린더가 전체 너비 사용
     
-    svg {
-      margin-bottom: 0.25rem;
-      transition: transform 0.2s ease;
+    .calendar-mobile-container,
+    .calendar-week-mobile-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden; // 스크롤 방지
+      padding: 0; // 패딩 제거
+      
+      .calendar-mobile,
+      .calendar-week-mobile {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden; // 스크롤 방지
+        
+        .calendar-mobile-grid,
+        .calendar-week-mobile-grid {
+          flex: 1;
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          overflow: hidden; // 스크롤 방지
+          
+          .calendar-mobile-day,
+          .calendar-week-mobile-day-slot {
+            height: auto;
+            min-height: 0;
+            flex: 1;
+            overflow: hidden; // 스크롤 방지
+          }
+        }
+      }
+    }
+  }
+  
+  .card {
+    height: calc(100vh - 8rem); // 데스크탑에서는 사이드바를 고려한 높이 (여유 공간 추가)
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; // 스크롤 방지
+    
+    .page-header {
+      flex-shrink: 0;
     }
     
-    span {
-      font-size: 0.75rem;
-      font-weight: 500;
+    .calendar-container {
+      flex: 1;
+      height: auto;
+      overflow: hidden; // 스크롤 방지
     }
   }
 }
@@ -273,46 +566,34 @@
     }
   }
   
-  .card .page-header {
-    gap: 0.5rem;
+  // 400px 이하에서 reservations-day-item 글씨 크기 추가 조정
+  .reservations-day-item {
+    padding: 0.5rem;
     
-    .reservations-header {
-      gap: 0.5rem;
-      
-      .reservations-header-title {
-        font-size: 1rem;
-      }
-      
-      .btn-today {
-        font-size: 0.7rem;
-        padding: 0.25rem 0.5rem;
-      }
-      
-      .btn-nav {
-        padding: 0.1875rem;
-        min-width: 1.75rem;
-        height: 1.75rem;
-        
-        svg {
-          width: 0.875rem !important;
-          height: 0.875rem !important;
-        }
-      }
+    .reservations-day-item-time {
+      font-size: 0.8rem;
     }
     
-    .reservations-header-btns {
-      gap: 0.125rem;
-      
-      .btn {
-        max-width: 3rem;
-        font-size: 0.65rem;
-        padding: 0.25rem 0.25rem;
-      }
+    .reservations-day-item-customer {
+      font-size: 0.75rem;
+    }
+    
+    .reservations-day-item-product {
+      font-size: 0.7rem;
+    }
+    
+    .reservations-day-item-memo {
+      font-size: 0.65rem;
+    }
+    
+    .reservation-status {
+      font-size: 0.6rem;
+      padding: 0.15rem 0.3rem;
     }
   }
   
   .calendar-mobile {
-    margin: 0 -0.5rem;
+    margin: 0; // 마진 제거하여 왼쪽 짤림 방지
     
     .calendar-mobile-header {
       .calendar-mobile-day-name {
@@ -348,110 +629,9 @@
       }
     }
   }
-}
-
-// PC에서 모바일 캘린더 스타일 최적화 (1200px 이상)
-@media (min-width: 1201px) {
-  .calendar-mobile {
-    max-width: 1200px;
-    margin: 0 auto;
-    
-    .calendar-mobile-header {
-      .calendar-mobile-day-name {
-        padding: 1rem 0.5rem;
-        font-size: 0.875rem;
-      }
-    }
-
-    .calendar-mobile-grid {
-      .calendar-mobile-day {
-        min-height: 8rem;
-        padding: 0.5rem;
-        
-        .calendar-mobile-day-number {
-          font-size: 1rem;
-          margin-bottom: 0.5rem;
-        }
-        
-        .calendar-mobile-events {
-          gap: 0.25rem;
-          min-height: 5rem;
-          
-          .calendar-mobile-event {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-            border-left-width: 4px;
-          
-          .event-time {
-              font-size: 0.7rem;
-          }
-          
-          .event-customer {
-              font-size: 0.7rem;
-          }
-          
-          .event-product {
-              font-size: 0.65rem;
-            }
-          }
-          
-          .calendar-mobile-more-events {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.7rem;
-          }
-        }
-      }
-          }
-        }
-        
+  
   .calendar-week-mobile {
-    max-width: 1200px;
-    margin: 0 auto;
-    
-    .calendar-week-mobile-header {
-      .calendar-week-mobile-day-header {
-        padding: 0.75rem 0.5rem;
-        
-        &.today {
-          background-color: rgba($primary-color, 0.1);
-          border-radius: 0.5rem;
-          margin: 0.125rem;
-          
-          .calendar-week-mobile-day-name,
-          .calendar-week-mobile-day-number {
-            font-weight: 700;
-          }
-        }
-        
-        .calendar-week-mobile-day-name {
-          font-size: 0.8rem;
-        }
-        
-        .calendar-week-mobile-day-number {
-          font-size: 1rem;
-        }
-      }
-    }
-    
-    .calendar-week-mobile-grid {
-      .calendar-week-mobile-day-slot {
-        padding: 0.75rem;
-        min-height: 10rem;
-        
-        .calendar-week-mobile-event {
-          padding: 0.25rem 0.5rem;
-          font-size: 0.8rem;
-          border-left-width: 3px;
-          margin-bottom: 0.375rem;
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 400px) {
-  .calendar-week-mobile {
-    margin: 0 -0.5rem;
+    margin: 0; // 마진 제거하여 왼쪽 짤림 방지
     
     .calendar-week-mobile-header {
       .calendar-week-mobile-time-header {
@@ -481,8 +661,16 @@
           font-size: 0.8rem;
           
           &.today {
-            width: auto;
-            height: auto;
+            background-color: $primary-color;
+            color: $white;
+            border-radius: 50%;
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin: 0 auto;
           }
         }
       }
@@ -490,166 +678,22 @@
     
     .calendar-week-mobile-grid {
       .calendar-week-mobile-time-slot {
-        padding: 0.0625rem;
-        min-height: 2rem;
+        padding: 0.25rem 0.0625rem;
         
         .calendar-week-mobile-time-label {
-          font-size: 0.65rem;
+          font-size: 0.7rem;
         }
       }
       
       .calendar-week-mobile-day-slot {
-        padding: 0.03125rem;
-        min-height: 6rem;
+        padding: 0.25rem 0.0625rem;
+        min-height: 8rem;
         
         .calendar-week-mobile-event {
-          background-color: $reservation-confirmed-bg;
-          border-radius: 0.25rem;
-          padding: 0.0625rem 0.125rem;
-          font-size: 0.6rem;
-          line-height: 1.2;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          margin-bottom: 0.0625rem;
-          
-          &:hover {
-            background-color: $reservation-confirmed-hover;
-            transform: scale(1.02);
-          }
-          
-          &:active {
-            transform: scale(0.98);
-            background-color: $reservation-confirmed-active;
-          }
-  
-          &.completed {
-            background-color: $reservation-completed-bg;
-            
-            &:hover {
-              background-color: $reservation-completed-hover;
-            }
-            
-            &:active {
-              background-color: $reservation-completed-active;
-            }
-    
-            .event-time,
-            .event-customer,
-            .event-product {
-              color: $reservation-completed-text;
-            }
-          }
-          
-          &.noshow {
-            background-color: $reservation-noshow-bg;
-            
-            &:hover {
-              background-color: $reservation-noshow-hover;
-            }
-            
-            &:active {
-              background-color: $reservation-noshow-active;
-            }
-            
-            .event-time,
-            .event-customer,
-            .event-product {
-              color: $reservation-noshow-text;
-            }
-          }
-          
-          &.cancelled {
-            background-color: $reservation-cancelled-bg;
-            
-            &:hover {
-              background-color: $reservation-cancelled-hover;
-            }
-            
-            &:active {
-              background-color: $reservation-cancelled-active;
-            }
-            
-            .event-time,
-            .event-customer,
-            .event-product {
-              color: $reservation-cancelled-text;
-            }
-          }
-          
-          .event-time {
-            font-weight: 600;
-            color: $reservation-confirmed-text;
-            display: block;
-            font-size: 0.55rem;
-            margin-bottom: 0.0625rem;
-          }
-          
-          .event-customer {
-            color: $reservation-confirmed-text;
-            display: block;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            font-size: 0.55rem;
-            font-weight: 500;
-            margin-bottom: 0.0625rem;
-          }
-          
-          .event-product {
-            color: $reservation-confirmed-text;
-            display: block;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            font-size: 0.5rem;
-            opacity: 0.8;
-          }
-        }
-        
-        .calendar-week-mobile-more-events {
-          background-color: $gray-200;
-          color: $gray-600;
-          border-radius: 0.25rem;
-          padding: 0.03125rem 0.0625rem;
-          font-size: 0.5rem;
-          text-align: center;
-          font-weight: 500;
-          margin-top: 0.0625rem;
-        }
-      }
-    }
-  }
-}
-
-// 데스크탑에서 캘린더 최적화
-@media (min-width: 900px) {
-  .calendar-card {
-    .calendar-container.full-width {
-      .calendar-mobile-container,
-      .calendar-week-mobile-container {
-        max-width: none;
-        width: 100%;
-      }
-      
-      .calendar-mobile,
-      .calendar-week-mobile {
-        max-width: none;
-        width: 100%;
-      }
-      
-      .calendar-mobile-grid {
-        .calendar-mobile-day {
-          min-height: 10rem;
-          
-          .calendar-mobile-events {
-            min-height: 8rem;
-          }
-        }
-      }
-      
-      .calendar-week-mobile-grid {
-        .calendar-week-mobile-day-slot {
-          min-height: 15rem;
+          padding: 0.125rem 0.25rem;
+          font-size: 0.7rem;
+          border-left-width: 2px;
+          margin-bottom: 0.25rem;
         }
       }
     }

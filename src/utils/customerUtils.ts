@@ -35,8 +35,12 @@ const detectNameLanguage = (name: string): 'korean' | 'vietnamese' | 'latin' => 
   
   const trimmedName = name.trim();
   
-  // 한글 또는 한자 패턴 체크 (한글: \u3131-\u318E, 한자: \u4E00-\u9FFF)
-  const koreanOrChinesePattern = /[\u3131-\u318E\u4E00-\u9FFF]/;
+  // 한글 또는 한자 패턴 체크
+  // 한글 완성형: \uAC00-\uD7AF (가-힣)
+  // 한글 자모: \u1100-\u11FF
+  // 한글 호환 자모: \u3130-\u318F
+  // 한자: \u4E00-\u9FFF
+  const koreanOrChinesePattern = /[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F\u4E00-\u9FFF]/;
   
   if (koreanOrChinesePattern.test(trimmedName)) {
     return 'korean';
@@ -69,8 +73,13 @@ export const maskName = (name: string): string => {
   
   if (language === 'korean') {
     // 한국어/한자 이름: 가운데 마스킹
-    if (trimmedName.length === 1) return '*';
-    if (trimmedName.length === 2) return trimmedName[0] + '*';
+    if (trimmedName.length === 1) {
+      return '*';
+    }
+    if (trimmedName.length === 2) {
+      return trimmedName[0] + '*';
+    }
+    // 3글자 이상: 첫글자 + 가운데 마스킹 + 마지막글자
     return trimmedName[0] + '*'.repeat(trimmedName.length - 2) + trimmedName[trimmedName.length - 1];
   } else if (language === 'vietnamese') {
     // 베트남어 이름: 성과 중간 이름 마스킹, 이름만 표시

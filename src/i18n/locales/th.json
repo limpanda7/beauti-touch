@@ -26,13 +26,14 @@
     "info": "ข้อมูล"
   },
   "navigation": {
-    "reservations": "จัดการการจอง",
-    "customers": "จัดการลูกค้า",
-    "products": "จัดการสินค้า",
+    "reservations": "การจอง",
+    "customers": "ลูกค้า",
+    "products": "สินค้า",
     "settings": "ตั้งค่า",
     "beauti-touch": "Beauti-Touch",
-    "adminSystem": "ระบบผู้ดูแล",
-    "other": "อื่นๆ"
+    "adminSystem": "สัมผัสแห่งความงาม",
+    "other": "อื่นๆ",
+    "pageTitle": "Beauti-Touch: สัมผัสแห่งความงาม"
   },
   "reservations": {
     "title": "จัดการการจอง",

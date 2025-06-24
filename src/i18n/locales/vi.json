@@ -26,13 +26,14 @@
     "info": "Thông tin"
   },
   "navigation": {
-    "reservations": "Quản lý đặt lịch",
-    "customers": "Quản lý khách hàng",
-    "products": "Quản lý sản phẩm",
+    "reservations": "Đặt lịch",
+    "customers": "Khách hàng",
+    "products": "Sản phẩm",
     "settings": "Cài đặt",
     "beauti-touch": "Beauti-Touch",
-    "adminSystem": "Hệ thống quản trị",
-    "other": "Khác"
+    "adminSystem": "Bàn tay làm đẹp",
+    "other": "Khác",
+    "pageTitle": "Beauti-Touch: Bàn tay làm đẹp"
   },
   "reservations": {
     "title": "Quản lý đặt lịch",

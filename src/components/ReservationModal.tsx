@@ -43,7 +43,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
   // 모바일 감지
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 900);
     };
 
     checkScreenSize();
@@ -108,6 +108,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
       ]);
       setCustomers(customerData);
       setProducts(productData);
+      
+      // 기존 예약의 상품 정보 설정
       if (reservation?.productId) {
         const product = productData.find(p => p.id === reservation.productId);
         setSelectedProduct(product || null);
@@ -116,6 +118,10 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
       console.error(t('reservations.dataLoadError'), error);
     }
   };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   useEffect(() => {
     if (reservation) {
@@ -128,8 +134,17 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
         memo: reservation.memo || '',
         price: reservation.price || 0,
       });
+      
+      // 기존 예약의 상품 정보 설정
+      if (reservation.productId && products.length > 0) {
+        const product = products.find(p => p.id === reservation.productId);
+        setSelectedProduct(product || null);
+      }
+    } else if (initialCustomerId) {
+      // 새 예약 생성 시 초기 고객 ID 설정
+      setFormData(prev => ({ ...prev, customerId: initialCustomerId }));
     }
-  }, [reservation]);
+  }, [reservation, initialCustomerId, products]);
 
   useEffect(() => {
     // 기존 예약 수정 시 값 세팅
@@ -174,12 +189,24 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    if (name === 'price') {
+      // 가격 필드는 숫자만 허용하고 number 타입으로 변환
+      const numericValue = value.replace(/[^0-9]/g, '');
+      setFormData(prev => ({ ...prev, [name]: numericValue ? parseInt(numericValue, 10) : 0 }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
 
     if (name === 'productId') {
       const product = products.find(p => p.id === value);
       setSelectedProduct(product || null);
-      setFormData(prev => ({ ...prev, price: product?.price || 0 }));
+      // 상품 선택 시 가격 자동 업데이트
+      if (product) {
+        setFormData(prev => ({ ...prev, price: product.price }));
+      } else {
+        setFormData(prev => ({ ...prev, price: 0 }));
+      }
     }
   };
 

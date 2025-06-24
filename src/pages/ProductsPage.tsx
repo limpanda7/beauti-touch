@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import type { Product } from '../types';
 import { productService } from '../services/firestore';
 import ProductModal from '../components/ProductModal';
@@ -10,16 +11,36 @@ import { useCurrencyFormat } from '../utils/currency';
 const ProductsPage: React.FC = () => {
   const { t } = useTranslation();
   const { formatCurrency } = useCurrencyFormat();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [togglingProducts, setTogglingProducts] = useState<Set<string>>(new Set());
   const [loadingProducts, setLoadingProducts] = useState<Record<string, boolean>>({});
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     loadProducts();
+    checkMobileView();
+    window.addEventListener('resize', checkMobileView);
+    
+    return () => window.removeEventListener('resize', checkMobileView);
   }, []);
+
+  // URL 파라미터 처리
+  useEffect(() => {
+    const action = searchParams.get('action');
+    if (action === 'new') {
+      handleOpenModal(null);
+      // URL에서 action 파라미터 제거
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams]);
+
+  const checkMobileView = () => {
+    setIsMobile(window.innerWidth <= 900);
+  };
 
   const loadProducts = async () => {
     try {
@@ -73,16 +94,19 @@ const ProductsPage: React.FC = () => {
 
   return (
     <div className="content-wrapper">
-      <div className="page-header">
-        <h1>{t('products.title')}</h1>
-        <button
-          onClick={() => handleOpenModal(null)}
-          className="btn btn-primary"
-        >
-          <Plus style={{ width: '1rem', height: '1rem' }} />
-          {t('products.newProduct')}
-        </button>
-      </div>
+      {/* 모바일에서는 헤더 숨김 */}
+      {!isMobile && (
+        <div className="page-header">
+          <h1>{t('products.title')}</h1>
+          <button
+            onClick={() => handleOpenModal(null)}
+            className="btn btn-primary"
+          >
+            <Plus style={{ width: '1rem', height: '1rem' }} />
+            {t('products.newProduct')}
+          </button>
+        </div>
+      )}
 
       <div className="table-container">
         <table>
