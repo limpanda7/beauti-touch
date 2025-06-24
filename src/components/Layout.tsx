@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import { Menu, X, Calendar, Users, ClipboardList, Settings } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
 import '../styles/main.scss';
 
 const Layout: React.FC = () => {
+  const { t } = useTranslation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -54,10 +56,10 @@ const Layout: React.FC = () => {
   };
 
   const menuItems = [
-    { path: '/reservations', icon: Calendar, label: '예약' },
-    { path: '/customers', icon: Users, label: '고객' },
-    { path: '/products', icon: ClipboardList, label: '상품' },
-    { path: '/settings', icon: Settings, label: '설정' },
+    { path: '/reservations', icon: Calendar, label: t('navigation.reservations') },
+    { path: '/customers', icon: Users, label: t('navigation.customers') },
+    { path: '/products', icon: ClipboardList, label: t('navigation.products') },
+    { path: '/settings', icon: Settings, label: t('navigation.settings') },
   ];
 
   const isActive = (path: string) => {

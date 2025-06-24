@@ -15,6 +15,7 @@ const ProductsPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [togglingProducts, setTogglingProducts] = useState<Set<string>>(new Set());
+  const [loadingProducts, setLoadingProducts] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     loadProducts();
@@ -26,7 +27,7 @@ const ProductsPage: React.FC = () => {
       const data = await productService.getAll();
       setProducts(data.sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0)));
     } catch (error) {
-      console.error('상품 목록을 불러오는데 실패했습니다:', error);
+      console.error(t('products.loadError'), error);
     } finally {
       setLoading(false);
     }
@@ -48,29 +49,23 @@ const ProductsPage: React.FC = () => {
         await productService.delete(id);
         await loadProducts();
       } catch (error) {
-        console.error('상품 삭제에 실패했습니다:', error);
+        console.error(t('products.deleteError'), error);
       }
     }
   };
   
   const handleToggleActive = async (product: Product) => {
+    // 로딩 상태 시작
+    setLoadingProducts(prev => ({ ...prev, [product.id]: true }));
+    
     try {
-      // 로딩 상태 시작
-      setTogglingProducts(prev => new Set(prev).add(product.id));
-      
       await productService.update(product.id, { isActive: !product.isActive });
-      setProducts(products.map(p => 
-        p.id === product.id ? { ...p, isActive: !p.isActive } : p
-      ));
+      await loadProducts();
     } catch (error) {
-      console.error('상품 상태 변경에 실패했습니다:', error);
+      console.error(t('products.statusChangeError'), error);
     } finally {
       // 로딩 상태 종료
-      setTogglingProducts(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(product.id);
-        return newSet;
-      });
+      setLoadingProducts(prev => ({ ...prev, [product.id]: false }));
     }
   };
 

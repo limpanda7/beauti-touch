@@ -36,7 +36,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
 
   useEffect(() => {
     // 로컬 스토리지에서 설정 불러오기
-    const savedSettings = localStorage.getItem('beautitouch-settings');
+    const savedSettings = localStorage.getItem('beauti-touch-settings');
     if (savedSettings) {
       const parsedSettings = JSON.parse(savedSettings);
       setSettings(parsedSettings);
@@ -46,7 +46,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
   const updateSettings = (newSettings: Partial<Settings>) => {
     const updatedSettings = { ...settings, ...newSettings };
     setSettings(updatedSettings);
-    localStorage.setItem('beautitouch-settings', JSON.stringify(updatedSettings));
+    localStorage.setItem('beauti-touch-settings', JSON.stringify(updatedSettings));
   };
 
   return (

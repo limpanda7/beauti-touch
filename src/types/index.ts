@@ -1,10 +1,7 @@
 export interface Customer {
-  id: string;
-  name: string;
-  phone: string;
-  birthDate?: string;
-  age?: number;
-  gender?: 'female' | 'male';
+  id: string; // 4자리 고유 ID
+  name: string; // 마스킹된 이름
+  phone: string; // 마스킹된 연락처 (뒤 4자리만)
   procedures?: CustomerProcedure[];
   contraindications?: string;
   memo?: string;

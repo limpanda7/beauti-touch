@@ -1,0 +1,57 @@
+// Animations
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes swipeFeedback {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes swipeFeedbackLeft {
+  0% { opacity: 0; transform: translate(-50%, -50%) translateX(-20px) scale(0.8); }
+  50% { opacity: 1; transform: translate(-50%, -50%) translateX(0) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) translateX(20px) scale(1); }
+}
+
+@keyframes swipeFeedbackRight {
+  0% { opacity: 0; transform: translate(-50%, -50%) translateX(20px) scale(0.8); }
+  50% { opacity: 1; transform: translate(-50%, -50%) translateX(0) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) translateX(-20px) scale(1); }
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; transform: translateX(-50%) translateY(0.5rem); }
+  20%, 80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+} 

@@ -99,7 +99,7 @@ const ChartPage: React.FC = () => {
         navigate('/reservations');
       }
     } catch (error) {
-      console.error('차트 정보를 불러오는데 실패했습니다:', error);
+      console.error(t('chart.loadError'), error);
       navigate('/reservations');
     } finally {
       setLoading(false);
@@ -135,7 +135,7 @@ const ChartPage: React.FC = () => {
       alert(t('common.saveSuccess'));
       navigate(-1); // 이전 페이지로 돌아가기
     } catch (error) {
-      console.error('차트 정보 저장에 실패했습니다:', error);
+      console.error(t('chart.saveError'), error);
       alert(t('common.saveError'));
     } finally {
       setSaving(false);

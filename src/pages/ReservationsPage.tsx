@@ -87,6 +87,20 @@ const ReservationsPage: React.FC = () => {
     return map;
   }, [products]);
 
+  // 상품의 시간을 포맷팅하는 함수
+  const formatProductDuration = (duration: number): string => {
+    const hours = Math.floor(duration / 60);
+    const minutes = duration % 60;
+    
+    if (hours > 0 && minutes > 0) {
+      return `${hours}${t('reservations.hour')} ${minutes}${t('reservations.minute')}`;
+    } else if (hours > 0) {
+      return `${hours}${t('reservations.hour')}`;
+    } else {
+      return `${minutes}${t('reservations.minute')}`;
+    }
+  };
+
   // 예약의 시간 범위를 계산하는 함수
   const getReservationTimeRange = (reservation: Reservation): string => {
     const product = productsMap.get(reservation.productId);
@@ -182,7 +196,7 @@ const ReservationsPage: React.FC = () => {
       const data = await reservationService.getByDateRange(getDateRangeAndHeader.dateRange.start, getDateRangeAndHeader.dateRange.end);
       setReservations(data);
     } catch (error) {
-      console.error('예약 목록을 불러오는데 실패했습니다:', error);
+      console.error(t('reservations.loadError'), error);
     } finally {
       setLoading(false);
     }
@@ -193,7 +207,7 @@ const ReservationsPage: React.FC = () => {
       const data = await productService.getAll();
       setProducts(data);
     } catch (error) {
-      console.error('상품 목록을 불러오는데 실패했습니다:', error);
+      console.error(t('reservations.productLoadError'), error);
     }
   };
 
@@ -237,7 +251,7 @@ const ReservationsPage: React.FC = () => {
         await reservationService.delete(id);
         await loadReservations();
       } catch (error) {
-        console.error('예약 삭제에 실패했습니다:', error);
+        console.error(t('reservations.deleteError'), error);
       }
     }
   };
@@ -276,13 +290,13 @@ const ReservationsPage: React.FC = () => {
       <div className="calendar-mobile-container">
         {showSwipeHint && (
           <div className="swipe-hint">
-            <span>← 스와이프하여 월 이동 →</span>
+            <span>{t('reservations.swipeHint')}</span>
           </div>
         )}
         
         {swipeFeedback && (
           <div className={`swipe-feedback ${swipeFeedback}`}>
-            {swipeFeedback === 'left' ? '다음 월' : '이전 월'}
+            {swipeFeedback === 'left' ? t('reservations.nextMonth') : t('reservations.prevMonth')}
           </div>
         )}
         
@@ -326,7 +340,9 @@ const ReservationsPage: React.FC = () => {
                       >
                         <span className="event-time">{getReservationTimeRange(res)}</span>
                         <span className="event-customer">{res.customerName}</span>
-                        <span className="event-product">{res.productName}</span>
+                        <span className="event-product">
+                          {res.productName} - {productsMap.get(res.productId)?.duration ? formatProductDuration(productsMap.get(res.productId)!.duration) : t('reservations.timeNotSet')}
+                        </span>
                       </div>
                     ))}
                     

@@ -8,13 +8,14 @@ import { useCurrencyFormat } from '../utils/currency';
 interface ProductModalProps {
   product: Product | null;
   onClose: () => void;
-  onSave: () => void;
+  onSave: (product: Product) => void;
 }
 
 const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave }) => {
   const { t } = useTranslation();
   const { getCurrencySymbol } = useCurrencyFormat();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     name: product?.name || '',
     category: product?.category || '',
@@ -46,29 +47,58 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave })
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+    setError('');
+
     try {
-      const price = Number(formData.price);
-      const duration = Number(formData.duration);
-      if (!formData.name || !formData.price || price <= 0 || !formData.duration || duration <= 0) {
-        alert(t('errors.requiredFields'));
+      // 가격과 duration은 문자열로 저장하되, 숫자만 허용
+      const price = parseInt(formData.price);
+      const duration = parseInt(formData.duration);
+
+      if (isNaN(price) || price < 0) {
+        setError(t('products.saveError'));
+        setLoading(false);
         return;
       }
 
-      const submitData = {
-        ...formData,
-        price: price,
-        duration: duration
-      };
-      
-      if (product) {
-        await productService.update(product.id, submitData);
-      } else {
-        await productService.create(submitData);
+      if (isNaN(duration) || duration < 0) {
+        setError(t('products.saveError'));
+        setLoading(false);
+        return;
       }
-      onSave();
+
+      const productData = {
+        name: formData.name.trim(),
+        category: formData.category.trim(),
+        price: price,
+        duration: duration,
+        description: formData.description.trim() || undefined,
+        isActive: formData.isActive,
+      };
+
+      let savedProduct: Product;
+
+      if (product) {
+        // 기존 상품 수정
+        await productService.update(product.id, productData);
+        const updatedProduct = await productService.getById(product.id);
+        if (!updatedProduct) {
+          throw new Error(t('products.saveError'));
+        }
+        savedProduct = updatedProduct;
+      } else {
+        // 새 상품 생성
+        const newId = await productService.create(productData);
+        const newProduct = await productService.getById(newId);
+        if (!newProduct) {
+          throw new Error(t('products.saveError'));
+        }
+        savedProduct = newProduct;
+      }
+
+      onSave(savedProduct);
     } catch (error) {
-      console.error("상품 정보 저장에 실패했습니다:", error);
+      console.error(t('products.saveError'), error);
+      setError(t('products.saveError'));
     } finally {
       setLoading(false);
     }

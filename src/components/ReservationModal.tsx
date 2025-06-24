@@ -100,25 +100,22 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
 
   const timeOptions = generateTimeOptions();
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [customerData, productData] = await Promise.all([
-          customerService.getAll(),
-          productService.getActive()
-        ]);
-        setCustomers(customerData);
-        setProducts(productData);
-        if (reservation?.productId) {
-          const product = productData.find(p => p.id === reservation.productId);
-          setSelectedProduct(product || null);
-        }
-      } catch (error) {
-        console.error("데이터 로딩 실패:", error);
+  const loadData = async () => {
+    try {
+      const [customerData, productData] = await Promise.all([
+        customerService.getAll(),
+        productService.getActive()
+      ]);
+      setCustomers(customerData);
+      setProducts(productData);
+      if (reservation?.productId) {
+        const product = productData.find(p => p.id === reservation.productId);
+        setSelectedProduct(product || null);
       }
-    };
-    loadData();
-  }, [reservation]);
+    } catch (error) {
+      console.error(t('reservations.dataLoadError'), error);
+    }
+  };
 
   useEffect(() => {
     if (reservation) {
@@ -230,11 +227,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await saveReservation();
-  };
-
   const saveReservation = async () => {
     setLoading(true);
     try {
@@ -267,25 +259,28 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
       };
 
       let savedReservation: Reservation;
+
       if (reservation) {
+        // 기존 예약 수정
         await reservationService.update(reservation.id, reservationData);
         const updatedReservation = await reservationService.getById(reservation.id);
         if (!updatedReservation) {
-          throw new Error('예약 업데이트 실패');
+          throw new Error(t('reservations.updateError'));
         }
         savedReservation = updatedReservation;
       } else {
+        // 새 예약 생성
         const newId = await reservationService.create(reservationData);
         const newReservation = await reservationService.getById(newId);
         if (!newReservation) {
-          throw new Error('예약 생성 실패');
+          throw new Error(t('reservations.createError'));
         }
         savedReservation = newReservation;
       }
 
       onSave(savedReservation, 'close');
     } catch (error) {
-      console.error('예약 저장 실패:', error);
+      console.error(t('reservations.saveError'), error);
       alert(t('reservations.saveError'));
     } finally {
       setLoading(false);
@@ -316,7 +311,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
           </button>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={saveReservation}>
           <div className="form-group">
             <label htmlFor="customer">{t('reservations.customer')}</label>
             <div className="customer-select-group">
@@ -328,7 +323,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                 onFocus={handleInputFocus}
                 required
               >
-                <option value="">{t('reservations.selectCustomer')}</option>
+                <option value=""></option>
                 {customers.map(customer => (
                   <option key={customer.id} value={customer.id}>
                     {customer.name} ({customer.phone})
@@ -356,10 +351,10 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
               onFocus={handleInputFocus}
               required
             >
-              <option value="">{t('reservations.selectProduct')}</option>
+              <option value=""></option>
               {products.map(product => (
                 <option key={product.id} value={product.id}>
-                  {product.name} - {product.duration ? formatProductDuration(product.duration) : '시간 미설정'}
+                  {product.name} - {product.duration ? formatProductDuration(product.duration) : t('reservations.timeNotSet')}
                 </option>
               ))}
             </select>

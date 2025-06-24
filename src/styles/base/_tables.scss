@@ -1,0 +1,50 @@
+// Tables
+.table-container {
+  background-color: $white;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  overflow-x: auto;
+  
+  table {
+    min-width: 100%;
+    border-collapse: collapse;
+    
+    thead {
+      background-color: $gray-50;
+      
+      th {
+        padding: 0.75rem 1.5rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: $gray-500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+    }
+    
+    tbody {
+      background-color: $white;
+      
+      tr {
+        border-bottom: 1px solid $gray-200;
+        
+        &:hover {
+          background-color: $gray-50;
+        }
+        
+        td {
+          padding: 1rem 1.5rem;
+          font-size: 0.875rem;
+          color: $gray-700;
+          white-space: nowrap;
+          
+          &.name {
+            font-weight: 500;
+            color: $gray-900;
+          }
+        }
+      }
+    }
+  }
+} 

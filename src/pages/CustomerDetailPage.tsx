@@ -10,6 +10,7 @@ import CustomerModal from '../components/CustomerModal';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useCurrencyFormat } from '../utils/currency';
 import { useSettings } from '../contexts/SettingsContext';
+import { maskCustomerData } from '../utils/customerUtils';
 
 const CustomerDetailPage: React.FC = () => {
   const { t } = useTranslation();
@@ -25,11 +26,6 @@ const CustomerDetailPage: React.FC = () => {
     { value: 'combination', label: t('customers.skinTypes.combination') },
     { value: 'sensitive', label: t('customers.skinTypes.sensitive') },
   ];
-  const genderOptions = [
-    { value: 'female', label: t('customers.genders.female') },
-    { value: 'male', label: t('customers.genders.male') },
-    { value: 'other', label: t('customers.genders.other') },
-  ];
   
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -39,6 +35,7 @@ const CustomerDetailPage: React.FC = () => {
   const [isDetailSaving, setIsDetailSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [detailForm, setDetailForm] = useState<Partial<Customer>>({});
+  const [originalData, setOriginalData] = useState<Partial<Customer>>({});
 
   const loadData = async () => {
     if (!id) return;
@@ -50,9 +47,18 @@ const CustomerDetailPage: React.FC = () => {
         setDetailForm({
           name: customerData.name || '',
           phone: customerData.phone || '',
-          gender: customerData.gender || undefined,
-          age: customerData.age || undefined,
           memo: customerData.memo || '',
+          skinType: customerData.skinType || '',
+          allergies: customerData.allergies || '',
+          notes: customerData.notes || '',
+        });
+        setOriginalData({
+          name: customerData.name || '',
+          phone: customerData.phone || '',
+          memo: customerData.memo || '',
+          skinType: customerData.skinType || '',
+          allergies: customerData.allergies || '',
+          notes: customerData.notes || '',
         });
         const reservationData = await reservationService.getByCustomerId(id);
         setReservations(reservationData);
@@ -60,7 +66,7 @@ const CustomerDetailPage: React.FC = () => {
         navigate('/customers', { replace: true });
       }
     } catch (error) {
-      console.error('고객 상세 정보를 불러오는데 실패했습니다:', error);
+      console.error(t('customers.detailLoadError'), error);
     } finally {
       setLoading(false);
     }
@@ -76,10 +82,36 @@ const CustomerDetailPage: React.FC = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-  const handleSave = (updatedCustomer: Customer) => {
-    setCustomer(updatedCustomer);
-    setDetailForm((prev: any) => ({ ...prev, ...updatedCustomer }));
-    handleCloseModal();
+  const handleSave = async () => {
+    if (!customer) return;
+
+    try {
+      setIsDetailSaving(true);
+      
+      // 상세정보 저장
+      const updatedCustomer = {
+        ...customer,
+        name: detailForm.name,
+        phone: detailForm.phone,
+        memo: detailForm.memo,
+        skinType: detailForm.skinType,
+        allergies: detailForm.allergies,
+        notes: detailForm.notes,
+      };
+
+      await customerService.update(customer.id, updatedCustomer);
+      setCustomer(updatedCustomer);
+      setOriginalData(detailForm);
+      setIsDetailEdit(false);
+      
+      // 성공 메시지 표시
+      alert(t('customers.saveSuccess'));
+    } catch (e) {
+      console.error(t('customers.saveError'), e);
+      alert(t('customers.saveError'));
+    } finally {
+      setIsDetailSaving(false);
+    }
   };
 
   // 상세정보 폼 핸들러
@@ -88,35 +120,14 @@ const CustomerDetailPage: React.FC = () => {
     setDetailForm(prev => ({ ...prev, [name]: value }));
   };
 
-  // 상세정보 저장
-  const handleDetailSave = async () => {
-    if (!customer || !detailForm) return;
-    setIsDetailSaving(true);
-    try {
-      const { id, createdAt, updatedAt, ...updateData } = detailForm;
-      await customerService.update(customer.id, updateData);
-      const updated = {
-        ...customer,
-        ...updateData,
-      };
-      setCustomer(updated);
-      setIsDetailEdit(false);
-      alert(t('customers.saveSuccess'));
-    } catch (e) {
-      console.error('고객 정보 저장 실패:', e);
-      alert(t('customers.saveError'));
-    } finally {
-      setIsDetailSaving(false);
-    }
-  };
-
   const handleDetailEdit = () => {
     setDetailForm({
       name: customer?.name || '',
       phone: customer?.phone || '',
-      gender: customer?.gender || undefined,
-      age: customer?.age || undefined,
       memo: customer?.memo || '',
+      skinType: customer?.skinType || '',
+      allergies: customer?.allergies || '',
+      notes: customer?.notes || '',
     });
     setIsDetailEdit(true);
   };
@@ -125,9 +136,10 @@ const CustomerDetailPage: React.FC = () => {
     setDetailForm({
       name: customer?.name || '',
       phone: customer?.phone || '',
-      gender: customer?.gender || undefined,
-      age: customer?.age || undefined,
       memo: customer?.memo || '',
+      skinType: customer?.skinType || '',
+      allergies: customer?.allergies || '',
+      notes: customer?.notes || '',
     });
     setIsDetailEdit(false);
   };
@@ -141,8 +153,8 @@ const CustomerDetailPage: React.FC = () => {
         await customerService.delete(customer.id);
         navigate('/customers');
       } catch (error) {
-        console.error('고객 삭제에 실패했습니다:', error);
-        alert(t('customers.saveError'));
+        console.error(t('customers.deleteError'), error);
+        alert(t('customers.deleteError'));
       } finally {
         setIsDeleting(false);
       }
@@ -190,6 +202,9 @@ const CustomerDetailPage: React.FC = () => {
         <div className="customer-detail-header-center">
           <h1 className="customer-detail-title">{customer.name}</h1>
           <p className="customer-detail-phone">{customer.phone}</p>
+          <p className="customer-detail-id">
+            ID: {customer.id.length === 4 && /^\d{4}$/.test(customer.id) ? customer.id : customer.id.slice(0, 4)}
+          </p>
         </div>
         <div className="customer-detail-btn-group">
           {/* 버튼들이 여기에서 아래로 이동합니다. */}
@@ -204,7 +219,7 @@ const CustomerDetailPage: React.FC = () => {
               {isDetailEdit ? (
                 <>
                   <button
-                    onClick={handleDetailSave}
+                    onClick={handleSave}
                     disabled={isDetailSaving}
                     className="customer-detail-btn customer-detail-btn-save"
                   >
@@ -264,34 +279,6 @@ const CustomerDetailPage: React.FC = () => {
                 />
               ) : (
                 <p className="customer-detail-value">{customer.phone}</p>
-              )}
-            </div>
-            <div>
-              <label className="customer-detail-label">{t('customers.gender')}</label>
-              {isDetailEdit ? (
-                <select name="gender" value={detailForm?.gender || ''} onChange={handleFormChange}>
-                  {genderOptions.map(opt => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
-              ) : (
-                <p className="customer-detail-value">{customer.gender ? t(`customers.genders.${customer.gender}`) : '-'}</p>
-              )}
-            </div>
-            <div>
-              <label className="customer-detail-label">{t('customers.age')}</label>
-              {isDetailEdit ? (
-                <input
-                  type="text"
-                  name="age"
-                  value={detailForm?.age || ''}
-                  onChange={handleFormChange}
-                  pattern="[0-9]*"
-                  inputMode="numeric"
-                  placeholder="나이를 입력하세요"
-                />
-              ) : (
-                <p className="customer-detail-value">{customer.age || '-'}</p>
               )}
             </div>
           </div>

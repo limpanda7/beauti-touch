@@ -5,13 +5,13 @@ import { getFirestore } from "firebase/firestore";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyD66GSHtReTHW2QwHfm8BlSlEZdvNuh7gc",
-  authDomain: "beautitouch.firebaseapp.com",
-  projectId: "beautitouch",
-  storageBucket: "beautitouch.firebasestorage.app",
-  messagingSenderId: "1072682333442",
-  appId: "1:1072682333442:web:fea1d15b2ff5d7f11efe1b",
-  measurementId: "G-XR27TQ6WWW"
+  apiKey: "AIzaSyCbCCCAbtFSclmRBvFthsdw2AA6tam7aRc",
+  authDomain: "beauti-touch.firebaseapp.com",
+  projectId: "beauti-touch",
+  storageBucket: "beauti-touch.firebasestorage.app",
+  messagingSenderId: "191998056918",
+  appId: "1:191998056918:web:cf12c42fb2f5247a7fec77",
+  measurementId: "G-RFFSZRHNGN"
 };
 
 // Initialize Firebase

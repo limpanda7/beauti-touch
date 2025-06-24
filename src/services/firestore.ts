@@ -9,10 +9,12 @@ import {
   query,
   where,
   orderBy,
-  Timestamp
+  Timestamp,
+  setDoc
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Customer, Product, Reservation } from '../types';
+import { generateCustomerId, maskCustomerData, generateUniqueCustomerId } from '../utils/customerUtils';
 
 // 고객 관리
 export const customerService = {
@@ -43,8 +45,20 @@ export const customerService = {
   async create(customer: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     try {
       const now = new Date();
+      
+      // 고객 데이터 마스킹 처리 (언어 자동 감지)
+      const maskedData = maskCustomerData(customer);
+      
+      // 기존 고객 ID 목록 가져오기
+      const existingCustomers = await this.getAll();
+      const existingIds = existingCustomers.map(c => c.id);
+      
+      // 고유한 4자리 ID 생성
+      const customerId = await generateUniqueCustomerId(existingIds);
+      
       const customerData = {
-        ...customer,
+        ...maskedData,
+        id: customerId, // 4자리 고유 ID
         createdAt: Timestamp.fromDate(now),
         updatedAt: Timestamp.fromDate(now)
       };
@@ -54,8 +68,11 @@ export const customerService = {
         Object.entries(customerData).filter(([_, value]) => value !== undefined)
       );
       
-      const docRef = await addDoc(collection(db, 'customers'), cleanData);
-      return docRef.id;
+      // 4자리 ID를 문서 ID로 직접 사용
+      const docRef = doc(db, 'customers', customerId);
+      await setDoc(docRef, cleanData);
+      
+      return customerId;
     } catch (error) {
       console.error('고객 생성 실패:', error);
       throw new Error('고객 생성에 실패했습니다.');
@@ -65,13 +82,17 @@ export const customerService = {
   async update(id: string, customer: Partial<Customer>): Promise<void> {
     try {
       const docRef = doc(db, 'customers', id);
+      
+      // 고객 데이터 마스킹 처리 (언어 자동 감지)
+      const maskedData = maskCustomerData(customer);
+      
       const updateData = {
-        ...customer,
+        ...maskedData,
         updatedAt: Timestamp.fromDate(new Date())
       };
       
       // undefined 값들을 제거하여 Firestore에 저장
-      const cleanData = Object.fromEntries(
+      const cleanData: Record<string, any> = Object.fromEntries(
         Object.entries(updateData).filter(([_, value]) => value !== undefined)
       );
       

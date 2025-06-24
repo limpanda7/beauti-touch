@@ -12,21 +12,18 @@ export const createTestData = async () => {
       await customerService.create({
         name: '김미영',
         phone: '010-1234-5678',
-        birthDate: '1990-05-15',
         memo: '첫 방문 고객'
       });
       
       await customerService.create({
         name: '이수진',
         phone: '010-9876-5432',
-        birthDate: '1988-12-03',
         memo: '단골 고객'
       });
       
       await customerService.create({
         name: '박지영',
         phone: '010-5555-1234',
-        birthDate: '1992-08-22',
         memo: ''
       });
     }

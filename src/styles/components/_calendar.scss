@@ -1,0 +1,626 @@
+// Calendar
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-top: 1px solid $gray-200;
+  border-left: 1px solid $gray-200;
+  
+  .calendar-header {
+    text-align: center;
+    font-weight: 600;
+    padding: 0.5rem;
+    border-bottom: 1px solid $gray-200;
+    border-right: 1px solid $gray-200;
+    background-color: $gray-50;
+  }
+  
+  .calendar-day {
+    padding: 0.5rem;
+    border: 1px solid #E5E7EB;
+    min-height: 120px;
+    
+    &.other-month {
+      background-color: $gray-50;
+    }
+    
+    .day-number {
+      font-size: 0.875rem;
+      color: $gray-700;
+      font-weight: normal;
+      text-align: left;
+    }
+    
+    &.today {
+      background-color: rgba($primary-color, 0.1);
+      
+      .day-number {
+        background-color: transparent;
+        color: $primary-color;
+        border-radius: 0;
+        width: auto;
+        height: auto;
+        display: block;
+        align-items: unset;
+        justify-content: unset;
+        font-weight: 600;
+        margin: 0 0 0.5rem 0;
+        text-align: left;
+      }
+    }
+    
+    .reservation-item {
+      font-size: 0.75rem;
+      padding: 0.25rem;
+      background-color: #DBEAFE;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      margin-bottom: 0.25rem;
+      
+      &.completed {
+        background-color: $reservation-completed-bg;
+        border: 1px solid #A7F3D0;
+        
+        p {
+          color: $reservation-completed-text;
+        }
+      }
+      
+      &.noshow {
+        background-color: $reservation-noshow-bg;
+        border: 1px solid #F9A8D4;
+        
+        p {
+          color: $reservation-noshow-text;
+        }
+      }
+      
+      &.cancelled {
+        background-color: $reservation-cancelled-bg;
+        border: 1px solid #E5E7EB;
+
+        p {
+          color: $reservation-cancelled-text;
+        }
+      }
+      
+      &.confirmed {
+        background-color: $reservation-confirmed-bg;
+      }
+    }
+  }
+  
+  .week-day-container {
+    display: flex;
+    flex-direction: column;
+    
+    &.today {
+      background-color: rgba($primary-color, 0.1);
+      
+      .calendar-header {
+        background-color: rgba($primary-color, 0.15);
+        color: $primary-color;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+// Mobile Calendar (구글 캘린더 모바일 뷰 스타일)
+.calendar-mobile-container {
+  position: relative;
+}
+
+.calendar-week-mobile-container {
+  position: relative;
+}
+
+.swipe-hint {
+  position: absolute;
+  top: -2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba($primary-color, 0.9);
+  color: $white;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  z-index: 10;
+  animation: fadeInOut 4s ease-in-out;
+  white-space: nowrap;
+  
+  span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+.swipe-feedback {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba($primary-color, 0.9);
+  color: $white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  z-index: 20;
+  animation: swipeFeedback 0.3s ease-out;
+  white-space: nowrap;
+  
+  &.left {
+    animation: swipeFeedbackLeft 0.3s ease-out;
+  }
+  
+  &.right {
+    animation: swipeFeedbackRight 0.3s ease-out;
+  }
+}
+
+@keyframes swipeFeedback {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes swipeFeedbackLeft {
+  0% { opacity: 0; transform: translate(-50%, -50%) translateX(-20px) scale(0.8); }
+  50% { opacity: 1; transform: translate(-50%, -50%) translateX(0) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) translateX(20px) scale(1); }
+}
+
+@keyframes swipeFeedbackRight {
+  0% { opacity: 0; transform: translate(-50%, -50%) translateX(20px) scale(0.8); }
+  50% { opacity: 1; transform: translate(-50%, -50%) translateX(0) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) translateX(-20px) scale(1); }
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; transform: translateX(-50%) translateY(0.5rem); }
+  20%, 80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.calendar-mobile {
+  background-color: $white;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  user-select: none;
+  touch-action: pan-y;
+  
+  .calendar-mobile-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background-color: $gray-50;
+    border-bottom: 1px solid $gray-200;
+    
+    .calendar-mobile-day-name {
+      padding: 0.75rem 0.25rem;
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: $gray-600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  }
+  
+  .calendar-mobile-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    
+    .calendar-mobile-day {
+      min-height: 6rem;
+      padding: 0.125rem;
+      border-right: 1px solid $gray-200;
+      border-bottom: 1px solid $gray-200;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      
+      &:nth-child(7n) {
+        border-right: none;
+      }
+      
+      &:hover {
+        background-color: $gray-50;
+      }
+      
+      &:active {
+        background-color: $gray-200;
+        transform: scale(0.98);
+      }
+      
+      &.other-month {
+        background-color: $gray-25;
+        
+        .calendar-mobile-day-number {
+          color: $gray-400;
+        }
+      }
+      
+      &.today {
+        background-color: rgba($primary-color, 0.1);
+        
+        .calendar-mobile-day-number {
+          background-color: transparent;
+          color: $primary-color;
+          border-radius: 0;
+          width: auto;
+          height: auto;
+          display: block;
+          align-items: unset;
+          justify-content: unset;
+          font-weight: 600;
+        }
+      }
+      
+      .calendar-mobile-day-number {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: $gray-700;
+        margin-bottom: 0.125rem;
+        text-align: left;
+        line-height: 1;
+      }
+      
+      .calendar-mobile-events {
+        display: flex;
+        flex-direction: column;
+        gap: 0.0625rem;
+        min-height: 4.5rem;
+        
+        .calendar-mobile-event {
+          background-color: $reservation-confirmed-bg;
+          border-radius: 0.25rem;
+          padding: 0.0625rem 0.125rem;
+          font-size: 0.6rem;
+          line-height: 1.2;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            background-color: $reservation-confirmed-hover;
+            transform: scale(1.02);
+          }
+          
+          &:active {
+            transform: scale(0.98);
+            background-color: $reservation-confirmed-active;
+          }
+          
+          &.completed {
+            background-color: $reservation-completed-bg;
+            
+            &:hover {
+              background-color: $reservation-completed-hover;
+            }
+            
+            &:active {
+              background-color: $reservation-completed-active;
+            }
+            
+            .event-time,
+            .event-customer,
+            .event-product {
+              color: $reservation-completed-text;
+            }
+          }
+          
+          &.noshow {
+            background-color: $reservation-noshow-bg;
+            
+            &:hover {
+              background-color: $reservation-noshow-hover;
+            }
+            
+            &:active {
+              background-color: $reservation-noshow-active;
+            }
+            
+            .event-time,
+            .event-customer,
+            .event-product {
+              color: $reservation-noshow-text;
+            }
+          }
+          
+          &.cancelled {
+            background-color: $reservation-cancelled-bg;
+            
+            &:hover {
+              background-color: $reservation-cancelled-hover;
+            }
+            
+            &:active {
+              background-color: $reservation-cancelled-active;
+            }
+            
+            .event-time,
+            .event-customer,
+            .event-product {
+              color: $reservation-cancelled-text;
+            }
+          }
+          
+          .event-time {
+            font-weight: 600;
+            color: $reservation-confirmed-text;
+            display: block;
+            font-size: 0.55rem;
+            margin-bottom: 0.0625rem;
+          }
+          
+          .event-customer {
+            color: $reservation-confirmed-text;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 0.55rem;
+            font-weight: 500;
+            margin-bottom: 0.0625rem;
+          }
+          
+          .event-product {
+            color: $reservation-confirmed-text;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 0.5rem;
+            opacity: 0.8;
+          }
+        }
+        
+        .calendar-mobile-more-events {
+          background-color: $gray-200;
+          color: $gray-600;
+          border-radius: 0.25rem;
+          padding: 0.0625rem 0.125rem;
+          font-size: 0.6rem;
+          text-align: center;
+          font-weight: 500;
+          margin-top: 0.125rem;
+        }
+      }
+    }
+  }
+}
+
+// 모바일 주간 뷰 스타일 (구글 캘린더 모바일 뷰 스타일)
+.calendar-week-mobile {
+  background-color: $white;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  user-select: none;
+  touch-action: pan-y;
+  
+  .calendar-week-mobile-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background-color: $gray-50;
+    border-bottom: 1px solid $gray-200;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    
+    .calendar-week-mobile-day-header {
+      padding: 0.5rem 0.25rem;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: $gray-600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-right: 1px solid $gray-200;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+      
+      &:hover {
+        background-color: $gray-100;
+      }
+      
+      &.today {
+        background-color: rgba($primary-color, 0.1);
+        border-radius: 0.5rem;
+        margin: 0.125rem;
+        
+        .calendar-week-mobile-day-name,
+        .calendar-week-mobile-day-number {
+          font-weight: 700;
+        }
+      }
+
+      &.selected {
+        background-color: $primary-color !important;
+
+        .calendar-week-mobile-day-name,
+        .calendar-week-mobile-day-number {
+          color: $white !important;
+        }
+      }
+      
+      &:last-child {
+        border-right: none;
+      }
+      
+      .calendar-week-mobile-day-name {
+        display: block;
+        font-size: 0.75rem;
+        margin-bottom: 0.125rem;
+      }
+      
+      .calendar-week-mobile-day-number {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: $gray-700;
+        
+        &.today {
+          background-color: transparent;
+          border-radius: 0;
+          width: auto;
+          height: auto;
+          display: block;
+          align-items: unset;
+          justify-content: unset;
+          margin: 0;
+        }
+      }
+    }
+  }
+  
+  .calendar-week-mobile-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    
+    .calendar-week-mobile-day-slot {
+      padding: 0.5rem;
+      border-right: 1px solid $gray-200;
+      border-bottom: 1px solid $gray-200;
+      min-height: 8rem;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+      
+      &:last-child {
+        border-right: none;
+      }
+      
+      &:hover {
+        background-color: $gray-50;
+      }
+      
+      &:active {
+        background-color: $gray-200;
+      }
+      
+      &.today {
+        background-color: rgba($primary-color, 0.05);
+      }
+      
+      .calendar-week-mobile-event {
+        background-color: $reservation-confirmed-bg;
+        border-radius: 0.25rem;
+        padding: 0.375rem 0.5rem;
+        margin-bottom: 0.25rem;
+        font-size: 0.75rem;
+        line-height: 1.2;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
+        
+        &:hover {
+          background-color: $reservation-confirmed-hover;
+          transform: scale(1.02);
+          z-index: 5;
+        }
+        
+        &:active {
+          transform: scale(0.98);
+          background-color: $reservation-confirmed-active;
+        }
+        
+        &.completed {
+          background-color: $reservation-completed-bg;
+          
+          &:hover {
+            background-color: $reservation-completed-hover;
+          }
+          
+          &:active {
+            background-color: $reservation-completed-active;
+          }
+          
+          .event-time,
+          .event-customer,
+          .event-product {
+            color: $reservation-completed-text;
+          }
+        }
+        
+        &.noshow {
+          background-color: $reservation-noshow-bg;
+          
+          &:hover {
+            background-color: $reservation-noshow-hover;
+          }
+          
+          &:active {
+            background-color: $reservation-noshow-active;
+          }
+          
+          .event-time,
+          .event-customer,
+          .event-product {
+            color: $reservation-noshow-text;
+          }
+        }
+        
+        &.cancelled {
+          background-color: $reservation-cancelled-bg;
+          
+          &:hover {
+            background-color: $reservation-cancelled-hover;
+          }
+          
+          &:active {
+            background-color: $reservation-cancelled-active;
+          }
+          
+          .event-time,
+          .event-customer,
+          .event-product {
+            color: $reservation-cancelled-text;
+          }
+        }
+        
+        .event-time {
+          font-weight: 600;
+          color: $reservation-confirmed-text;
+          display: block;
+          font-size: 0.7rem;
+          margin-bottom: 0.125rem;
+        }
+        
+        .event-customer {
+          color: $reservation-confirmed-text;
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 0.7rem;
+          font-weight: 500;
+          margin-bottom: 0.125rem;
+        }
+        
+        .event-product {
+          color: $reservation-confirmed-text;
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 0.6rem;
+          opacity: 0.8;
+        }
+      }
+      
+      .calendar-week-mobile-more-events {
+        background-color: $gray-200;
+        color: $gray-600;
+        border-radius: 0.25rem;
+        padding: 0.125rem 0.25rem;
+        font-size: 0.6rem;
+        text-align: center;
+        font-weight: 500;
+        margin-top: 0.125rem;
+      }
+    }
+  }
+} 

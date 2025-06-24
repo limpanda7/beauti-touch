@@ -1,0 +1,164 @@
+// ProductModal 스타일
+.product-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.product-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  z-index: 10000;
+  width: 100%;
+  max-width: 32rem;
+  padding: 24px;
+}
+
+.product-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.product-modal-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.product-modal-close-btn {
+  padding: 0.25rem;
+  border-radius: 9999px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.product-modal-close-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.product-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.product-modal-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.product-modal-input {
+  margin-top: 0.25rem;
+  display: block;
+  width: 100%;
+  border: 1px solid #D1D5DB;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+}
+
+.product-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.product-modal-input-group {
+  margin-top: 0.25rem;
+  position: relative;
+}
+
+.product-modal-currency {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding-right: 0.75rem;
+  pointer-events: none;
+  color: #6B7280;
+  font-size: 0.875rem;
+}
+
+.product-modal-textarea {
+  margin-top: 0.25rem;
+  display: block;
+  width: 100%;
+  border: 1px solid #D1D5DB;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.product-modal-checkbox-group {
+  display: flex;
+  align-items: center;
+}
+
+.product-modal-checkbox {
+  height: 1rem;
+  width: 1rem;
+  margin-right: 0.5rem;
+}
+
+.product-modal-checkbox-label {
+  display: block;
+  font-size: 0.875rem;
+  color: #111827;
+}
+
+.product-modal-btn-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+}
+
+.product-modal-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  border: 1px solid #D1D5DB;
+}
+
+.product-modal-btn-cancel {
+  color: #374151;
+  background-color: white;
+  border: 1px solid #D1D5DB;
+  
+  &:hover {
+    background-color: #F9FAFB;
+  }
+}
+
+.product-modal-btn-save {
+  color: white;
+  background-color: $btn-primary-color;
+  border: 1px solid transparent;
+  
+  &:hover {
+    background-color: $btn-primary-hover;
+  }
+} 

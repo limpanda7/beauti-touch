@@ -19,14 +19,18 @@
     "optional": "Opcional",
     "saveSuccess": "Guardado exitosamente.",
     "saveError": "Error al guardar.",
-    "notFound": "No encontrado."
+    "notFound": "No encontrado.",
+    "error": "Error",
+    "success": "Éxito",
+    "warning": "Advertencia",
+    "info": "Información"
   },
   "navigation": {
     "reservations": "Gestión de Reservas",
     "customers": "Gestión de Clientes",
     "products": "Gestión de Productos",
     "settings": "Configuración",
-    "beautitouch": "BeautiTouch",
+    "beauti-touch": "Beauti-Touch",
     "adminSystem": "Sistema Administrativo",
     "other": "Otro"
   },
@@ -63,7 +67,16 @@
     "deleteConfirm": "¿Estás seguro de que quieres eliminar esta reserva?",
     "deleteError": "Error al eliminar la reserva.",
     "saveSuccess": "Reserva guardada exitosamente.",
-    "saveError": "Error al guardar la reserva."
+    "saveError": "Error al guardar la reserva.",
+    "loadError": "Error al cargar la lista de reservas.",
+    "productLoadError": "Error al cargar la lista de productos.",
+    "swipeHint": "← Deslizar para mover mes →",
+    "nextMonth": "Mes Siguiente",
+    "prevMonth": "Mes Anterior",
+    "timeNotSet": "Hora no establecida",
+    "updateError": "Error al actualizar reserva",
+    "createError": "Error al crear reserva",
+    "dataLoadError": "Error al cargar datos"
   },
   "customers": {
     "title": "Gestión de Clientes",
@@ -71,23 +84,19 @@
     "editCustomer": "Editar Cliente",
     "customerInfo": "Información del Cliente",
     "name": "Nombre",
-    "phone": "Teléfono",
-    "gender": "Género",
-    "birthDate": "Fecha de Nacimiento",
-    "age": "Edad",
+    "phone": "Últimos 4 dígitos del teléfono",
     "memo": "Memo",
     "registrationDate": "Fecha de Registro",
     "reservationHistory": "Historial de Reservas",
     "noCustomers": "No hay clientes registrados.",
     "noSearchResults": "No se encontraron resultados.",
     "searchPlaceholder": "Buscar por nombre o número de teléfono",
-    "deleteConfirm": "¿Está seguro de que desea eliminar este cliente? La información de reserva relacionada también puede eliminarse.",
+    "deleteConfirm": "¿Está seguro de que desea eliminar este cliente? La información de reserva relacionada también puede ser eliminada.",
     "saveSuccess": "Información del cliente guardada exitosamente.",
     "saveError": "Error al guardar la información del cliente.",
     "noMemo": "No hay memo escrito.",
     "basicInfoMessage": "Ingrese información básica. Puede agregar información detallada en la página de detalles del cliente.",
     "nameRequired": "El nombre es requerido.",
-    "genderRequired": "El género es requerido.",
     "phoneRequired": "El número de teléfono es requerido.",
     "customerNotFound": "Cliente no encontrado.",
     "basicInfo": "Información Básica",
@@ -102,11 +111,6 @@
       "sensitive": "Sensible",
       "normal": "Normal"
     },
-    "genders": {
-      "female": "Femenino",
-      "male": "Masculino",
-      "other": "Otro"
-    },
     "allergies": "Alergias",
     "notes": "Notas",
     "noReservations": "No hay historial de reservas.",
@@ -114,7 +118,14 @@
     "createChart": "Crear Gráfico",
     "viewChart": "Ver Gráfico",
     "lastVisit": "Última Visita",
-    "nextVisit": "Próxima Visita"
+    "nextVisit": "Próxima Visita",
+    "privacyNotice": "Para proteger la privacidad, la información del cliente se enmascara automáticamente al guardar. Los nombres se enmascaran apropiadamente según el idioma y solo se almacenan los últimos 4 dígitos de los números de teléfono.",
+    "loadError": "Error al cargar la lista de clientes.",
+    "detailLoadError": "Error al cargar información detallada del cliente.",
+    "updateError": "No se pudo obtener datos después de actualizar cliente.",
+    "createError": "No se pudo obtener datos después de crear cliente.",
+    "saveError": "Error al guardar cliente",
+    "deleteError": "Error al eliminar cliente."
   },
   "products": {
     "title": "Gestión de Productos/Servicios",
@@ -133,7 +144,11 @@
     "deleteConfirm": "¿Está seguro de que desea eliminar este producto?",
     "saveSuccess": "Información del producto guardada exitosamente.",
     "saveError": "Error al guardar la información del producto.",
-    "categoryPlaceholder": "ej: Uñas, Pestañas"
+    "categoryPlaceholder": "ej: Uñas, Pestañas",
+    "loadError": "Error al cargar la lista de productos.",
+    "deleteError": "Error al eliminar producto.",
+    "statusChangeError": "Error al cambiar estado del producto.",
+    "saveError": "Error al guardar información del producto."
   },
   "settings": {
     "title": "Configuración",
@@ -218,12 +233,12 @@
       "nailFeedback": "Comentarios",
       "skinType": "Tipo de Piel",
       "skinTypeDetail": "Tipo de Piel Detallado",
-      "skinPurpose": "Propósito del Tratamiento",
+      "skinPurpose": "Propósito de Cuidado",
       "skinTrouble": "Problemas de Piel",
       "skinSensitivity": "Sensibilidad",
       "skinFeedback": "Comentarios",
       "massageArea": "Área de Masaje",
-      "massageStrength": "Intensidad",
+      "massageStrength": "Fuerza",
       "massagePreference": "Preferencia",
       "massageMuscle": "Condición Muscular",
       "visitCycle": "Ciclo de Visita",
@@ -254,8 +269,8 @@
       },
       "waxingAftercare": {
         "sensitive": "Sensible",
-        "normal": "Normal",
-        "none": "Ninguno"
+        "dry": "Seco",
+        "trouble": "Problema"
       },
       "nailType": {
         "care": "Cuidado",
@@ -290,6 +305,8 @@
         "medium": "Medio",
         "strong": "Fuerte"
       }
-    }
+    },
+    "saveError": "Error al guardar información del gráfico.",
+    "loadError": "Error al cargar información del gráfico."
   }
 } 

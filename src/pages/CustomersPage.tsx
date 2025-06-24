@@ -64,7 +64,7 @@ const CustomersPage: React.FC = () => {
       
       setCustomers(processedCustomers);
     } catch (error) {
-      console.error('고객 목록을 불러오는데 실패했습니다:', error);
+      console.error(t('customers.loadError'), error);
     } finally {
       setLoading(false);
     }
@@ -128,6 +128,7 @@ const CustomersPage: React.FC = () => {
         <table>
           <thead>
             <tr>
+              <th>ID</th>
               <th>{t('customers.name')}</th>
               <th>{t('customers.phone')}</th>
               <th>{t('customers.lastVisit')}</th>
@@ -137,13 +138,16 @@ const CustomersPage: React.FC = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={4} className="customers-table-empty">
+                <td colSpan={5} className="customers-table-empty">
                   <LoadingSpinner text={t('common.loading')} />
                 </td>
               </tr>
             ) : filteredCustomers.length > 0 ? (
               filteredCustomers.map(customer => (
                 <tr key={customer.id} className="customers-table-row-pointer" onClick={() => handleRowClick(customer.id)}>
+                  <td className="customer-id">
+                    {customer.id.length === 4 && /^\d{4}$/.test(customer.id) ? customer.id : customer.id.slice(0, 4)}
+                  </td>
                   <td className="name">{customer.name}</td>
                   <td>{customer.phone}</td>
                   <td>{customer.lastVisit ? format(customer.lastVisit, 'yyyy.MM.dd', { locale: ko }) : '-'}</td>
@@ -152,7 +156,7 @@ const CustomersPage: React.FC = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="customers-table-empty">
+                <td colSpan={5} className="customers-table-empty">
                   {searchTerm ? t('customers.noSearchResults') : t('customers.noCustomers')}
                 </td>
               </tr>

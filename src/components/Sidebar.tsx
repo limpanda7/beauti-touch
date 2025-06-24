@@ -29,9 +29,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose, isMobile = false, className 
     <div className={`sidebar ${isMobile ? 'sidebar-mobile' : ''} ${className}`}>
       <div className="sidebar-header">
         <div className="brand-container">
-          <img src="/logo.png" alt="Beautitouch Logo" className="sidebar-logo-large" />
+          <img src="/logo.png" alt="Beauti-Touch Logo" className="sidebar-logo-large" />
         </div>
-        <h1>{t('navigation.beautitouch')}</h1>
+        <h1>{t('navigation.beauti-touch')}</h1>
         <p>{t('navigation.adminSystem')}</p>
       </div>
       
