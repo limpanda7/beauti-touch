@@ -71,7 +71,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave })
         category: formData.category.trim(),
         price: price,
         duration: duration,
-        description: formData.description.trim() || undefined,
+        description: formData.description.trim() || '',
         isActive: formData.isActive,
       };
 
@@ -188,7 +188,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave })
                   required
                 />
                 <span className="product-modal-currency">
-                  분
+                  min
                 </span>
               </div>
             </div>

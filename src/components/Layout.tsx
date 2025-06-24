@@ -1,18 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Outlet, useLocation, Link, useNavigate } from 'react-router-dom';
 import { Menu, X, Calendar, Users, ClipboardList, Settings, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
+import { useUIStore } from '../stores/uiStore';
 import '../styles/main.scss';
 
 const Layout: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const location = useLocation();
+  
+  const {
+    isMobile,
+    isSidebarOpen,
+    isClosing,
+    isModalOpen,
+    setIsModalOpen,
+    toggleSidebar,
+    closeSidebar,
+    checkScreenSize
+  } = useUIStore();
 
   // 페이지 타이틀 다국어 처리
   useEffect(() => {
@@ -20,19 +28,11 @@ const Layout: React.FC = () => {
   }, [t]);
 
   useEffect(() => {
-    const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 900);
-      if (window.innerWidth >= 900) {
-        setIsSidebarOpen(false);
-        setIsClosing(false);
-      }
-    };
-
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
     
     return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
+  }, [checkScreenSize]);
 
   useEffect(() => {
     const checkModalOpen = () => {
@@ -49,29 +49,7 @@ const Layout: React.FC = () => {
     });
 
     return () => observer.disconnect();
-  }, []);
-
-  const toggleSidebar = () => {
-    if (isSidebarOpen) {
-      setIsClosing(true);
-      setTimeout(() => {
-        setIsSidebarOpen(false);
-        setIsClosing(false);
-      }, 400);
-    } else {
-      setIsSidebarOpen(true);
-    }
-  };
-
-  const closeSidebar = () => {
-    if (isMobile) {
-      setIsClosing(true);
-      setTimeout(() => {
-        setIsSidebarOpen(false);
-        setIsClosing(false);
-      }, 400);
-    }
-  };
+  }, [setIsModalOpen]);
 
   const handleOverlayClick = () => {
     if (isMobile && !isClosing) {

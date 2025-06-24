@@ -136,7 +136,7 @@
     "name": "Tên sản phẩm",
     "category": "Danh mục",
     "price": "Giá",
-    "duration": "Thời gian (phút)",
+    "duration": "Thời gian",
     "description": "Mô tả",
     "isActive": "Trạng thái hoạt động",
     "active": "Hoạt động",

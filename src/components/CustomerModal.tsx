@@ -150,7 +150,6 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
               value={formData.phone}
               onChange={handleChange}
               required
-              placeholder="01012345678 (뒤 4자리만 저장)"
               inputMode="numeric"
             />
           </div>

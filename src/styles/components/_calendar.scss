@@ -327,7 +327,6 @@
             }
             
             .event-time,
-            .event-customer,
             .event-product {
               color: $reservation-completed-text;
             }
@@ -345,7 +344,6 @@
             }
             
             .event-time,
-            .event-customer,
             .event-product {
               color: $reservation-noshow-text;
             }
@@ -363,7 +361,6 @@
             }
             
             .event-time,
-            .event-customer,
             .event-product {
               color: $reservation-cancelled-text;
             }
@@ -375,17 +372,9 @@
             display: block;
             font-size: 0.55rem;
             margin-bottom: 0.0625rem;
-          }
-          
-          .event-customer {
-            color: $reservation-confirmed-text;
-            display: block;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            font-size: 0.55rem;
-            font-weight: 500;
-            margin-bottom: 0.0625rem;
           }
           
           .event-product {
@@ -571,7 +560,6 @@
           }
           
           .event-time,
-          .event-customer,
           .event-product {
             color: $reservation-completed-text;
           }
@@ -589,7 +577,6 @@
           }
           
           .event-time,
-          .event-customer,
           .event-product {
             color: $reservation-noshow-text;
           }
@@ -607,7 +594,6 @@
           }
           
           .event-time,
-          .event-customer,
           .event-product {
             color: $reservation-cancelled-text;
           }
@@ -618,17 +604,6 @@
           color: $reservation-confirmed-text;
           display: block;
           font-size: 0.7rem;
-          margin-bottom: 0.125rem;
-        }
-        
-        .event-customer {
-          color: $reservation-confirmed-text;
-          display: block;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          font-size: 0.7rem;
-          font-weight: 500;
           margin-bottom: 0.125rem;
         }
         

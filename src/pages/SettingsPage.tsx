@@ -1,14 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Settings as SettingsIcon, Globe, DollarSign, Briefcase } from 'lucide-react';
-import { useSettings, type Settings } from '../contexts/SettingsContext';
+import { useSettingsStore } from '../stores/settingsStore';
 import type { ChartType } from '../types';
 
 const SettingsPage: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { settings, updateSettings } = useSettings();
+  const { language, currency, businessType, updateSettings } = useSettingsStore();
 
-  const handleSettingChange = (key: keyof Settings, value: string) => {
+  const handleSettingChange = (key: keyof { language: string; currency: string; businessType: string }, value: string) => {
     if (key === 'businessType') {
       updateSettings({ [key]: value as ChartType });
     } else {
@@ -62,7 +62,7 @@ const SettingsPage: React.FC = () => {
           </div>
           <p className="settings-item-description">{t('settings.languageDescription')}</p>
           <select
-            value={settings.language}
+            value={language}
             onChange={(e) => handleSettingChange('language', e.target.value)}
             className="settings-select"
           >
@@ -79,7 +79,7 @@ const SettingsPage: React.FC = () => {
           </div>
           <p className="settings-item-description">{t('settings.currencyDescription')}</p>
           <select
-            value={settings.currency}
+            value={currency}
             onChange={(e) => handleSettingChange('currency', e.target.value)}
             className="settings-select"
           >
@@ -96,7 +96,7 @@ const SettingsPage: React.FC = () => {
           </div>
           <p className="settings-item-description">{t('settings.businessTypeDescription')}</p>
           <select
-            value={settings.businessType}
+            value={businessType}
             onChange={(e) => handleSettingChange('businessType', e.target.value)}
             className="settings-select"
           >

@@ -9,13 +9,13 @@ import { customerService, reservationService } from '../services/firestore';
 import CustomerModal from '../components/CustomerModal';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useCurrencyFormat } from '../utils/currency';
-import { useSettings } from '../contexts/SettingsContext';
+import { useSettingsStore } from '../stores/settingsStore';
 import { maskCustomerData } from '../utils/customerUtils';
 
 const CustomerDetailPage: React.FC = () => {
   const { t } = useTranslation();
   const { formatCurrency } = useCurrencyFormat();
-  const { settings } = useSettings();
+  const { businessType } = useSettingsStore();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
@@ -91,8 +91,8 @@ const CustomerDetailPage: React.FC = () => {
       // 상세정보 저장
       const updatedCustomer = {
         ...customer,
-        name: detailForm.name,
-        phone: detailForm.phone,
+        name: detailForm.name || customer.name,
+        phone: detailForm.phone || customer.phone,
         memo: detailForm.memo,
         skinType: detailForm.skinType,
         allergies: detailForm.allergies,

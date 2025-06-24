@@ -2,6 +2,11 @@ export interface Customer {
   id: string; // 4자리 고유 ID
   name: string; // 마스킹된 이름
   phone: string; // 마스킹된 연락처 (뒤 4자리만)
+  gender?: 'male' | 'female' | 'other'; // 성별
+  age?: number; // 나이
+  skinType?: string; // 피부 타입
+  allergies?: string; // 알레르기 정보
+  notes?: string; // 기타 메모
   procedures?: CustomerProcedure[];
   contraindications?: string;
   memo?: string;

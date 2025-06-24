@@ -41,4 +41,22 @@ export const formatTime = (time: string): string => {
   } catch (error) {
     return time;
   }
+};
+
+/**
+ * 상품 소요시간을 "1h", "30m" 형식으로 포맷팅합니다.
+ * @param durationMinutes - 소요 시간 (분)
+ * @returns 포맷팅된 시간 문자열 (예: "1h", "30m", "1h 30m")
+ */
+export const formatDuration = (durationMinutes: number): string => {
+  const hours = Math.floor(durationMinutes / 60);
+  const minutes = durationMinutes % 60;
+  
+  if (hours > 0 && minutes > 0) {
+    return `${hours}h ${minutes}m`;
+  } else if (hours > 0) {
+    return `${hours}h`;
+  } else {
+    return `${minutes}m`;
+  }
 }; 

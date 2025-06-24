@@ -72,10 +72,6 @@
   margin: 0;
 }
 
-.reservations-day-item-customer {
-  margin: 0;
-}
-
 .reservations-day-item-product {
   color: #6B7280;
   margin: 0;
@@ -361,5 +357,40 @@
     opacity: 0.6;
     pointer-events: none;
     transition: opacity 0.3s ease-in-out;
+  }
+}
+
+// Floating Today 버튼 스타일
+.floating-today-button {
+  position: fixed;
+  bottom: 100px; // + 버튼과 같은 높이
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.75rem 1rem;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
+  border: none;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  white-space: nowrap;
+  
+  &:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  &:active {
+    transform: translateX(-50%) translateY(0);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  // 모바일에서만 표시
+  @media (min-width: 1200px) {
+    display: none;
   }
 } 

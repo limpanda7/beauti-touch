@@ -10,11 +10,52 @@ import {
   where,
   orderBy,
   Timestamp,
-  setDoc
+  setDoc,
+  onSnapshot
 } from 'firebase/firestore';
+import type { QuerySnapshot, DocumentData } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Customer, Product, Reservation } from '../types';
 import { generateCustomerId, maskCustomerData, generateUniqueCustomerId } from '../utils/customerUtils';
+
+// Firestore 오류 처리를 위한 헬퍼 함수
+const handleFirestoreError = (error: any, operation: string) => {
+  console.error(`Firestore ${operation} 오류:`, error);
+  
+  if (error.code === 'permission-denied') {
+    throw new Error('데이터베이스 접근 권한이 없습니다.');
+  } else if (error.code === 'unavailable') {
+    throw new Error('데이터베이스 서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요.');
+  } else if (error.code === 'deadline-exceeded') {
+    throw new Error('요청 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.');
+  } else {
+    throw new Error(`데이터베이스 오류가 발생했습니다: ${error.message}`);
+  }
+};
+
+// 재시도 로직을 위한 헬퍼 함수
+const retryOperation = async <T>(
+  operation: () => Promise<T>, 
+  maxRetries: number = 3,
+  delay: number = 1000
+): Promise<T> => {
+  let lastError: any;
+  
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await operation();
+    } catch (error: any) {
+      lastError = error;
+      console.warn(`Firestore 작업 실패 (${i + 1}/${maxRetries}):`, error);
+      
+      if (i < maxRetries - 1) {
+        await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
+      }
+    }
+  }
+  
+  throw lastError;
+};
 
 // 고객 관리
 export const customerService = {
@@ -112,13 +153,20 @@ export const customerService = {
 // 상품 관리
 export const productService = {
   async getAll(): Promise<Product[]> {
-    const querySnapshot = await getDocs(collection(db, 'products'));
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt?.toDate(),
-      updatedAt: doc.data().updatedAt?.toDate()
-    })) as Product[];
+    try {
+      return await retryOperation(async () => {
+        const querySnapshot = await getDocs(collection(db, 'products'));
+        return querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          createdAt: doc.data().createdAt?.toDate(),
+          updatedAt: doc.data().updatedAt?.toDate()
+        })) as Product[];
+      });
+    } catch (error) {
+      handleFirestoreError(error, '상품 목록 조회');
+      return [];
+    }
   },
 
   async getActive(): Promise<Product[]> {
@@ -154,8 +202,14 @@ export const productService = {
 
   async create(product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     const now = new Date();
+    
+    // undefined 값을 필터링하여 Firebase 오류 방지
+    const cleanProduct = Object.fromEntries(
+      Object.entries(product).filter(([_, value]) => value !== undefined)
+    );
+    
     const docRef = await addDoc(collection(db, 'products'), {
-      ...product,
+      ...cleanProduct,
       createdAt: Timestamp.fromDate(now),
       updatedAt: Timestamp.fromDate(now)
     });
@@ -164,8 +218,14 @@ export const productService = {
 
   async update(id: string, product: Partial<Product>): Promise<void> {
     const docRef = doc(db, 'products', id);
+    
+    // undefined 값을 필터링하여 Firebase 오류 방지
+    const cleanProduct = Object.fromEntries(
+      Object.entries(product).filter(([_, value]) => value !== undefined)
+    );
+    
     await updateDoc(docRef, {
-      ...product,
+      ...cleanProduct,
       updatedAt: Timestamp.fromDate(new Date())
     });
   },

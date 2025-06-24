@@ -138,7 +138,7 @@
     "name": "Product Name",
     "category": "Category",
     "price": "Price",
-    "duration": "Duration (minutes)",
+    "duration": "Duration",
     "description": "Description",
     "isActive": "Active Status",
     "active": "Active",

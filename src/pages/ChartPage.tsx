@@ -7,14 +7,14 @@ import { ko } from 'date-fns/locale';
 import type { Customer, Reservation, ChartType, ChartData } from '../types';
 import { customerService, reservationService } from '../services/firestore';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { useSettings } from '../contexts/SettingsContext';
+import { useSettingsStore } from '../stores/settingsStore';
 
 const ChartPage: React.FC = () => {
   const { t } = useTranslation();
   const { reservationId } = useParams<{ reservationId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { settings } = useSettings();
+  const { businessType } = useSettingsStore();
   
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [reservation, setReservation] = useState<Reservation | null>(null);
@@ -89,7 +89,7 @@ const ChartPage: React.FC = () => {
       const reservationData = await reservationService.getById(reservationId);
       if (reservationData) {
         setReservation(reservationData);
-        setChartType(reservationData.chartType || settings.businessType || '');
+        setChartType(reservationData.chartType || businessType || '');
         setChartData(reservationData.chartData || {});
         
         // 고객 정보도 로드

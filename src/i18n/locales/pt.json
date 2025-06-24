@@ -134,7 +134,7 @@
     "name": "Nome do Produto",
     "category": "Categoria",
     "price": "Preço",
-    "duration": "Duração (minutos)",
+    "duration": "Duração",
     "description": "Descrição",
     "isActive": "Status Ativo",
     "active": "Ativo",

@@ -7,6 +7,7 @@ import type { Customer, Product, Reservation, ChartType } from '../types';
 import { customerService, productService, reservationService } from '../services/firestore';
 import CustomerModal from './CustomerModal';
 import { useCurrencyFormat } from '../utils/currency';
+import { formatDuration } from '../utils/timeUtils';
 
 interface ReservationModalProps {
   reservation: Reservation | null;
@@ -73,16 +74,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
 
   // 상품의 시간을 포맷팅하는 함수
   const formatProductDuration = (duration: number): string => {
-    const hours = Math.floor(duration / 60);
-    const minutes = duration % 60;
-    
-    if (hours > 0 && minutes > 0) {
-      return `${hours}시간 ${minutes}분`;
-    } else if (hours > 0) {
-      return `${hours}시간`;
-    } else {
-      return `${minutes}분`;
-    }
+    return formatDuration(duration);
   };
 
   // 5분 단위 시간 옵션 생성 (AM이 먼저)
@@ -381,7 +373,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
               <option value=""></option>
               {products.map(product => (
                 <option key={product.id} value={product.id}>
-                  {product.name} - {product.duration ? formatProductDuration(product.duration) : t('reservations.timeNotSet')}
+                  {product.name} ({product.duration ? formatProductDuration(product.duration) : t('reservations.timeNotSet')})
                 </option>
               ))}
             </select>

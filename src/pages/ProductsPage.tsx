@@ -7,6 +7,7 @@ import { productService } from '../services/firestore';
 import ProductModal from '../components/ProductModal';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useCurrencyFormat } from '../utils/currency';
+import { formatDuration } from '../utils/timeUtils';
 
 const ProductsPage: React.FC = () => {
   const { t } = useTranslation();
@@ -133,7 +134,7 @@ const ProductsPage: React.FC = () => {
                   <td className="name">{product.name}</td>
                   <td>{product.category}</td>
                   <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>
-                  <td style={{ textAlign: 'right' }}>{product.duration}</td>
+                  <td style={{ textAlign: 'right' }}>{formatDuration(product.duration)}</td>
                   <td style={{ textAlign: 'center' }}>
                     {isToggling(product.id) ? (
                       <div style={{ 

@@ -1,4 +1,4 @@
-import { useSettings } from '../contexts/SettingsContext';
+import { useSettingsStore } from '../stores/settingsStore';
 
 export const formatCurrency = (amount: number, currency: string = 'KRW'): string => {
   const formatters: Record<string, Intl.NumberFormat> = {
@@ -64,21 +64,21 @@ export const getCurrencySymbol = (currency: string): string => {
   return symbols[currency] || '₩';
 };
 
-// 설정 컨텍스트와 연동하는 훅
+// 설정 스토어와 연동하는 훅
 export const useCurrencyFormat = () => {
-  const { settings } = useSettings();
+  const { currency } = useSettingsStore();
   
   const formatWithCurrentCurrency = (amount: number): string => {
-    return formatCurrency(amount, settings.currency);
+    return formatCurrency(amount, currency);
   };
   
   const getCurrentCurrencySymbol = (): string => {
-    return getCurrencySymbol(settings.currency);
+    return getCurrencySymbol(currency);
   };
   
   return {
     formatCurrency: formatWithCurrentCurrency,
     getCurrencySymbol: getCurrentCurrencySymbol,
-    currentCurrency: settings.currency
+    currentCurrency: currency
   };
 }; 

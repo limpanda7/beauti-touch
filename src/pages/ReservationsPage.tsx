@@ -20,13 +20,15 @@ import { reservationService, productService } from '../services/firestore';
 import ReservationModal from '../components/ReservationModal';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useCurrencyFormat } from '../utils/currency';
-import { getTimeRange } from '../utils/timeUtils';
+import { getTimeRange, formatDuration } from '../utils/timeUtils';
+import { useUIStore } from '../stores/uiStore';
 
 type ViewType = 'month' | 'week' | 'day';
 
 const ReservationsPage: React.FC = () => {
   const { t } = useTranslation();
   const { formatCurrency } = useCurrencyFormat();
+  const { isMobile } = useUIStore();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +38,6 @@ const ReservationsPage: React.FC = () => {
   const [editingReservation, setEditingReservation] = useState<Reservation | null>(null);
   const [selectedDateForModal, setSelectedDateForModal] = useState<Date | null>(null);
   const [initialCustomerIdForModal, setInitialCustomerIdForModal] = useState<string | undefined>(undefined);
-  const [isMobile, setIsMobile] = useState(false);
   const [showSwipeHint, setShowSwipeHint] = useState(false);
   const [selectedDay, setSelectedDay] = useState(new Date());
   const [searchParams, setSearchParams] = useSearchParams();
@@ -91,16 +92,7 @@ const ReservationsPage: React.FC = () => {
 
   // 상품의 시간을 포맷팅하는 함수
   const formatProductDuration = (duration: number): string => {
-    const hours = Math.floor(duration / 60);
-    const minutes = duration % 60;
-    
-    if (hours > 0 && minutes > 0) {
-      return `${hours}${t('reservations.hour')} ${minutes}${t('reservations.minute')}`;
-    } else if (hours > 0) {
-      return `${hours}${t('reservations.hour')}`;
-    } else {
-      return `${minutes}${t('reservations.minute')}`;
-    }
+    return formatDuration(duration);
   };
 
   // 예약의 시간 범위를 계산하는 함수
@@ -110,6 +102,20 @@ const ReservationsPage: React.FC = () => {
       return getTimeRange(reservation.time, product.duration);
     }
     return reservation.time; // 상품 정보가 없으면 원래 시간 반환
+  };
+
+  // 캘린더에서 표시할 예약 정보를 포맷팅하는 함수
+  const formatReservationForCalendar = (reservation: Reservation): { timeAndCustomer: string; productAndDuration: string } => {
+    const product = productsMap.get(reservation.productId);
+    const timeAndCustomer = `${reservation.time} ${reservation.customerName}`;
+    
+    let productAndDuration = reservation.productName;
+    if (product && product.duration) {
+      const durationText = formatProductDuration(product.duration);
+      productAndDuration = `${reservation.productName} (${durationText})`;
+    }
+    
+    return { timeAndCustomer, productAndDuration };
   };
 
   const onTouchStart = (e: React.TouchEvent) => {
@@ -218,17 +224,6 @@ const ReservationsPage: React.FC = () => {
     loadProducts();
   }, [getDateRangeAndHeader]);
 
-  useEffect(() => {
-    const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 900);
-    };
-
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
-
   const handleOpenModal = (reservation: Reservation | null, date?: Date) => {
     setEditingReservation(reservation);
     setSelectedDateForModal(date || reservation?.date || currentDate);
@@ -331,22 +326,21 @@ const ReservationsPage: React.FC = () => {
                   </div>
                   
                   <div className="calendar-mobile-events">
-                    {reservationsForDay.slice(0, 3).map((res, resIndex) => (
-                      <div 
-                        key={res.id} 
-                        className={`calendar-mobile-event ${res.status}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenModal(res);
-                        }}
-                      >
-                        <span className="event-time">{getReservationTimeRange(res)}</span>
-                        <span className="event-customer">{res.customerName}</span>
-                        <span className="event-product">
-                          {res.productName}
-                        </span>
-                      </div>
-                    ))}
+                    {reservationsForDay.slice(0, 3).map((res, resIndex) => {
+                      return (
+                        <div 
+                          key={res.id} 
+                          className={`calendar-mobile-event ${res.status}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenModal(res);
+                          }}
+                        >
+                          <span className="event-time">{res.time}</span>
+                          <span className="event-product">{res.productName}</span>
+                        </div>
+                      );
+                    })}
                     
                     {reservationsForDay.length > 3 && (
                       <div className="calendar-mobile-more-events">
@@ -369,6 +363,7 @@ const ReservationsPage: React.FC = () => {
     
     if (isMobile) {
       const reservationsForSelectedDay = reservations.filter(r => isSameDay(r.date, selectedDay));
+      const isTodaySelected = isSameDay(selectedDay, new Date());
 
       return (
         <div className="calendar-week-mobile-container">
@@ -403,21 +398,23 @@ const ReservationsPage: React.FC = () => {
               {reservationsForSelectedDay.length === 0 ? (
                 <div className="reservations-day-empty">{t('reservations.noReservations')}</div>
               ) : (
-                reservationsForSelectedDay.map(reservation => (
-                  <div key={reservation.id} className={`reservations-day-item ${reservation.status}`}
-                    onClick={() => handleOpenModal(reservation)}
-                  >
-                    <div>
-                      <p className="reservations-day-item-time">{getReservationTimeRange(reservation)}</p>
-                      <p className="reservations-day-item-customer">{reservation.customerName}</p>
-                      <p className="reservations-day-item-product">{reservation.productName}</p>
+                reservationsForSelectedDay.map(reservation => {
+                  const { timeAndCustomer, productAndDuration } = formatReservationForCalendar(reservation);
+                  return (
+                    <div key={reservation.id} className={`reservations-day-item ${reservation.status}`}
+                      onClick={() => handleOpenModal(reservation)}
+                    >
+                      <div>
+                        <p className="reservations-day-item-time">{timeAndCustomer}</p>
+                        <p className="reservations-day-item-product">{productAndDuration}</p>
+                      </div>
+                      <div className="reservations-day-item-details">
+                        <span className={`reservation-status ${reservation.status}`}>{t(`reservations.status${reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}`)}</span>
+                        {reservation.memo && <p className="reservations-day-item-memo">{reservation.memo}</p>}
+                      </div>
                     </div>
-                    <div className="reservations-day-item-details">
-                      <span className={`reservation-status ${reservation.status}`}>{t(`reservations.status${reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}`)}</span>
-                      {reservation.memo && <p className="reservations-day-item-memo">{reservation.memo}</p>}
-                    </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           </div>
@@ -461,20 +458,22 @@ const ReservationsPage: React.FC = () => {
                   className={`calendar-week-mobile-day-slot ${isToday ? 'today' : ''}`}
                   onClick={() => handleOpenModal(null, day)}
                 >
-                  {reservationsForDay.map((res) => (
-                    <div 
-                      key={res.id} 
-                      className={`calendar-week-mobile-event ${res.status}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenModal(res);
-                      }}
-                    >
-                      <span className="event-time">{getReservationTimeRange(res)}</span>
-                      <span className="event-customer">{res.customerName}</span>
-                      <span className="event-product">{res.productName}</span>
-                    </div>
-                  ))}
+                  {reservationsForDay.map((res) => {
+                    const { timeAndCustomer, productAndDuration } = formatReservationForCalendar(res);
+                    return (
+                      <div 
+                        key={res.id} 
+                        className={`calendar-week-mobile-event ${res.status}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenModal(res);
+                        }}
+                      >
+                        <span className="event-time">{timeAndCustomer}</span>
+                        <span className="event-product">{productAndDuration}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               );
             })}
@@ -489,22 +488,24 @@ const ReservationsPage: React.FC = () => {
       {reservations.length === 0 ? (
         <div className="reservations-day-empty">{t('reservations.noReservations')}</div>
       ) : (
-        reservations.map(reservation => (
-          <div key={reservation.id} 
-               className={`reservations-day-item ${reservation.status}`}
-               onClick={() => handleOpenModal(reservation)}
-          >
-            <div>
-              <p className="reservations-day-item-time">{getReservationTimeRange(reservation)}</p>
-              <p className="reservations-day-item-customer">{reservation.customerName}</p>
-              <p className="reservations-day-item-product">{reservation.productName}</p>
+        reservations.map(reservation => {
+          const { timeAndCustomer, productAndDuration } = formatReservationForCalendar(reservation);
+          return (
+            <div key={reservation.id} 
+                 className={`reservations-day-item ${reservation.status}`}
+                 onClick={() => handleOpenModal(reservation)}
+            >
+              <div>
+                <p className="reservations-day-item-time">{timeAndCustomer}</p>
+                <p className="reservations-day-item-product">{productAndDuration}</p>
+              </div>
+              <div className="reservations-day-item-details">
+                <span className={`reservation-status ${reservation.status}`}>{t(`reservations.status${reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}`)}</span>
+                {reservation.memo && <p className="reservations-day-item-memo">{reservation.memo}</p>}
+              </div>
             </div>
-            <div className="reservations-day-item-details">
-              <span className={`reservation-status ${reservation.status}`}>{t(`reservations.status${reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}`)}</span>
-              {reservation.memo && <p className="reservations-day-item-memo">{reservation.memo}</p>}
-            </div>
-          </div>
-        ))
+          );
+        })
       )}
     </div>
   );
@@ -634,6 +635,26 @@ const ReservationsPage: React.FC = () => {
             await loadReservations();
           }}
         />
+      )}
+
+      {/* 모바일에서 오늘이 아닌 날짜를 볼 때 Today 버튼 표시 */}
+      {isMobile && (
+        (view === 'week' && !isSameDay(selectedDay, new Date())) ||
+        (view === 'day' && !isSameDay(currentDate, new Date()))
+      ) && (
+        <button 
+          className="floating-today-button"
+          onClick={() => {
+            if (view === 'week') {
+              setSelectedDay(new Date());
+            } else if (view === 'day') {
+              setCurrentDate(new Date());
+            }
+          }}
+          aria-label={t('reservations.today')}
+        >
+          {t('reservations.today')}
+        </button>
       )}
     </div>
   );
