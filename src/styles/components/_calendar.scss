@@ -1,9 +1,12 @@
+@use '../base/variables' as *;
+
 // Calendar
 .calendar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   border-top: 1px solid $gray-200;
   border-left: 1px solid $gray-200;
+  width: 100%;
   
   .calendar-header {
     text-align: center;
@@ -108,10 +111,12 @@
 // Mobile Calendar (구글 캘린더 모바일 뷰 스타일)
 .calendar-mobile-container {
   position: relative;
+  width: 100%;
 }
 
 .calendar-week-mobile-container {
   position: relative;
+  width: 100%;
 }
 
 .swipe-hint {
@@ -213,7 +218,7 @@
     grid-template-columns: repeat(7, 1fr);
     
     .calendar-mobile-day {
-      min-height: 6rem;
+      min-height: 8rem;
       padding: 0.125rem;
       border-right: 1px solid $gray-200;
       border-bottom: 1px solid $gray-200;
@@ -271,7 +276,7 @@
         display: flex;
         flex-direction: column;
         gap: 0.0625rem;
-        min-height: 4.5rem;
+        min-height: 6.5rem;
         
         .calendar-mobile-event {
           background-color: $reservation-confirmed-bg;
@@ -483,7 +488,7 @@
       padding: 0.5rem;
       border-right: 1px solid $gray-200;
       border-bottom: 1px solid $gray-200;
-      min-height: 8rem;
+      min-height: 12rem;
       position: relative;
       cursor: pointer;
       transition: background-color 0.15s ease;

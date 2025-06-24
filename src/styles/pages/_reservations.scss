@@ -1,3 +1,5 @@
+@use '../base/variables' as *;
+
 // ReservationsPage 스타일
 .reservations-day-view {
   display: flex;
@@ -324,4 +326,40 @@
   margin-top: 0;
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+// 캘린더 카드 스타일 (월/주 보기에서 패딩 줄이기)
+.calendar-card {
+  padding: 1rem;
+  
+  .page-header {
+    margin-bottom: 1rem;
+  }
+}
+
+// 캘린더 컨테이너 스타일
+.calendar-container {
+  &.full-width {
+    width: 100%;
+    max-width: none;
+    
+    .calendar-mobile-container,
+    .calendar-week-mobile-container {
+      width: 100%;
+      max-width: none;
+    }
+    
+    .calendar-mobile,
+    .calendar-week-mobile {
+      width: 100%;
+      max-width: none;
+      border-radius: 0.375rem;
+    }
+  }
+  
+  &.loading {
+    opacity: 0.6;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+  }
 } 

@@ -1,23 +1,23 @@
 // Import base styles
-@import 'base/variables';
-@import 'base/mixins';
-@import 'base/global';
-@import 'base/buttons';
-@import 'base/forms';
-@import 'base/tables';
+@use 'base/variables' as *;
+@use 'base/mixins' as *;
+@use 'base/global';
+@use 'base/buttons';
+@use 'base/forms';
+@use 'base/tables';
 
 // Import component styles
-@import 'components/sidebar';
-@import 'components/modal';
-@import 'components/calendar';
+@use 'components/sidebar';
+@use 'components/modal';
+@use 'components/calendar';
 
 // Import page styles
-@import 'pages/reservations';
-@import 'pages/customers';
-@import 'pages/products';
-@import 'pages/settings';
-@import 'pages/chart';
+@use 'pages/reservations';
+@use 'pages/customers';
+@use 'pages/products';
+@use 'pages/settings';
+@use 'pages/chart';
 
 // Import utility styles
-@import 'utilities/responsive';
-@import 'utilities/animations'; 
+@use 'utilities/responsive';
+@use 'utilities/animations'; 

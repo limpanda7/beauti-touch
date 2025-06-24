@@ -1,3 +1,5 @@
+@use '../base/variables' as *;
+
 // Responsive styles
 @media (max-width: 899px) {
   .layout {
@@ -613,6 +615,41 @@
           text-align: center;
           font-weight: 500;
           margin-top: 0.0625rem;
+        }
+      }
+    }
+  }
+}
+
+// 데스크탑에서 캘린더 최적화
+@media (min-width: 900px) {
+  .calendar-card {
+    .calendar-container.full-width {
+      .calendar-mobile-container,
+      .calendar-week-mobile-container {
+        max-width: none;
+        width: 100%;
+      }
+      
+      .calendar-mobile,
+      .calendar-week-mobile {
+        max-width: none;
+        width: 100%;
+      }
+      
+      .calendar-mobile-grid {
+        .calendar-mobile-day {
+          min-height: 10rem;
+          
+          .calendar-mobile-events {
+            min-height: 8rem;
+          }
+        }
+      }
+      
+      .calendar-week-mobile-grid {
+        .calendar-week-mobile-day-slot {
+          min-height: 15rem;
         }
       }
     }

@@ -507,7 +507,7 @@ const ReservationsPage: React.FC = () => {
     </div>
   );
 
-  if (loading || view === null) {
+  if (view === null) {
     return (
       <div className="content-wrapper">
         <LoadingSpinner fullScreen text={t('common.loading')} />
@@ -528,7 +528,7 @@ const ReservationsPage: React.FC = () => {
         </button>
       </div>
 
-      <div className="card">
+      <div className={`card ${view === 'month' || view === 'week' ? 'calendar-card' : ''}`}>
         <div className="page-header">
           <div className="reservations-header">
             {!isMobile && (
@@ -536,6 +536,7 @@ const ReservationsPage: React.FC = () => {
                 <button
                   onClick={() => changeDate('prev')}
                   className="btn btn-icon"
+                  disabled={loading}
                 >
                   <ChevronLeft style={{ width: '1.25rem', height: '1.25rem' }} />
                 </button>
@@ -543,6 +544,7 @@ const ReservationsPage: React.FC = () => {
                 <button
                   onClick={() => changeDate('next')}
                   className="btn btn-icon"
+                  disabled={loading}
                 >
                   <ChevronRight style={{ width: '1.25rem', height: '1.25rem' }} />
                 </button>
@@ -554,6 +556,7 @@ const ReservationsPage: React.FC = () => {
                   <button
                     onClick={() => changeDate('prev')}
                     className="btn btn-icon btn-nav"
+                    disabled={loading}
                   >
                     <ChevronLeft style={{ width: '1rem', height: '1rem' }} />
                   </button>
@@ -561,6 +564,7 @@ const ReservationsPage: React.FC = () => {
                   <button
                     onClick={() => changeDate('next')}
                     className="btn btn-icon btn-nav"
+                    disabled={loading}
                   >
                     <ChevronRight style={{ width: '1rem', height: '1rem' }} />
                   </button>
@@ -572,28 +576,35 @@ const ReservationsPage: React.FC = () => {
             <button
               onClick={() => setView('month')}
               className={`btn ${view === 'month' ? 'btn-primary' : 'btn-secondary'}`}
+              disabled={loading}
             >
               {t('reservations.month')}
             </button>
             <button
               onClick={() => setView('week')}
               className={`btn ${view === 'week' ? 'btn-primary' : 'btn-secondary'}`}
+              disabled={loading}
             >
               {t('reservations.week')}
             </button>
             <button
               onClick={() => setView('day')}
               className={`btn ${view === 'day' ? 'btn-primary' : 'btn-secondary'}`}
+              disabled={loading}
             >
               {t('reservations.day')}
             </button>
           </div>
         </div>
 
-        {view === 'month' && renderMonthView()}
-        {view === 'week' && renderWeekView()}
-        {view === 'day' && renderDayView()}
+        <div className={`calendar-container ${view === 'month' || view === 'week' ? 'full-width' : ''} ${loading ? 'loading' : ''}`}>
+          {view === 'month' && renderMonthView()}
+          {view === 'week' && renderWeekView()}
+          {view === 'day' && renderDayView()}
+        </div>
       </div>
+
+      {loading && <LoadingSpinner fullScreen text={t('common.loading')} />}
 
       {isModalOpen && (
         <ReservationModal
