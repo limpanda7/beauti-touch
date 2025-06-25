@@ -7,6 +7,7 @@ import { ko } from 'date-fns/locale';
 import type { Customer, Reservation } from '../types';
 import { customerService, reservationService } from '../services/firestore';
 import CustomerModal from '../components/CustomerModal';
+import ReservationModal from '../components/ReservationModal';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Button from '../components/Button';
 import { useCurrencyFormat } from '../utils/currency';
@@ -29,6 +30,7 @@ const CustomerDetailPage: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [detailForm, setDetailForm] = useState<Partial<Customer>>({});
   const [originalData, setOriginalData] = useState<Partial<Customer>>({});
+  const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
 
   const loadData = async () => {
     if (!id) return;
@@ -69,6 +71,20 @@ const CustomerDetailPage: React.FC = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+  
+  const handleOpenReservationModal = () => {
+    setIsReservationModalOpen(true);
+  };
+  
+  const handleCloseReservationModal = () => {
+    setIsReservationModalOpen(false);
+  };
+  
+  const handleSaveReservation = async (savedReservation: Reservation) => {
+    handleCloseReservationModal();
+    await loadData(); // 예약 목록 새로고침
+  };
+
   const handleSave = async () => {
     if (!customer) return;
 
@@ -304,7 +320,18 @@ const CustomerDetailPage: React.FC = () => {
         </div>
 
         <div className="customer-detail-section">
-          <h2 className="customer-detail-section-title">{t('customers.reservationHistory')}</h2>
+          <div className="customer-detail-section-header">
+            <h2 className="customer-detail-section-title">{t('customers.reservationHistory')}</h2>
+            <div className="customer-detail-btn-group">
+              <Button
+                onClick={handleOpenReservationModal}
+                variant="primary"
+              >
+                <Plus style={{ width: '1rem', height: '1rem' }} />
+                {t('reservations.newReservation')}
+              </Button>
+            </div>
+          </div>
           {reservations.length > 0 ? (
             <div className="customer-detail-reservation-list">
               {reservations.map(reservation => (
@@ -352,6 +379,21 @@ const CustomerDetailPage: React.FC = () => {
           customer={customer}
           onClose={handleCloseModal}
           onSave={handleSave}
+        />
+      )}
+      
+      {isReservationModalOpen && customer && (
+        <ReservationModal
+          reservation={null}
+          initialDate={new Date()}
+          initialCustomerId={customer.id}
+          onClose={handleCloseReservationModal}
+          onSave={handleSaveReservation}
+          onDelete={async (id: string) => {
+            await reservationService.delete(id);
+            handleCloseReservationModal();
+            await loadData();
+          }}
         />
       )}
     </div>

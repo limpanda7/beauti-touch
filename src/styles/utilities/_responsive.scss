@@ -131,6 +131,10 @@
       min-width: 0;
       text-align: center;
       font-size: 0.875rem;
+      width: 120px; // 모바일에서 고정 width 설정
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
     .btn {
@@ -239,6 +243,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        width: 140px; // 모바일 month-nav-group에서 고정 width 설정
       }
     }
     
@@ -643,14 +648,16 @@
         padding: 0.25rem 0.0625rem;
         
         &.today {
-          background-color: rgba($primary-color, 0.1);
-          border-radius: 0.25rem;
-          margin: 0.03125rem;
-          
-          .calendar-week-mobile-day-name,
-          .calendar-week-mobile-day-number {
-            font-weight: 700;
-          }
+          background-color: transparent;
+          color: $primary-color;
+          border-radius: 0;
+          width: auto;
+          height: auto;
+          display: block;
+          align-items: unset;
+          justify-content: unset;
+          font-weight: 700;
+          margin: 0;
         }
         
         .calendar-week-mobile-day-name {
@@ -661,16 +668,16 @@
           font-size: 0.8rem;
           
           &.today {
-            background-color: $primary-color;
-            color: $white;
-            border-radius: 50%;
-            width: 1.5rem;
-            height: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-color: transparent;
+            color: $primary-color;
+            border-radius: 0;
+            width: auto;
+            height: auto;
+            display: block;
+            align-items: unset;
+            justify-content: unset;
             font-weight: 700;
-            margin: 0 auto;
+            margin: 0;
           }
         }
       }

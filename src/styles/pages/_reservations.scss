@@ -136,6 +136,11 @@
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0;
+  width: 120px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .reservations-header-btns {
@@ -360,7 +365,7 @@
   }
 }
 
-// Floating Today 버튼 스타일
+// Floating Today 버튼 스타일 (모바일 전용)
 .floating-today-button {
   position: fixed;
   bottom: 100px; // + 버튼과 같은 높이
@@ -389,8 +394,8 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
   
-  // 모바일에서만 표시
-  @media (min-width: 1200px) {
+  // PC에서는 숨김
+  @media (min-width: 901px) {
     display: none;
   }
 } 

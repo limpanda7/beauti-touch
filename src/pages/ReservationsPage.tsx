@@ -14,7 +14,7 @@ import {
   isSameDay,
   isSameMonth,
 } from 'date-fns';
-import { ko } from 'date-fns/locale';
+import { ko, enUS, es, pt, th, vi } from 'date-fns/locale';
 import type { Reservation, Product } from '../types';
 import { reservationService, productService } from '../services/firestore';
 import ReservationModal from '../components/ReservationModal';
@@ -26,7 +26,7 @@ import { useUIStore } from '../stores/uiStore';
 type ViewType = 'month' | 'week' | 'day';
 
 const ReservationsPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { formatCurrency } = useCurrencyFormat();
   const { isMobile } = useUIStore();
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -48,6 +48,26 @@ const ReservationsPage: React.FC = () => {
   const [swipeFeedback, setSwipeFeedback] = useState<'left' | 'right' | null>(null);
 
   const minSwipeDistance = 50;
+
+  // 현재 언어에 맞는 date-fns 로케일을 반환하는 함수
+  const getCurrentLocale = () => {
+    switch (i18n.language) {
+      case 'ko':
+        return ko;
+      case 'en':
+        return enUS;
+      case 'es':
+        return es;
+      case 'pt':
+        return pt;
+      case 'th':
+        return th;
+      case 'vi':
+        return vi;
+      default:
+        return enUS;
+    }
+  };
 
   // 마지막으로 본 뷰 상태를 localStorage에서 복원
   useEffect(() => {
@@ -177,18 +197,18 @@ const ReservationsPage: React.FC = () => {
       case 'week':
         start = startOfWeek(currentDate, { weekStartsOn: 0 }); // Sunday
         end = endOfWeek(currentDate, { weekStartsOn: 0 });
-        text = `${format(start, 'yyyy.MM.dd', { locale: ko })} - ${format(end, 'MM.dd', { locale: ko })}`;
+        text = `${format(start, 'MM.dd')} - ${format(end, 'MM.dd')}`;
         break;
       case 'day':
         start = currentDate;
         end = currentDate;
-        text = format(currentDate, 'yyyy.MM.dd (eee)', { locale: ko });
+        text = format(currentDate, 'MM.dd (eee)', { locale: getCurrentLocale() });
         break;
       case 'month':
       default:
         start = startOfMonth(currentDate);
         end = endOfMonth(currentDate);
-        text = format(currentDate, 'yyyy년 MMMM', { locale: ko });
+        text = format(currentDate, 'yyyy.MM');
         break;
     }
     
@@ -384,7 +404,7 @@ const ReservationsPage: React.FC = () => {
                     onClick={() => setSelectedDay(day)}
                   >
                     <span className="calendar-week-mobile-day-name">
-                      {format(day, 'eee', { locale: ko })}
+                      {format(day, 'eee', { locale: getCurrentLocale() })}
                     </span>
                     <span className={`calendar-week-mobile-day-number ${isToday ? 'today' : ''}`}>
                       {format(day, 'd')}
@@ -437,7 +457,7 @@ const ReservationsPage: React.FC = () => {
               return (
                 <div key={index} className={`calendar-week-mobile-day-header ${isToday ? 'today' : ''}`}>
                   <span className="calendar-week-mobile-day-name">
-                    {format(day, 'eee', { locale: ko })}
+                    {format(day, 'eee', { locale: getCurrentLocale() })}
                   </span>
                   <span className={`calendar-week-mobile-day-number ${isToday ? 'today' : ''}`}>
                     {format(day, 'd')}
@@ -564,6 +584,22 @@ const ReservationsPage: React.FC = () => {
                 >
                   <ChevronRight style={{ width: '1.25rem', height: '1.25rem' }} />
                 </button>
+                <button
+                  onClick={() => {
+                    if (view === 'month') {
+                      setCurrentDate(new Date());
+                    } else if (view === 'week') {
+                      setCurrentDate(new Date());
+                      setSelectedDay(new Date());
+                    } else if (view === 'day') {
+                      setCurrentDate(new Date());
+                    }
+                  }}
+                  className="btn btn-secondary"
+                  disabled={loading}
+                >
+                  {t('reservations.today')}
+                </button>
               </>
             )}
             {isMobile && (
@@ -639,13 +675,17 @@ const ReservationsPage: React.FC = () => {
 
       {/* 모바일에서 오늘이 아닌 날짜를 볼 때 Today 버튼 표시 */}
       {isMobile && (
+        (view === 'month' && !isSameMonth(currentDate, new Date())) ||
         (view === 'week' && !isSameDay(selectedDay, new Date())) ||
         (view === 'day' && !isSameDay(currentDate, new Date()))
       ) && (
         <button 
           className="floating-today-button"
           onClick={() => {
-            if (view === 'week') {
+            if (view === 'month') {
+              setCurrentDate(new Date());
+            } else if (view === 'week') {
+              setCurrentDate(new Date());
               setSelectedDay(new Date());
             } else if (view === 'day') {
               setCurrentDate(new Date());
