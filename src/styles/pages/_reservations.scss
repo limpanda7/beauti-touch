@@ -136,7 +136,7 @@
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0;
-  width: 120px;
+  width: 140px;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
@@ -176,13 +176,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .reservation-modal-title {
   font-size: 1.25rem;
   font-weight: bold;
   margin: 0;
+}
+
+// 예약 모달에서 폼 그룹 간격 줄이기
+.modal-content .form-group {
+  margin-bottom: 0.75rem;
 }
 
 .reservation-modal-grid {
@@ -252,7 +257,7 @@
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 }
 
 .reservation-modal-price-value {

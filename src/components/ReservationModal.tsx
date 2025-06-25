@@ -36,9 +36,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [amPm, setAmPm] = useState<string>('AM');
-  const [hour, setHour] = useState<string>('');
-  const [minute, setMinute] = useState<string>('00');
+  const [selectedTime, setSelectedTime] = useState<string>('');
   const [isMobile, setIsMobile] = useState(false);
 
   // 모바일 감지
@@ -77,13 +75,13 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
     return formatDuration(duration);
   };
 
-  // 5분 단위 시간 옵션 생성 (AM이 먼저)
+  // 10분 단위 시간 옵션 생성 (24시간제)
   const generateTimeOptions = () => {
     const options = [];
     for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 5) {
+      for (let minute = 0; minute < 60; minute += 10) {
         const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        const displayTime = format(new Date(`2000-01-01T${timeString}`), 'h:mm a');
+        const displayTime = format(new Date(`2000-01-01T${timeString}`), 'HH:mm');
         options.push({ value: timeString, label: displayTime });
       }
     }
@@ -143,25 +141,10 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
     if (reservation?.time) {
       const [h, m] = reservation.time.split(':');
       let hNum = parseInt(h, 10);
-      if (hNum === 0) {
-        setHour('12');
-        setAmPm('AM');
-      } else if (hNum === 12) {
-        setHour('12');
-        setAmPm('PM');
-      } else if (hNum > 12) {
-        setHour((hNum - 12).toString());
-        setAmPm('PM');
-      } else {
-        setHour(hNum.toString());
-        setAmPm('AM');
-      }
-      setMinute(m);
+      setSelectedTime(`${hNum.toString().padStart(2, '0')}:${m}`);
     } else {
-      // 새 예약 생성 시 AM을 기본값으로 설정
-      setAmPm('AM');
-      setHour('');
-      setMinute('00');
+      // 새 예약 생성 시 기본값 설정
+      setSelectedTime('');
     }
   }, [reservation]);
 
@@ -251,20 +234,11 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
       }
 
       // 시간 입력 검증 - AM/PM, 시간이 선택되었는지 확인 (분은 선택하지 않으면 00으로 처리)
-      if (!amPm || !hour) {
+      if (!selectedTime) {
         alert(t('reservations.timeRequired'));
         setLoading(false);
         return;
       }
-
-      // 시간을 24시간 형식으로 변환 (분이 없으면 00으로 처리)
-      let h = parseInt(hour, 10);
-      if (amPm === 'AM') {
-        if (h === 12) h = 0;
-      } else {
-        if (h !== 12) h += 12;
-      }
-      const timeValue = `${h.toString().padStart(2, '0')}:${minute || '00'}`;
 
       const reservationData = {
         customerId: formData.customerId,
@@ -273,7 +247,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
         productName: selectedProduct.name,
         price: formData.price,
         date: new Date(formData.date),
-        time: timeValue,
+        time: selectedTime,
         status: formData.status,
         memo: formData.memo,
       };
@@ -382,79 +356,65 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
           }
 
           {isMobile ? (
-            // 모바일: 날짜와 시간을 별도 행으로 표시
-            <>
-              <div className="form-group">
-                <label htmlFor="date">{t('reservations.date')}</label>
-                <input
-                  type="date"
-                  id="date"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  onFocus={handleInputFocus}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="time">{t('reservations.time')}</label>
-                <div className="reservation-modal-time-select" style={{ display: 'flex', gap: '0.5rem' }}>
-                  <select value={amPm} onChange={e => setAmPm(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }} required>
-                    <option value="AM">AM</option>
-                    <option value="PM">PM</option>
-                  </select>
-                  <select value={hour} onChange={e => setHour(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }} required>
-                    <option value="">{t('reservations.hour')}</option>
-                    {[...Array(12)].map((_, i) => (
-                      <option key={i+1} value={(i+1).toString()}>{i+1}</option>
+            // 모바일: 날짜와 시간을 한 행에 표시
+            <div className="form-group">
+              <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'flex-end' }}>
+                <div style={{ flex: 1 }}>
+                  <label htmlFor="date">{t('reservations.date')}</label>
+                  <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    onFocus={handleInputFocus}
+                    required
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label htmlFor="time">{t('reservations.time')}</label>
+                  <select 
+                    value={selectedTime} 
+                    onChange={e => setSelectedTime(e.target.value)} 
+                    onFocus={handleInputFocus}
+                    required
+                  >
+                    <option value="">{t('reservations.selectTime')}</option>
+                    {timeOptions.map((option, index) => (
+                      <option key={index} value={option.value}>{option.label}</option>
                     ))}
-                  </select>
-                  <select value={minute} onChange={e => setMinute(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }}>
-                    <option value="00">00</option>
-                    {[...Array(12)].map((_, i) => {
-                      const val = (i*5).toString().padStart(2, '0');
-                      return <option key={val} value={val}>{val}</option>;
-                    })}
                   </select>
                 </div>
               </div>
-            </>
+            </div>
           ) : (
-            // 데스크탑: 기존 그리드 레이아웃 유지
-            <div className="reservation-modal-grid">
-              <div className="form-group">
-                <label htmlFor="date">{t('reservations.date')}</label>
-                <input
-                  type="date"
-                  id="date"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  onFocus={handleInputFocus}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="time">{t('reservations.time')}</label>
-                <div className="reservation-modal-time-select" style={{ display: 'flex', gap: '0.5rem' }}>
-                  <select value={amPm} onChange={e => setAmPm(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }} required>
-                    <option value="AM">AM</option>
-                    <option value="PM">PM</option>
-                  </select>
-                  <select value={hour} onChange={e => setHour(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }} required>
-                    <option value="">{t('reservations.hour')}</option>
-                    {[...Array(12)].map((_, i) => (
-                      <option key={i+1} value={(i+1).toString()}>{i+1}</option>
+            // 데스크탑: 날짜와 시간을 한 행에 표시
+            <div className="form-group">
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
+                <div style={{ flex: 1 }}>
+                  <label htmlFor="date">{t('reservations.date')}</label>
+                  <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    onFocus={handleInputFocus}
+                    required
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label htmlFor="time">{t('reservations.time')}</label>
+                  <select 
+                    value={selectedTime} 
+                    onChange={e => setSelectedTime(e.target.value)} 
+                    onFocus={handleInputFocus}
+                    required
+                  >
+                    <option value="">{t('reservations.selectTime')}</option>
+                    {timeOptions.map((option, index) => (
+                      <option key={index} value={option.value}>{option.label}</option>
                     ))}
-                  </select>
-                  <select value={minute} onChange={e => setMinute(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }}>
-                    <option value="00">00</option>
-                    {[...Array(12)].map((_, i) => {
-                      const val = (i*5).toString().padStart(2, '0');
-                      return <option key={val} value={val}>{val}</option>;
-                    })}
                   </select>
                 </div>
               </div>

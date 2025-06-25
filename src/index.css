@@ -35,7 +35,7 @@ code {
   padding: 2rem;
   border-radius: 0.5rem;
   max-width: 500px;
-  width: 90%;
-  max-height: 90vh;
+  width: 95%;
+  max-height: 95vh;
   overflow-y: auto;
 } 
