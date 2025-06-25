@@ -8,6 +8,7 @@ import type { Customer, Reservation } from '../types';
 import { customerService, reservationService } from '../services/firestore';
 import CustomerModal from '../components/CustomerModal';
 import LoadingSpinner from '../components/LoadingSpinner';
+import Button from '../components/Button';
 import { useCurrencyFormat } from '../utils/currency';
 import { useSettingsStore } from '../stores/settingsStore';
 import { maskCustomerData } from '../utils/customerUtils';
@@ -18,14 +19,6 @@ const CustomerDetailPage: React.FC = () => {
   const { businessType } = useSettingsStore();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
-  const skinTypeOptions = [
-    { value: 'normal', label: t('customers.skinTypes.normal') },
-    { value: 'dry', label: t('customers.skinTypes.dry') },
-    { value: 'oily', label: t('customers.skinTypes.oily') },
-    { value: 'combination', label: t('customers.skinTypes.combination') },
-    { value: 'sensitive', label: t('customers.skinTypes.sensitive') },
-  ];
   
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -48,17 +41,11 @@ const CustomerDetailPage: React.FC = () => {
           name: customerData.name || '',
           phone: customerData.phone || '',
           memo: customerData.memo || '',
-          skinType: customerData.skinType || '',
-          allergies: customerData.allergies || '',
-          notes: customerData.notes || '',
         });
         setOriginalData({
           name: customerData.name || '',
           phone: customerData.phone || '',
           memo: customerData.memo || '',
-          skinType: customerData.skinType || '',
-          allergies: customerData.allergies || '',
-          notes: customerData.notes || '',
         });
         const reservationData = await reservationService.getByCustomerId(id);
         setReservations(reservationData);
@@ -94,9 +81,6 @@ const CustomerDetailPage: React.FC = () => {
         name: detailForm.name || customer.name,
         phone: detailForm.phone || customer.phone,
         memo: detailForm.memo,
-        skinType: detailForm.skinType,
-        allergies: detailForm.allergies,
-        notes: detailForm.notes,
       };
 
       await customerService.update(customer.id, updatedCustomer);
@@ -125,9 +109,6 @@ const CustomerDetailPage: React.FC = () => {
       name: customer?.name || '',
       phone: customer?.phone || '',
       memo: customer?.memo || '',
-      skinType: customer?.skinType || '',
-      allergies: customer?.allergies || '',
-      notes: customer?.notes || '',
     });
     setIsDetailEdit(true);
   };
@@ -137,9 +118,6 @@ const CustomerDetailPage: React.FC = () => {
       name: customer?.name || '',
       phone: customer?.phone || '',
       memo: customer?.memo || '',
-      skinType: customer?.skinType || '',
-      allergies: customer?.allergies || '',
-      notes: customer?.notes || '',
     });
     setIsDetailEdit(false);
   };
@@ -192,18 +170,16 @@ const CustomerDetailPage: React.FC = () => {
     <div className="customer-detail-page">
       <div className="customer-detail-header">
         <div className="customer-detail-header-left">
-          <button
+          <Button
             onClick={() => navigate('/customers')}
+            variant="icon"
             className="customer-detail-back-icon"
           >
-            <ArrowLeft style={{ width: '1.5rem', height: '1.5rem' }} />
-          </button>
+            <ArrowLeft style={{ width: '1.25rem', height: '1.25rem' }} />
+          </Button>
         </div>
         <div className="customer-detail-header-center">
           <h1 className="customer-detail-title">{customer.name}</h1>
-        </div>
-        <div className="customer-detail-btn-group">
-          {/* 버튼들이 여기에서 아래로 이동합니다. */}
         </div>
       </div>
 
@@ -214,88 +190,116 @@ const CustomerDetailPage: React.FC = () => {
             <div className="customer-detail-btn-group">
               {isDetailEdit ? (
                 <>
-                  <button
+                  <Button
                     onClick={handleSave}
                     disabled={isDetailSaving}
-                    className="customer-detail-btn customer-detail-btn-save"
+                    loading={isDetailSaving}
+                    variant="primary"
                   >
-                    <Save style={{ width: '1rem', height: '1rem' }} />
-                    {isDetailSaving ? t('common.saving') : t('common.save')}
-                  </button>
-                  <button
+                    {t('common.save')}
+                  </Button>
+                  <Button
                     onClick={handleDetailCancel}
-                    className="customer-detail-btn customer-detail-btn-cancel"
+                    variant="secondary"
                   >
                     {t('common.cancel')}
-                  </button>
+                  </Button>
                 </>
               ) : (
                 <>
-                  <button
+                  <Button
                     onClick={handleDetailEdit}
-                    className="customer-detail-btn customer-detail-btn-edit"
+                    variant="primary"
                   >
-                    <Edit style={{ width: '1rem', height: '1rem' }} />
                     {t('common.edit')}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={handleDelete}
                     disabled={isDeleting}
-                    className="customer-detail-btn customer-detail-btn-delete"
+                    loading={isDeleting}
+                    variant="danger"
                   >
-                    <Trash2 style={{ width: '1rem', height: '1rem' }} />
-                    {isDeleting ? t('common.deleting') : t('common.delete')}
-                  </button>
+                    {t('common.delete')}
+                  </Button>
                 </>
               )}
             </div>
           </div>
-          <div className="customer-detail-form">
-            <div className="customer-detail-form-item">
-              <label className="customer-detail-label">{t('customers.name')}</label>
-              {isDetailEdit ? (
-                <input
-                  type="text"
-                  name="name"
-                  value={detailForm?.name || ''}
-                  onChange={handleFormChange}
-                />
-              ) : (
-                <p className="customer-detail-value">{customer.name}</p>
-              )}
-            </div>
-            <div className="customer-detail-form-item">
-              <label className="customer-detail-label">ID</label>
-              <p className="customer-detail-value">
-                {customer.id.length === 4 && /^\d{4}$/.test(customer.id) ? customer.id : customer.id.slice(0, 4)}
-              </p>
-            </div>
-            <div className="customer-detail-form-item">
-              <label className="customer-detail-label">{t('customers.phone')}</label>
-              {isDetailEdit ? (
-                <input
-                  type="text"
-                  name="phone"
-                  value={detailForm?.phone || ''}
-                  onChange={handleFormChange}
-                />
-              ) : (
-                <p className="customer-detail-value">{customer.phone}</p>
-              )}
-            </div>
-          </div>
-          <div className="customer-detail-memo">
-            <label className="customer-detail-label">{t('customers.memo')}</label>
-            {isDetailEdit ? (
-              <textarea
-                name="memo"
-                value={detailForm?.memo || ''}
-                onChange={handleFormChange}
-                rows={4}
-              />
-            ) : (
-              <p className="customer-detail-value memo">{customer.memo || '-'}</p>
-            )}
+          
+          <div className="customer-detail-table-container">
+            <table className="customer-detail-table">
+              <tbody>
+                <tr className="customer-detail-table-row">
+                  <td className="customer-detail-table-label">ID</td>
+                  <td className="customer-detail-table-label">{t('customers.name')}</td>
+                  <td className="customer-detail-table-label">{t('customers.phone')}</td>
+                  <td className="customer-detail-table-label customer-detail-memo-label-desktop">{t('customers.memo')}</td>
+                </tr>
+                <tr className="customer-detail-table-row">
+                  <td className="customer-detail-table-value">
+                    {customer.id.length === 4 && /^\d{4}$/.test(customer.id) ? customer.id : customer.id.slice(0, 4)}
+                  </td>
+                  <td className="customer-detail-table-value">
+                    {isDetailEdit ? (
+                      <input
+                        type="text"
+                        name="name"
+                        value={detailForm?.name || ''}
+                        onChange={handleFormChange}
+                        className="customer-detail-table-input"
+                      />
+                    ) : (
+                      <span>{customer.name}</span>
+                    )}
+                  </td>
+                  <td className="customer-detail-table-value">
+                    {isDetailEdit ? (
+                      <input
+                        type="text"
+                        name="phone"
+                        value={detailForm?.phone || ''}
+                        onChange={handleFormChange}
+                        className="customer-detail-table-input"
+                      />
+                    ) : (
+                      <span>{customer.phone}</span>
+                    )}
+                  </td>
+                  <td className="customer-detail-table-value customer-detail-memo-value-desktop">
+                    {isDetailEdit ? (
+                      <textarea
+                        name="memo"
+                        value={detailForm?.memo || ''}
+                        onChange={handleFormChange}
+                        className="customer-detail-table-textarea"
+                        rows={4}
+                      />
+                    ) : (
+                      <span className="customer-detail-memo-text">{customer.memo || '-'}</span>
+                    )}
+                  </td>
+                </tr>
+                {/* 모바일에서 메모를 별도 행으로 표시 */}
+                <tr className="customer-detail-table-row customer-detail-memo-row-mobile">
+                  <td className="customer-detail-table-label" colSpan={3}>{t('customers.memo')}</td>
+                </tr>
+                <tr className="customer-detail-table-row customer-detail-memo-row-mobile">
+                  <td className="customer-detail-table-value" colSpan={3}>
+                    {isDetailEdit ? (
+                      <textarea
+                        name="memo"
+                        value={detailForm?.memo || ''}
+                        onChange={handleFormChange}
+                        className="customer-detail-table-textarea"
+                        rows={4}
+                      />
+                    ) : (
+                      <span className="customer-detail-memo-text">{customer.memo || '-'}</span>
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -325,13 +329,14 @@ const CustomerDetailPage: React.FC = () => {
                     <p className="customer-detail-reservation-status">{reservationStatusLabel(reservation.status)}</p>
                   </div>
                   <div className="customer-detail-reservation-actions">
-                    <button
+                    <Button
                       onClick={() => handleChartClick(reservation.id)}
-                      className="customer-detail-reservation-action"
+                      variant="chart"
+                      size="sm"
                     >
                       <FileText style={{ width: '1rem', height: '1rem' }} />
                       {reservation.chartType ? t('customers.viewChart') : t('customers.createChart')}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}

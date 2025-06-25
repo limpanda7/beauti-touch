@@ -75,6 +75,13 @@ const Layout: React.FC = () => {
     }
   };
 
+  // floating action button을 표시할 경로인지 확인
+  const shouldShowFloatingButton = () => {
+    const currentPath = location.pathname;
+    // 메인 페이지들만 floating button 표시 (상세 페이지 제외)
+    return ['/reservations', '/customers', '/products'].includes(currentPath);
+  };
+
   const menuItems = [
     { path: '/reservations', icon: Calendar, label: t('navigation.reservations') },
     { path: '/customers', icon: Users, label: t('navigation.customers') },
@@ -125,7 +132,7 @@ const Layout: React.FC = () => {
       )}
 
       {/* 모바일 플로팅 + 버튼 - 모달이 열려있지 않을 때만 표시 */}
-      {isMobile && !isModalOpen && (
+      {isMobile && !isModalOpen && shouldShowFloatingButton() && (
         <button 
           className="floating-action-button"
           onClick={handleFloatingButtonClick}
