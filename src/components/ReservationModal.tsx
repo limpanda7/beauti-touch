@@ -368,24 +368,23 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="product">{t('reservations.product')}</label>
-            <select
-              id="product"
-              name="productId"
-              value={formData.productId}
-              onChange={handleChange}
-              onFocus={handleInputFocus}
-              required
-            >
-              <option value=""></option>
-              {products.map(product => (
-                <option key={product.id} value={product.id}>
-                  {product.name} ({product.duration ? formatProductDuration(product.duration) : t('reservations.timeNotSet')})
-                </option>
-              ))}
-            </select>
-          </div>
+          {
+            reservation &&
+            <div className="form-group">
+              <label htmlFor="status">{t('reservations.status')}</label>
+              <select
+                id="status"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                onFocus={handleInputFocus}
+              >
+                <option value="confirmed">{t('reservations.statusConfirmed')}</option>
+                <option value="noshow">{t('reservations.statusNoshow')}</option>
+                <option value="cancelled">{t('reservations.statusCancelled')}</option>
+              </select>
+            </div>
+          }
 
           {isMobile ? (
             // 모바일: 날짜와 시간을 별도 행으로 표시
@@ -468,6 +467,25 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
           )}
 
           <div className="form-group">
+            <label htmlFor="product">{t('reservations.product')}</label>
+            <select
+              id="product"
+              name="productId"
+              value={formData.productId}
+              onChange={handleChange}
+              onFocus={handleInputFocus}
+              required
+            >
+              <option value=""></option>
+              {products.map(product => (
+                <option key={product.id} value={product.id}>
+                  {product.name} ({product.duration ? formatProductDuration(product.duration) : t('reservations.timeNotSet')})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
             <label htmlFor="price">{t('reservations.price')}</label>
             <div className="price-input-wrapper">
               <input
@@ -485,24 +503,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
               <span className="price-unit">{t('settings.currencies.KRW').split(' ')[0]}</span>
             </div>
           </div>
-
-          {
-            reservation &&
-            <div className="form-group">
-              <label htmlFor="status">{t('reservations.status')}</label>
-              <select
-                id="status"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                onFocus={handleInputFocus}
-              >
-                <option value="confirmed">{t('reservations.statusConfirmed')}</option>
-                <option value="noshow">{t('reservations.statusNoshow')}</option>
-                <option value="cancelled">{t('reservations.statusCancelled')}</option>
-              </select>
-            </div>
-          }
 
           <div className="form-group">
             <label htmlFor="memo">{t('reservations.memo')}</label>
