@@ -36,9 +36,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [amPm, setAmPm] = useState<string>('');
+  const [amPm, setAmPm] = useState<string>('AM');
   const [hour, setHour] = useState<string>('');
-  const [minute, setMinute] = useState<string>('');
+  const [minute, setMinute] = useState<string>('00');
   const [isMobile, setIsMobile] = useState(false);
 
   // 모바일 감지
@@ -139,11 +139,10 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
   }, [reservation, initialCustomerId, products]);
 
   useEffect(() => {
-    // 기존 예약 수정 시 값 세팅
-    if (formData.time) {
-      const [h, m] = formData.time.split(':');
+    // 기존 예약 수정 시 시간 값 세팅
+    if (reservation?.time) {
+      const [h, m] = reservation.time.split(':');
       let hNum = parseInt(h, 10);
-      let ampm = 'AM';
       if (hNum === 0) {
         setHour('12');
         setAmPm('AM');
@@ -159,25 +158,12 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
       }
       setMinute(m);
     } else {
-      setAmPm('');
+      // 새 예약 생성 시 AM을 기본값으로 설정
+      setAmPm('AM');
       setHour('');
-      setMinute('');
+      setMinute('00');
     }
-  }, [formData.time]);
-
-  useEffect(() => {
-    // 세 값이 모두 선택되면 24시간제로 변환하여 formData.time에 저장
-    if (amPm && hour && minute) {
-      let h = parseInt(hour, 10);
-      if (amPm === 'AM') {
-        if (h === 12) h = 0;
-      } else {
-        if (h !== 12) h += 12;
-      }
-      const timeValue = `${h.toString().padStart(2, '0')}:${minute}`;
-      setFormData(prev => ({ ...prev, time: timeValue }));
-    }
-  }, [amPm, hour, minute]);
+  }, [reservation]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -264,12 +250,21 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
         return;
       }
 
-      // 시간 입력 검증
-      if (!formData.time || formData.time.trim() === '') {
+      // 시간 입력 검증 - AM/PM, 시간이 선택되었는지 확인 (분은 선택하지 않으면 00으로 처리)
+      if (!amPm || !hour) {
         alert(t('reservations.timeRequired'));
         setLoading(false);
         return;
       }
+
+      // 시간을 24시간 형식으로 변환 (분이 없으면 00으로 처리)
+      let h = parseInt(hour, 10);
+      if (amPm === 'AM') {
+        if (h === 12) h = 0;
+      } else {
+        if (h !== 12) h += 12;
+      }
+      const timeValue = `${h.toString().padStart(2, '0')}:${minute || '00'}`;
 
       const reservationData = {
         customerId: formData.customerId,
@@ -278,7 +273,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
         productName: selectedProduct.name,
         price: formData.price,
         date: new Date(formData.date),
-        time: formData.time,
+        time: timeValue,
         status: formData.status,
         memo: formData.memo,
       };
@@ -415,8 +410,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                       <option key={i+1} value={(i+1).toString()}>{i+1}</option>
                     ))}
                   </select>
-                  <select value={minute} onChange={e => setMinute(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }} required>
-                    <option value="">{t('reservations.minute')}</option>
+                  <select value={minute} onChange={e => setMinute(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }}>
+                    <option value="00">00</option>
                     {[...Array(12)].map((_, i) => {
                       const val = (i*5).toString().padStart(2, '0');
                       return <option key={val} value={val}>{val}</option>;
@@ -454,8 +449,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                       <option key={i+1} value={(i+1).toString()}>{i+1}</option>
                     ))}
                   </select>
-                  <select value={minute} onChange={e => setMinute(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }} required>
-                    <option value="">{t('reservations.minute')}</option>
+                  <select value={minute} onChange={e => setMinute(e.target.value)} onFocus={handleInputFocus} style={{ width: 70 }}>
+                    <option value="00">00</option>
                     {[...Array(12)].map((_, i) => {
                       const val = (i*5).toString().padStart(2, '0');
                       return <option key={val} value={val}>{val}</option>;
