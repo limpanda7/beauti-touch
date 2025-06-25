@@ -190,6 +190,11 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
       setFormData(prev => ({ ...prev, [name]: value }));
     }
 
+    // status 변경 시 로그 추가
+    if (name === 'status') {
+      console.log('예약 상태 변경:', value);
+    }
+
     if (name === 'productId') {
       const product = products.find(p => p.id === value);
       setSelectedProduct(product || null);
@@ -246,7 +251,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
     }
   };
 
-  const saveReservation = async () => {
+  const saveReservation = async (event?: React.FormEvent) => {
+    if (event) event.preventDefault();
     setLoading(true);
     try {
       const selectedCustomer = customers.find(c => c.id === formData.customerId);
@@ -281,12 +287,14 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
 
       if (reservation) {
         // 기존 예약 수정
+        console.log('예약 업데이트 중:', reservation.id, reservationData);
         await reservationService.update(reservation.id, reservationData);
         const updatedReservation = await reservationService.getById(reservation.id);
         if (!updatedReservation) {
           throw new Error(t('reservations.updateError'));
         }
         savedReservation = updatedReservation;
+        console.log('예약 업데이트 완료:', savedReservation);
       } else {
         // 새 예약 생성
         const newId = await reservationService.create(reservationData);
@@ -300,7 +308,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
       onSave(savedReservation, 'close');
     } catch (error) {
       console.error(t('reservations.saveError'), error);
-      alert(t('reservations.saveError'));
+      alert(`${t('reservations.saveError')}: ${error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'}`);
     } finally {
       setLoading(false);
     }

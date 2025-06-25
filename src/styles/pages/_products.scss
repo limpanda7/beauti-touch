@@ -192,32 +192,3 @@
     }
   }
 }
-
-// 모바일 테이블 스타일
-@media (max-width: 768px) {
-  .table-container {
-    width: 100vw;
-    max-width: 100vw;
-    
-    table {
-      min-width: 600px; // 최소 너비 설정
-      
-      th, td {
-        padding: 0.5rem;
-        font-size: 0.875rem;
-      }
-      
-      .name {
-        min-width: 120px;
-      }
-      
-      th:last-child,
-      td:last-child {
-        position: sticky;
-        right: 0;
-        background: white;
-        box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
-      }
-    }
-  }
-} 

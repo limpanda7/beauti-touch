@@ -201,10 +201,6 @@ const CustomerDetailPage: React.FC = () => {
         </div>
         <div className="customer-detail-header-center">
           <h1 className="customer-detail-title">{customer.name}</h1>
-          <p className="customer-detail-phone">{customer.phone}</p>
-          <p className="customer-detail-id">
-            ID: {customer.id.length === 4 && /^\d{4}$/.test(customer.id) ? customer.id : customer.id.slice(0, 4)}
-          </p>
         </div>
         <div className="customer-detail-btn-group">
           {/* 버튼들이 여기에서 아래로 이동합니다. */}
@@ -255,7 +251,7 @@ const CustomerDetailPage: React.FC = () => {
             </div>
           </div>
           <div className="customer-detail-form">
-            <div>
+            <div className="customer-detail-form-item">
               <label className="customer-detail-label">{t('customers.name')}</label>
               {isDetailEdit ? (
                 <input
@@ -268,7 +264,13 @@ const CustomerDetailPage: React.FC = () => {
                 <p className="customer-detail-value">{customer.name}</p>
               )}
             </div>
-            <div>
+            <div className="customer-detail-form-item">
+              <label className="customer-detail-label">ID</label>
+              <p className="customer-detail-value">
+                {customer.id.length === 4 && /^\d{4}$/.test(customer.id) ? customer.id : customer.id.slice(0, 4)}
+              </p>
+            </div>
+            <div className="customer-detail-form-item">
               <label className="customer-detail-label">{t('customers.phone')}</label>
               {isDetailEdit ? (
                 <input
@@ -302,7 +304,10 @@ const CustomerDetailPage: React.FC = () => {
           {reservations.length > 0 ? (
             <div className="customer-detail-reservation-list">
               {reservations.map(reservation => (
-                <div key={reservation.id} className="customer-detail-reservation-item">
+                <div 
+                  key={reservation.id} 
+                  className={`customer-detail-reservation-item ${reservation.status}`}
+                >
                   <div>
                     <p className="customer-detail-reservation-date">{format(new Date(reservation.date), 'yyyy.MM.dd (eee)', { locale: ko })} - {reservation.time}</p>
                     <p className="customer-detail-reservation-product">{reservation.productName}</p>

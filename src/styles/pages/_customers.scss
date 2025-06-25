@@ -155,26 +155,43 @@
   gap: 1.5rem;
 }
 
-.customer-detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.customer-detail-page .customer-detail-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 1rem;
+  flex-wrap: nowrap !important;
+  flex-direction: row !important;
+  width: 100%;
+  min-height: auto;
+  height: auto;
 }
 
-.customer-detail-header-left {
+.customer-detail-page .customer-detail-header-left {
   flex-shrink: 0;
+  min-width: auto;
+  width: auto;
 }
 
-.customer-detail-header-center {
+.customer-detail-page .customer-detail-header-center {
   flex: 1;
   text-align: left;
+  min-width: 0;
+  overflow: hidden;
+  width: auto;
 }
 
-.customer-detail-title {
+.customer-detail-page .customer-detail-title {
   font-size: 1.875rem;
   font-weight: bold;
   color: #111827;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  line-height: 1.2;
+  width: 100%;
 }
 
 .customer-detail-phone {
@@ -265,8 +282,8 @@
 }
 
 .customer-detail-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
 }
 
@@ -292,9 +309,14 @@
 }
 
 .customer-detail-form {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
+  margin-top: 1rem;
+}
+
+.customer-detail-memo {
+  grid-column: 1 / -1;
   margin-top: 1rem;
 }
 
@@ -377,75 +399,152 @@
   padding: 1rem;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  background-color: $reservation-confirmed-bg;
+  align-items: flex-start;
+  background-color: white;
+  gap: 1rem;
+  transition: all 0.2s ease;
+  
+  // 모바일에서 레이아웃 개선
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  
+  // 예약 상태별 스타일
+  &.confirmed {
+    background-color: $reservation-confirmed-bg;
+    border-color: #93C5FD !important;
+    
+    .customer-detail-reservation-date,
+    .customer-detail-reservation-product,
+    .customer-detail-reservation-price-value {
+      color: $reservation-confirmed-text;
+    }
+    
+    .customer-detail-reservation-status {
+      color: $reservation-confirmed-text;
+      font-weight: 500;
+      background-color: rgba(30, 64, 175, 0.1);
+    }
+  }
   
   &.completed {
     background-color: $reservation-completed-bg;
     border-color: #A7F3D0 !important;
     
-    .reservations-day-item-time,
-    .reservations-day-item-customer,
-    .reservations-day-item-product,
-    .reservations-day-item-price {
+    .customer-detail-reservation-date,
+    .customer-detail-reservation-product,
+    .customer-detail-reservation-price-value {
       color: $reservation-completed-text;
+    }
+    
+    .customer-detail-reservation-status {
+      color: $reservation-completed-text;
+      font-weight: 500;
+      background-color: rgba(6, 95, 70, 0.1);
     }
   }
   
   &.noshow {
     background-color: $reservation-noshow-bg;
-    border: 1px solid #F9A8D4;
+    border-color: #F9A8D4 !important;
     
-    p {
+    .customer-detail-reservation-date,
+    .customer-detail-reservation-product,
+    .customer-detail-reservation-price-value {
       color: $reservation-noshow-text;
-      
-      &.time {
-        color: $reservation-noshow-text;
-      }
-      
-      &.price {
-        color: $reservation-noshow-text;
-      }
+    }
+    
+    .customer-detail-reservation-status {
+      color: $reservation-noshow-text;
+      font-weight: 500;
+      background-color: rgba(190, 24, 93, 0.1);
     }
   }
   
   &.cancelled {
     background-color: $reservation-cancelled-bg;
-    border: 1px solid #E5E7EB;
-
-    p {
+    border-color: #D1D5DB !important;
+    
+    .customer-detail-reservation-date,
+    .customer-detail-reservation-product,
+    .customer-detail-reservation-price-value {
       color: $reservation-cancelled-text;
+    }
+    
+    .customer-detail-reservation-status {
+      color: $reservation-cancelled-text;
+      font-weight: 500;
+      background-color: rgba(107, 114, 128, 0.1);
     }
   }
   
-  &.confirmed {
-    background-color: $reservation-confirmed-bg;
+  // 호버 효과
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 }
 
 .customer-detail-reservation-date {
   font-weight: 600;
   margin: 0;
+  font-size: 0.875rem;
+  
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 }
 
 .customer-detail-reservation-product {
   color: #6B7280;
   margin: 0.25rem 0 0 0;
+  font-size: 0.875rem;
+  
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 }
 
 .customer-detail-reservation-price {
   text-align: right;
+  flex-shrink: 0;
+  
+  @media (max-width: 768px) {
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+    border-top: 1px solid #E5E7EB;
+  }
 }
 
 .customer-detail-reservation-price-value {
   font-weight: 600;
   margin: 0;
+  font-size: 0.875rem;
+  
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 }
 
 .customer-detail-reservation-status {
   color: #6B7280;
   margin: 0.25rem 0 0 0;
   font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  display: inline-block;
+  font-weight: 500;
+  
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+    margin: 0;
+    padding: 0.125rem 0.375rem;
+  }
 }
 
 .customer-detail-no-reservations {
@@ -461,6 +560,11 @@
   background-color: #F9FAFB;
   border-radius: 0.375rem;
   border-left: 3px solid #3B82F6;
+  
+  @media (max-width: 768px) {
+    margin-top: 0.375rem;
+    padding: 0.375rem;
+  }
 }
 
 .customer-detail-chart-type {
@@ -468,6 +572,11 @@
   color: #3B82F6;
   margin: 0 0 0.25rem 0;
   font-size: 0.875rem;
+  
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+    margin: 0 0 0.125rem 0;
+  }
 }
 
 .customer-detail-chart-product,
@@ -475,6 +584,11 @@
   margin: 0.125rem 0;
   font-size: 0.75rem;
   color: #6B7280;
+  
+  @media (max-width: 768px) {
+    font-size: 0.7rem;
+    margin: 0.0625rem 0;
+  }
 }
 
 .customer-detail-value {
@@ -512,6 +626,11 @@
   display: flex;
   gap: 0.5rem;
   margin-top: 0.5rem;
+  
+  @media (max-width: 768px) {
+    margin-top: 0;
+    justify-content: flex-end;
+  }
 }
 
 .customer-detail-reservation-action {
@@ -527,6 +646,12 @@
   align-items: center;
   gap: 0.25rem;
   transition: all 0.15s;
+  white-space: nowrap;
+  
+  @media (max-width: 768px) {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8rem;
+  }
 }
 
 .customer-detail-reservation-action:hover {

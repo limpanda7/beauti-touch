@@ -390,7 +390,15 @@ export const reservationService = {
       updateData.date = Timestamp.fromDate(utcDate);
     }
     
-    await updateDoc(docRef, updateData);
+    console.log('Firestore 업데이트 시작:', id, updateData);
+    
+    try {
+      await updateDoc(docRef, updateData);
+      console.log('Firestore 업데이트 성공:', id);
+    } catch (error) {
+      console.error('Firestore 업데이트 실패:', id, error);
+      throw error;
+    }
   },
 
   async delete(id: string): Promise<void> {
