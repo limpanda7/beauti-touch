@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Product } from '../types';
 import { productService } from '../services/firestore';
@@ -9,9 +9,10 @@ interface ProductModalProps {
   product: Product | null;
   onClose: () => void;
   onSave: (product: Product) => void;
+  onDelete?: () => void;
 }
 
-const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave }) => {
+const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave, onDelete }) => {
   const { t } = useTranslation();
   const { getCurrencySymbol } = useCurrencyFormat();
   const [loading, setLoading] = useState(false);
@@ -41,6 +42,23 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave })
     // 가격과 duration은 문자열로 저장하되, 숫자만 허용
     if (value === '' || /^\d*$/.test(value)) {
       setFormData(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!product) return;
+    
+    if (window.confirm(t('products.deleteConfirm'))) {
+      setLoading(true);
+      try {
+        await productService.delete(product.id);
+        onDelete?.();
+      } catch (error) {
+        console.error(t('products.deleteError'), error);
+        setError(t('products.deleteError'));
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -223,7 +241,24 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave })
               </label>
           </div>
 
+          {error && (
+            <div className="product-modal-error">
+              {error}
+            </div>
+          )}
+
           <div className="product-modal-btn-group">
+            {product && (
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={loading}
+                className="product-modal-btn product-modal-btn-delete"
+              >
+                <Trash2 style={{ width: '1rem', height: '1rem' }} />
+                {t('common.delete')}
+              </button>
+            )}
             <button
               type="button"
               onClick={onClose}

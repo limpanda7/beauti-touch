@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import type { Product } from '../types';
@@ -55,6 +55,10 @@ const ProductsPage: React.FC = () => {
     }
   };
 
+  const handleRowClick = (product: Product) => {
+    handleOpenModal(product);
+  };
+
   const handleOpenModal = (product: Product | null) => {
     setEditingProduct(product);
     setIsModalOpen(true);
@@ -65,18 +69,32 @@ const ProductsPage: React.FC = () => {
     setEditingProduct(null);
   };
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm(t('products.deleteConfirm'))) {
-      try {
-        await productService.delete(id);
-        await loadProducts();
-      } catch (error) {
-        console.error(t('products.deleteError'), error);
+  const handleProductSaved = (savedProduct: Product) => {
+    setProducts(prev => {
+      const existingIndex = prev.findIndex(p => p.id === savedProduct.id);
+      if (existingIndex >= 0) {
+        // 기존 상품 업데이트
+        const updated = [...prev];
+        updated[existingIndex] = savedProduct;
+        return updated;
+      } else {
+        // 새 상품 추가
+        return [savedProduct, ...prev];
       }
+    });
+    handleCloseModal();
+  };
+
+  const handleProductDeleted = () => {
+    if (editingProduct) {
+      setProducts(prev => prev.filter(p => p.id !== editingProduct.id));
     }
+    handleCloseModal();
   };
   
-  const handleToggleActive = async (product: Product) => {
+  const handleToggleActive = async (product: Product, e: React.MouseEvent) => {
+    e.stopPropagation(); // 행 클릭 이벤트 방지
+    
     // 로딩 상태 시작
     setLoadingProducts(prev => ({ ...prev, [product.id]: true }));
     
@@ -93,8 +111,113 @@ const ProductsPage: React.FC = () => {
 
   const isToggling = (productId: string) => togglingProducts.has(productId);
 
+  const renderMobileProductCard = (product: Product) => (
+    <div 
+      key={product.id} 
+      className="product-card"
+      onClick={() => handleRowClick(product)}
+    >
+      <div className="product-card-header">
+        <div className="product-card-name">
+          {product.name}
+        </div>
+        <div className="product-card-category">
+          {product.category}
+        </div>
+      </div>
+      
+      <div className="product-card-details">
+        <div className="product-card-price">
+          {formatCurrency(product.price)}
+        </div>
+        <div className="product-card-duration">
+          {formatDuration(product.duration)}
+        </div>
+      </div>
+      
+      <div className="product-card-status">
+        <label className="toggle-switch" onClick={(e) => handleToggleActive(product, e)}>
+          <input
+            type="checkbox"
+            checked={product.isActive}
+            readOnly
+          />
+          <div className="toggle-slider"></div>
+        </label>
+      </div>
+    </div>
+  );
+
+  const renderDesktopTable = () => (
+    <table>
+      <thead>
+        <tr>
+          <th>{t('products.name')}</th>
+          <th>{t('products.category')}</th>
+          <th style={{ textAlign: 'right' }}>{t('products.price')}</th>
+          <th style={{ textAlign: 'right' }}>{t('products.duration')}</th>
+          <th style={{ textAlign: 'center' }}>{t('products.isActive')}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {loading ? (
+          <tr>
+            <td colSpan={5} style={{ textAlign: 'center', padding: '2rem' }}>
+              <LoadingSpinner text={t('common.loading')} />
+            </td>
+          </tr>
+        ) : products.length > 0 ? (
+          products.map(product => (
+            <tr 
+              key={product.id} 
+              className="products-table-row-pointer"
+              onClick={() => handleRowClick(product)}
+            >
+              <td className="name">{product.name}</td>
+              <td>{product.category}</td>
+              <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>
+              <td style={{ textAlign: 'right' }}>{formatDuration(product.duration)}</td>
+              <td style={{ textAlign: 'center' }}>
+                {loadingProducts[product.id] ? (
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    alignItems: 'center',
+                    height: '1.5rem'
+                  }}>
+                    <div style={{
+                      width: '1rem',
+                      height: '1rem',
+                      border: '2px solid #E5E7EB',
+                      borderTop: '2px solid #3B82F6',
+                      borderRadius: '50%',
+                      animation: 'spin 1s linear infinite'
+                    }}></div>
+                  </div>
+                ) : (
+                  <label className="toggle-switch" onClick={(e) => handleToggleActive(product, e)}>
+                    <input
+                      type="checkbox"
+                      checked={product.isActive}
+                      readOnly
+                    />
+                    <div className="toggle-slider"></div>
+                  </label>
+                )}
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: '#6B7280' }}>{t('products.noProducts')}</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  );
+
   return (
-    <div className="content-wrapper">
+    <div className="content-wrapper products-page">
       {/* 모바일에서는 헤더 숨김 */}
       {!isMobile && (
         <div className="page-header">
@@ -110,96 +233,31 @@ const ProductsPage: React.FC = () => {
       )}
 
       <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>{t('products.name')}</th>
-              <th>{t('products.category')}</th>
-              <th style={{ textAlign: 'right' }}>{t('products.price')}</th>
-              <th style={{ textAlign: 'right' }}>{t('products.duration')}</th>
-              <th style={{ textAlign: 'center' }}>{t('products.isActive')}</th>
-              <th style={{ textAlign: 'right' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+        {isMobile ? (
+          <div className="products-mobile-container">
             {loading ? (
-              <tr>
-                <td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>
-                  <LoadingSpinner text={t('common.loading')} />
-                </td>
-              </tr>
+              <div className="products-mobile-loading">
+                <LoadingSpinner text={t('common.loading')} />
+              </div>
             ) : products.length > 0 ? (
-              products.map(product => (
-                <tr key={product.id}>
-                  <td className="name">{product.name}</td>
-                  <td>{product.category}</td>
-                  <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>
-                  <td style={{ textAlign: 'right' }}>{formatDuration(product.duration)}</td>
-                  <td style={{ textAlign: 'center' }}>
-                    {isToggling(product.id) ? (
-                      <div style={{ 
-                        display: 'flex', 
-                        justifyContent: 'center', 
-                        alignItems: 'center',
-                        height: '1.5rem'
-                      }}>
-                        <div style={{
-                          width: '1rem',
-                          height: '1rem',
-                          border: '2px solid #E5E7EB',
-                          borderTop: '2px solid #3B82F6',
-                          borderRadius: '50%',
-                          animation: 'spin 1s linear infinite'
-                        }}></div>
-                      </div>
-                    ) : (
-                      <label className="toggle-switch">
-                        <input
-                          type="checkbox"
-                          checked={product.isActive}
-                          onChange={() => handleToggleActive(product)}
-                        />
-                        <div className="toggle-slider"></div>
-                      </label>
-                    )}
-                  </td>
-                  <td style={{ textAlign: 'right' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                      <button 
-                        onClick={() => handleOpenModal(product)} 
-                        className="btn btn-icon edit"
-                        disabled={isToggling(product.id)}
-                      >
-                        <Edit style={{ width: '1rem', height: '1rem' }} />
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(product.id)} 
-                        className="btn btn-icon delete"
-                        disabled={isToggling(product.id)}
-                      >
-                        <Trash2 style={{ width: '1rem', height: '1rem' }} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
+              products.map(product => renderMobileProductCard(product))
             ) : (
-              <tr>
-                <td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: '#6B7280' }}>{t('products.noProducts')}</td>
-              </tr>
+              <div className="products-mobile-empty">
+                {t('products.noProducts')}
+              </div>
             )}
-          </tbody>
-        </table>
+          </div>
+        ) : (
+          renderDesktopTable()
+        )}
       </div>
 
       {isModalOpen && (
         <ProductModal
           product={editingProduct}
           onClose={handleCloseModal}
-          onSave={() => {
-            handleCloseModal();
-            loadProducts();
-          }}
+          onSave={handleProductSaved}
+          onDelete={handleProductDeleted}
         />
       )}
     </div>

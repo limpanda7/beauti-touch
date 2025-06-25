@@ -492,6 +492,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                 {loading ? t('common.deleting') : t('common.delete')}
               </button>
             )}
+            <button type="button" onClick={onClose} className="btn btn-secondary">
+              {t('common.cancel')}
+            </button>
             <button type="submit" disabled={loading} className="btn btn-primary">
               {loading ? t('common.saving') : t('common.save')}
             </button>
