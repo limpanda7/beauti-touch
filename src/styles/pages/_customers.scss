@@ -3,7 +3,7 @@
 // CustomersPage 스타일
 .customers-search-bar {
   padding: 1rem;
-  border-bottom: 1px solid #E5E7EB;
+  border-bottom: 1px solid $primary-color;
 }
 
 .customers-search-input-wrapper {
@@ -17,7 +17,7 @@
   transform: translateY(-50%);
   width: 1.25rem;
   height: 1.25rem;
-  color: #9CA3AF;
+  color: $primary-color;
 }
 
 .customers-search-input {
@@ -27,10 +27,86 @@
   padding-bottom: 0.5rem;
   width: 100%;
   max-width: 24rem;
-  border: 1px solid #D1D5DB;
+  border: 1px solid $primary-color;
   border-radius: 0.375rem;
   font-size: 0.875rem;
   box-sizing: border-box;
+  background: $bg-color;
+}
+
+// PC용 검색 컨테이너 스타일 개선
+.search-container {
+  position: relative;
+  margin: 1rem 0;
+  max-width: 28rem;
+  
+  .search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $primary-color;
+    width: 1rem;
+    height: 1rem;
+    z-index: 2;
+    transition: all 0.2s ease;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 0.625rem 0.75rem 0.625rem 2.5rem;
+    border: 2px solid $primary-color;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    background: $bg-color;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    
+    &:focus {
+      outline: none;
+      border-color: #3B82F6;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transform: translateY(-1px);
+      
+      & + .search-icon {
+        color: #3B82F6;
+        transform: translateY(-50%) scale(1.1);
+      }
+    }
+    
+    &:hover:not(:focus) {
+      border-color: #D1D5DB;
+      background: white;
+      box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+      
+      & + .search-icon {
+        color: #4B5563;
+      }
+    }
+    
+    &::placeholder {
+      color: $primary-color;
+      font-weight: 400;
+      transition: color 0.2s ease;
+    }
+    
+    &:focus::placeholder {
+      color: #D1D5DB;
+    }
+  }
+  
+  // 검색창에 입력이 있을 때의 스타일
+  &.has-content {
+    .search-icon {
+      color: #3B82F6;
+    }
+    
+    .search-input {
+      border-color: #3B82F6;
+      background: white;
+    }
+  }
 }
 
 .customers-table-row-pointer {
@@ -38,9 +114,21 @@
 }
 
 .customers-table-empty {
-  text-align: center;
-  padding: 2rem;
-  color: #6B7280;
+  text-align: center !important;
+  padding: 3rem 2rem;
+  color: $gray-700;
+  background: $bg-color;
+  border-radius: 0.75rem;
+  border: 2px dashed $primary-color;
+  margin: 1rem 0;
+  
+  &::before {
+    content: "🔍";
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.5;
+  }
 }
 
 // 모바일 고객 카드 스타일
@@ -95,7 +183,7 @@
   gap: 0.5rem;
   font-weight: 600;
   font-size: 1.125rem;
-  color: #111827;
+  color: $gray-900;
 }
 
 .customer-card-id {
@@ -112,7 +200,7 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
-  color: #374151;
+  color: $gray-900;
   font-size: 0.875rem;
 }
 
@@ -130,20 +218,20 @@
 }
 
 .customer-card-visit-label {
-  color: #6B7280;
+  color: $primary-color;
   font-weight: 500;
   min-width: 4rem;
 }
 
 .customer-card-visit-date {
-  color: #111827;
+  color: $gray-900;
   font-weight: 500;
 }
 
 .customer-card-icon {
   width: 1rem;
   height: 1rem;
-  color: #6B7280;
+  color: $primary-color;
   flex-shrink: 0;
 }
 
@@ -185,7 +273,7 @@
 .customer-detail-page .customer-detail-title {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #111827;
+  color: $gray-900;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -200,7 +288,7 @@
 }
 
 .customer-detail-phone {
-  color: #6B7280;
+  color: $gray-700;
   margin: 0.25rem 0 0 0;
 }
 
@@ -293,7 +381,7 @@
 }
 
 .customer-detail-section {
-  background-color: white;
+  background-color: $white;
   padding: 1rem;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -310,7 +398,7 @@
   font-size: 1rem;
   font-weight: 600;
   margin: 0 0 0.75rem 0;
-  color: #111827;
+  color: $gray-900;
 }
 
 .customer-detail-form {
@@ -351,7 +439,7 @@
   min-height: 2.25rem;
   padding: 0.5rem 0.75rem;
   font-size: 0.95rem;
-  color: #111827;
+  color: $gray-900;
   background: none;
   border: none;
 }
@@ -359,37 +447,37 @@
 // 고객 정보 테이블 스타일
 .customer-detail-table-container {
   margin-top: 1rem;
-  border: 1px solid #E5E7EB;
+  border: 1px solid $primary-color;
   border-radius: 0.5rem;
   overflow: hidden;
-  background-color: white;
+  background-color: $white;
 }
 
 .customer-detail-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
+  background-color: $white;
 }
 
 .customer-detail-table-row {
-  border-bottom: 1px solid #F3F4F6;
+  border-bottom: 1px solid $primary-color;
   
   &:last-child {
     border-bottom: none;
   }
   
   &:hover {
-    background-color: #F9FAFB;
+    background-color: $gray-100;
   }
 }
 
 .customer-detail-table-label {
   padding: 1rem 1.5rem;
-  background-color: #F9FAFB;
+  background-color: $gray-50;
   font-weight: 600;
-  color: #374151;
+  color: $primary-color;
   font-size: 0.875rem;
-  border-right: 1px solid #E5E7EB;
+  border-right: 1px solid $primary-color;
   vertical-align: middle;
   text-align: center;
   white-space: normal;
@@ -448,10 +536,10 @@
 
 .customer-detail-table-value {
   padding: 1rem 1.5rem;
-  color: #111827;
+  color: $gray-900;
   font-size: 0.875rem;
   vertical-align: top;
-  border-right: 1px solid #E5E7EB;
+  border-right: 1px solid $primary-color;
   
   &:last-child {
     border-right: none;
@@ -515,18 +603,18 @@
 .customer-detail-memo-text {
   white-space: pre-wrap;
   line-height: 1.6;
-  color: #374151;
+  color: $gray-900;
 }
 
 // 테이블 내 입력 필드 스타일
 .customer-detail-table-input {
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border: 1px solid #D1D5DB;
+  border: 1px solid $primary-color;
   border-radius: 0.375rem;
   font-size: 0.875rem;
-  background-color: white;
-  color: #111827;
+  background-color: $white;
+  color: $gray-900;
   transition: border-color 0.2s ease;
   
   &:focus {
@@ -536,18 +624,18 @@
   }
   
   &::placeholder {
-    color: #9CA3AF;
+    color: $primary-color;
   }
 }
 
 .customer-detail-table-textarea {
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border: 1px solid #D1D5DB;
+  border: 1px solid $primary-color;
   border-radius: 0.375rem;
   font-size: 0.875rem;
-  background-color: white;
-  color: #111827;
+  background-color: $white;
+  color: $gray-900;
   resize: vertical;
   min-height: 80px;
   font-family: inherit;
@@ -560,7 +648,7 @@
   }
   
   &::placeholder {
-    color: #9CA3AF;
+    color: $primary-color;
   }
 }
 
@@ -675,49 +763,55 @@
 
 .customer-detail-input:disabled,
 .customer-detail-select:disabled {
-  background-color: #F9FAFB;
-  color: #6B7280;
+  background-color: $bg-color;
+  color: $gray-700;
 }
 
 .customer-detail-textarea {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #D1D5DB;
+  border: 1px solid $primary-color;
   border-radius: 0.375rem;
   font-size: 0.875rem;
-  background-color: white;
-  color: #111827;
+  background-color: $white;
+  color: $gray-900;
   resize: vertical;
   box-sizing: border-box;
 }
 
 .customer-detail-textarea:disabled {
-  background-color: #F9FAFB;
-  color: #6B7280;
+  background-color: $bg-color;
+  color: $gray-700;
 }
 
 .customer-detail-reservation-list {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
 }
 
 .customer-detail-reservation-item {
-  border: 1px solid #E5E7EB !important;
+  border: 1px solid $primary-color !important;
   border-radius: 0.5rem;
   padding: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  background-color: white;
+  background-color: $white;
   gap: 1rem;
   transition: all 0.2s ease;
   
-  // 모바일에서 레이아웃 개선
+  // 모바일에서 레이아웃 개선 - 더 컴팩트하게
   @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
     gap: 0.75rem;
+    padding: 0.75rem;
+    min-height: auto;
   }
   
   // 예약 상태별 스타일
@@ -751,13 +845,13 @@
     .customer-detail-reservation-status {
       color: $reservation-completed-text;
       font-weight: 500;
-      background-color: rgba(6, 95, 70, 0.1);
+      background-color: rgba(5, 122, 85, 0.1);
     }
   }
   
   &.noshow {
     background-color: $reservation-noshow-bg;
-    border-color: #F9A8D4 !important;
+    border-color: #FCA5A5 !important;
     
     .customer-detail-reservation-date,
     .customer-detail-reservation-product,
@@ -768,13 +862,13 @@
     .customer-detail-reservation-status {
       color: $reservation-noshow-text;
       font-weight: 500;
-      background-color: rgba(190, 24, 93, 0.1);
+      background-color: rgba(185, 28, 28, 0.1);
     }
   }
   
   &.cancelled {
     background-color: $reservation-cancelled-bg;
-    border-color: #D1D5DB !important;
+    border-color: #E5E7EB !important;
     
     .customer-detail-reservation-date,
     .customer-detail-reservation-product,
@@ -785,174 +879,108 @@
     .customer-detail-reservation-status {
       color: $reservation-cancelled-text;
       font-weight: 500;
-      background-color: rgba(107, 114, 128, 0.1);
+      background-color: #dddddd;
     }
   }
   
-  // 호버 효과
   &:hover {
-    transform: translateY(-1px);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
   }
 }
 
 .customer-detail-reservation-date {
   font-weight: 600;
-  margin: 0;
+  color: $gray-900;
+  margin: 0 0 0.25rem 0;
   font-size: 0.875rem;
   
+  // 모바일에서 더 작게
   @media (max-width: 768px) {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    margin: 0 0 0.125rem 0;
   }
 }
 
 .customer-detail-reservation-product {
-  color: #6B7280;
-  margin: 0.25rem 0 0 0;
+  color: $gray-900;
+  margin: 0 0 0.25rem 0;
   font-size: 0.875rem;
   
+  // 모바일에서 더 작게
   @media (max-width: 768px) {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    margin: 0;
   }
 }
 
 .customer-detail-reservation-price {
   text-align: right;
-  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
   
   @media (max-width: 768px) {
-    text-align: left;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 0.5rem;
-    border-top: 1px solid #E5E7EB;
+    text-align: right;
+    align-items: flex-end;
+    gap: 0.125rem;
+    flex-shrink: 0;
   }
 }
 
 .customer-detail-reservation-price-value {
   font-weight: 600;
+  color: $gray-900;
+  font-size: 1rem;
   margin: 0;
-  font-size: 0.875rem;
   
+  // 모바일에서 더 작게
   @media (max-width: 768px) {
-    font-size: 0.8rem;
+    font-size: 0.875rem;
   }
 }
 
 .customer-detail-reservation-status {
-  color: #6B7280;
-  margin: 0.25rem 0 0 0;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
-  display: inline-block;
   font-weight: 500;
+  margin: 0;
   
+  // 모바일에서 더 작게
   @media (max-width: 768px) {
-    font-size: 0.75rem;
-    margin: 0;
+    font-size: 0.625rem;
     padding: 0.125rem 0.375rem;
   }
 }
 
-.customer-detail-no-reservations {
-  color: #6B7280;
-  text-align: center;
-  margin: 0;
-}
-
-// 차트 정보 스타일
-.customer-detail-chart-info {
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  background-color: #F9FAFB;
-  border-radius: 0.375rem;
-  border-left: 3px solid #3B82F6;
-  
-  @media (max-width: 768px) {
-    margin-top: 0.375rem;
-    padding: 0.375rem;
-  }
-}
-
-.customer-detail-chart-type {
-  font-weight: 600;
-  color: #3B82F6;
-  margin: 0 0 0.25rem 0;
-  font-size: 0.875rem;
-  
-  @media (max-width: 768px) {
-    font-size: 0.8rem;
-    margin: 0 0 0.125rem 0;
-  }
-}
-
-.customer-detail-chart-product,
-.customer-detail-chart-device {
-  margin: 0.125rem 0;
-  font-size: 0.75rem;
-  color: #6B7280;
-  
-  @media (max-width: 768px) {
-    font-size: 0.7rem;
-    margin: 0.0625rem 0;
-  }
-}
-
-.customer-detail-back-icon {
-  background: none;
-  border: none;
-  color: $gray-700;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 0.375rem;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  &:hover {
-    background-color: $gray-100;
-    color: $gray-900;
-  }
-}
-
-// 고객 상세 페이지 예약 액션 스타일
 .customer-detail-reservation-actions {
   display: flex;
   gap: 0.5rem;
-  margin-top: 0.5rem;
   
   @media (max-width: 768px) {
-    margin-top: 0;
     justify-content: flex-end;
+    flex-shrink: 0;
+    
+    .btn-chart {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.75rem;
+      gap: 0.25rem;
+      
+      svg {
+        width: 0.875rem;
+        height: 0.875rem;
+      }
+    }
   }
 }
 
-.customer-detail-reservation-action {
-  background-color: #10B981;
-  color: white;
-  border: none;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  font-size: 0.75rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  transition: all 0.15s;
-  white-space: nowrap;
-  
-  @media (max-width: 768px) {
-    padding: 0.375rem 0.75rem;
-    font-size: 0.8rem;
-  }
-}
-
-.customer-detail-reservation-action:hover {
-  background-color: #059669;
+.customer-detail-no-reservations {
+  text-align: center;
+  padding: 2rem;
+  color: $gray-700;
+  font-style: italic;
 }
 
 // CustomerModal 스타일
@@ -1020,24 +1048,50 @@
   margin-top: 1.5rem;
 }
 
+// 작은 화면에서 고객 모달 최적화
+@media (max-width: 480px) {
+  .customer-modal-btn-group {
+    margin-top: 1rem;
+    gap: 0.5rem;
+  }
+  
+  .customer-modal-btn-group .btn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .customer-modal-btn-group {
+    margin-top: 0.75rem;
+    gap: 0.375rem;
+  }
+  
+  .customer-modal-btn-group .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
 // 모바일 검색 컨테이너
 .mobile-search-container {
   padding: 1rem;
-  background: white;
-  border-bottom: 1px solid #E5E7EB;
+  background: $white;
+  border-bottom: 1px solid $primary-color;
   position: sticky;
   top: 0;
   z-index: 10;
   
   .search-container {
     position: relative;
+    margin: 0;
     
     .search-icon {
       position: absolute;
       left: 0.75rem;
       top: 50%;
       transform: translateY(-50%);
-      color: #6B7280;
+      color: $primary-color;
       width: 1rem;
       height: 1rem;
     }
@@ -1045,10 +1099,10 @@
     .search-input {
       width: 100%;
       padding: 0.75rem 0.75rem 0.75rem 2.5rem;
-      border: 1px solid #D1D5DB;
+      border: 1px solid $primary-color;
       border-radius: 0.5rem;
       font-size: 1rem;
-      background: #F9FAFB;
+      background: $bg-color;
       
       &:focus {
         outline: none;
@@ -1058,7 +1112,42 @@
       }
       
       &::placeholder {
-        color: #9CA3AF;
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+.customer-detail-reservation-info {
+  flex: 1;
+  min-width: 0; // 텍스트 오버플로우 방지
+  
+  @media (max-width: 768px) {
+    flex: 1;
+  }
+}
+
+// CustomerDetailPage 모바일 최적화
+.customer-detail-page {
+  @media (max-width: 768px) {
+    .customer-detail-section {
+      margin-bottom: 1rem;
+    }
+    
+    .customer-detail-section-header {
+      margin-bottom: 0.75rem;
+    }
+    
+    .customer-detail-section-title {
+      font-size: 1.125rem;
+    }
+    
+    .customer-detail-btn-group {
+      gap: 0.5rem;
+      
+      .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
       }
     }
   }

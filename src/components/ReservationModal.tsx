@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, UserPlus, ChevronDown, FileText } from 'lucide-react';
+import { X, UserPlus, ChevronDown, FileText, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { format, parseISO } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
@@ -337,10 +337,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
             </div>
           </div>
 
-          {
-            reservation &&
-            <div className="form-group">
-              <label htmlFor="status">{t('reservations.status')}</label>
+          <div className="form-group">
+            <label htmlFor="status">{t('reservations.status')}</label>
+            <div className={`status-select status-${formData.status}`}>
               <select
                 id="status"
                 name="status"
@@ -348,12 +347,21 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                 onChange={handleChange}
                 onFocus={handleInputFocus}
               >
-                <option value="confirmed">{t('reservations.statusConfirmed')}</option>
-                <option value="noshow">{t('reservations.statusNoshow')}</option>
-                <option value="cancelled">{t('reservations.statusCancelled')}</option>
+                <option value="confirmed">
+                  {t('reservations.statusConfirmed')}
+                </option>
+                <option value="completed">
+                  {t('reservations.statusCompleted')}
+                </option>
+                <option value="noshow">
+                  {t('reservations.statusNoshow')}
+                </option>
+                <option value="cancelled">
+                  {t('reservations.statusCancelled')}
+                </option>
               </select>
             </div>
-          }
+          </div>
 
           {isMobile ? (
             // 모바일: 날짜와 시간을 한 행에 표시
@@ -489,6 +497,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                 disabled={loading}
                 className="btn btn-danger"
               >
+                <Trash2 style={{ width: '1rem', height: '1rem' }} />
                 {loading ? t('common.deleting') : t('common.delete')}
               </button>
             )}

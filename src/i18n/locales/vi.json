@@ -48,7 +48,7 @@
     "price": "Giá",
     "status": "Trạng thái",
     "statusConfirmed": "Đã xác nhận",
-    "statusCompleted": "Hoàn thành",
+    "statusCompleted": "Chart Hoàn thành",
     "statusNoshow": "Không đến",
     "statusCancelled": "Đã hủy",
     "memo": "Ghi chú",
@@ -130,9 +130,9 @@
     "saveError": "Lưu khách hàng thất bại"
   },
   "products": {
-    "title": "Quản lý sản phẩm/Dịch vụ",
+    "title": "Quản lý Sản phẩm/Dịch vụ",
     "newProduct": "Sản phẩm mới",
-    "editProduct": "Sửa sản phẩm",
+    "editProduct": "Chỉnh sửa sản phẩm",
     "name": "Tên sản phẩm",
     "category": "Danh mục",
     "price": "Giá",
@@ -142,15 +142,17 @@
     "active": "Hoạt động",
     "inactive": "Không hoạt động",
     "activeDescription": "Hoạt động (hiển thị trong danh sách đặt lịch)",
-    "noProducts": "Không có sản phẩm đăng ký.",
-    "deleteConfirm": "Bạn có chắc chắn muốn xóa sản phẩm này?",
-    "saveSuccess": "Lưu thông tin sản phẩm thành công.",
-    "saveError": "Lưu thông tin sản phẩm thất bại.",
-    "categoryPlaceholder": "vd: Nail, Lông mi",
-    "loadError": "Tải danh sách sản phẩm thất bại.",
-    "deleteError": "Xóa sản phẩm thất bại.",
-    "statusChangeError": "Thay đổi trạng thái sản phẩm thất bại.",
-    "saveError": "Lưu thông tin sản phẩm thất bại."
+    "noProducts": "Không có sản phẩm nào được đăng ký.",
+    "noSearchResults": "Không tìm thấy kết quả tìm kiếm.",
+    "searchPlaceholder": "Tìm kiếm theo tên sản phẩm hoặc danh mục",
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa sản phẩm này không?",
+    "saveSuccess": "Thông tin sản phẩm đã được lưu.",
+    "saveError": "Không thể lưu thông tin sản phẩm.",
+    "categoryPlaceholder": "vd., Nail, Lông mi",
+    "loadError": "Không thể tải danh sách sản phẩm.",
+    "deleteError": "Không thể xóa sản phẩm.",
+    "statusChangeError": "Không thể thay đổi trạng thái sản phẩm.",
+    "saveError": "Không thể lưu thông tin sản phẩm."
   },
   "settings": {
     "title": "Cài đặt",
@@ -204,7 +206,7 @@
   },
   "chart": {
     "title": "Biểu đồ",
-    "createChart": "Tạo biểu đồ",
+    "createChart": "Biểu đồ",
     "type": {
       "label": "Loại biểu đồ",
       "eyelash": "Lông mi",

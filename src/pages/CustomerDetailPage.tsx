@@ -10,6 +10,7 @@ import CustomerModal from '../components/CustomerModal';
 import ReservationModal from '../components/ReservationModal';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Button from '../components/Button';
+import CustomerInfo from '../components/CustomerInfo';
 import { useCurrencyFormat } from '../utils/currency';
 import { useSettingsStore } from '../stores/settingsStore';
 import { maskCustomerData } from '../utils/customerUtils';
@@ -38,7 +39,14 @@ const CustomerDetailPage: React.FC = () => {
       setLoading(true);
       const customerData = await customerService.getById(id);
       if (customerData) {
+        // 마스킹된 데이터를 화면에 표시
         setCustomer(customerData);
+        
+        // 원본 데이터는 별도로 저장 (편집 시 사용)
+        // 서버에서 가져온 데이터가 이미 마스킹되어 있으므로, 
+        // 원본 데이터는 별도로 관리해야 합니다.
+        // 현재는 마스킹된 데이터를 그대로 사용하되, 
+        // 편집 시에는 사용자가 입력한 값을 원본으로 간주합니다.
         setDetailForm({
           name: customerData.name || '',
           phone: customerData.phone || '',
@@ -100,7 +108,15 @@ const CustomerDetailPage: React.FC = () => {
       };
 
       await customerService.update(customer.id, updatedCustomer);
-      setCustomer(updatedCustomer);
+      
+      // 마스킹된 데이터로 화면 업데이트
+      const maskedCustomer = {
+        ...updatedCustomer,
+        name: maskCustomerData(updatedCustomer).name,
+        phone: maskCustomerData(updatedCustomer).phone,
+      };
+      
+      setCustomer(maskedCustomer);
       setOriginalData(detailForm);
       setIsDetailEdit(false);
       
@@ -122,18 +138,18 @@ const CustomerDetailPage: React.FC = () => {
 
   const handleDetailEdit = () => {
     setDetailForm({
-      name: customer?.name || '',
-      phone: customer?.phone || '',
-      memo: customer?.memo || '',
+      name: originalData.name || customer?.name || '',
+      phone: originalData.phone || customer?.phone || '',
+      memo: originalData.memo || customer?.memo || '',
     });
     setIsDetailEdit(true);
   };
 
   const handleDetailCancel = () => {
     setDetailForm({
-      name: customer?.name || '',
-      phone: customer?.phone || '',
-      memo: customer?.memo || '',
+      name: originalData.name || customer?.name || '',
+      phone: originalData.phone || customer?.phone || '',
+      memo: originalData.memo || customer?.memo || '',
     });
     setIsDetailEdit(false);
   };
@@ -161,9 +177,7 @@ const CustomerDetailPage: React.FC = () => {
 
   // 예약 상태 라벨 다국어 처리 및 상태값 제한
   const reservationStatusLabel = (status: string) => {
-    if (status === 'noshow') return t('reservations.statusNoshow');
-    if (status === 'cancelled') return t('reservations.statusCancelled');
-    return t('reservations.statusConfirmed');
+    return t(`reservations.status${status.charAt(0).toUpperCase() + status.slice(1)}`);
   };
 
   if (loading) {
@@ -242,81 +256,17 @@ const CustomerDetailPage: React.FC = () => {
             </div>
           </div>
           
-          <div className="customer-detail-table-container">
-            <table className="customer-detail-table">
-              <tbody>
-                <tr className="customer-detail-table-row">
-                  <td className="customer-detail-table-label">ID</td>
-                  <td className="customer-detail-table-label">{t('customers.name')}</td>
-                  <td className="customer-detail-table-label">{t('customers.phone')}</td>
-                  <td className="customer-detail-table-label customer-detail-memo-label-desktop">{t('customers.memo')}</td>
-                </tr>
-                <tr className="customer-detail-table-row">
-                  <td className="customer-detail-table-value">
-                    {customer.id.length === 4 && /^\d{4}$/.test(customer.id) ? customer.id : customer.id.slice(0, 4)}
-                  </td>
-                  <td className="customer-detail-table-value">
-                    {isDetailEdit ? (
-                      <input
-                        type="text"
-                        name="name"
-                        value={detailForm?.name || ''}
-                        onChange={handleFormChange}
-                        className="customer-detail-table-input"
-                      />
-                    ) : (
-                      <span>{customer.name}</span>
-                    )}
-                  </td>
-                  <td className="customer-detail-table-value">
-                    {isDetailEdit ? (
-                      <input
-                        type="text"
-                        name="phone"
-                        value={detailForm?.phone || ''}
-                        onChange={handleFormChange}
-                        className="customer-detail-table-input"
-                      />
-                    ) : (
-                      <span>{customer.phone}</span>
-                    )}
-                  </td>
-                  <td className="customer-detail-table-value customer-detail-memo-value-desktop">
-                    {isDetailEdit ? (
-                      <textarea
-                        name="memo"
-                        value={detailForm?.memo || ''}
-                        onChange={handleFormChange}
-                        className="customer-detail-table-textarea"
-                        rows={4}
-                      />
-                    ) : (
-                      <span className="customer-detail-memo-text">{customer.memo || '-'}</span>
-                    )}
-                  </td>
-                </tr>
-                {/* 모바일에서 메모를 별도 행으로 표시 */}
-                <tr className="customer-detail-table-row customer-detail-memo-row-mobile">
-                  <td className="customer-detail-table-label" colSpan={3}>{t('customers.memo')}</td>
-                </tr>
-                <tr className="customer-detail-table-row customer-detail-memo-row-mobile">
-                  <td className="customer-detail-table-value" colSpan={3}>
-                    {isDetailEdit ? (
-                      <textarea
-                        name="memo"
-                        value={detailForm?.memo || ''}
-                        onChange={handleFormChange}
-                        className="customer-detail-table-textarea"
-                        rows={4}
-                      />
-                    ) : (
-                      <span className="customer-detail-memo-text">{customer.memo || '-'}</span>
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <CustomerInfo
+            customer={isDetailEdit ? {
+              ...customer,
+              name: detailForm.name || customer.name,
+              phone: detailForm.phone || customer.phone,
+              memo: detailForm.memo || customer.memo,
+            } : customer}
+            isEdit={isDetailEdit}
+            formData={detailForm}
+            onFormChange={handleFormChange}
+          />
         </div>
 
         <div className="customer-detail-section">
@@ -339,17 +289,9 @@ const CustomerDetailPage: React.FC = () => {
                   key={reservation.id} 
                   className={`customer-detail-reservation-item ${reservation.status}`}
                 >
-                  <div>
+                  <div className="customer-detail-reservation-info">
                     <p className="customer-detail-reservation-date">{format(new Date(reservation.date), 'yyyy.MM.dd (eee)', { locale: ko })} - {reservation.time}</p>
                     <p className="customer-detail-reservation-product">{reservation.productName}</p>
-                    {/* 차트 정보 표시 */}
-                    {reservation.chartType && (
-                      <div className="customer-detail-chart-info">
-                        <p className="customer-detail-chart-type">
-                          {t(`chart.type.${reservation.chartType}`)}
-                        </p>
-                      </div>
-                    )}
                   </div>
                   <div className="customer-detail-reservation-price">
                     <p className="customer-detail-reservation-price-value">{formatCurrency(reservation.price)}</p>
@@ -362,7 +304,7 @@ const CustomerDetailPage: React.FC = () => {
                       size="sm"
                     >
                       <FileText style={{ width: '1rem', height: '1rem' }} />
-                      {reservation.chartType ? t('customers.viewChart') : t('customers.createChart')}
+                      {t('customers.createChart')}
                     </Button>
                   </div>
                 </div>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Plus, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import type { Product } from '../types';
@@ -15,6 +15,7 @@ const ProductsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [togglingProducts, setTogglingProducts] = useState<Set<string>>(new Set());
@@ -54,6 +55,15 @@ const ProductsPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const filteredProducts = useMemo(() => {
+    return products
+      .filter(p =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.category.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+  }, [products, searchTerm]);
 
   const handleRowClick = (product: Product) => {
     handleOpenModal(product);
@@ -166,8 +176,8 @@ const ProductsPage: React.FC = () => {
               <LoadingSpinner text={t('common.loading')} />
             </td>
           </tr>
-        ) : products.length > 0 ? (
-          products.map(product => (
+        ) : filteredProducts.length > 0 ? (
+          filteredProducts.map(product => (
             <tr 
               key={product.id} 
               className="products-table-row-pointer"
@@ -209,7 +219,9 @@ const ProductsPage: React.FC = () => {
           ))
         ) : (
           <tr>
-            <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: '#6B7280' }}>{t('products.noProducts')}</td>
+            <td colSpan={5} className="products-table-empty">
+              {searchTerm ? t('products.noSearchResults') : t('products.noProducts')}
+            </td>
           </tr>
         )}
       </tbody>
@@ -218,7 +230,6 @@ const ProductsPage: React.FC = () => {
 
   return (
     <div className="content-wrapper products-page">
-      {/* 모바일에서는 헤더 숨김 */}
       {!isMobile && (
         <div className="page-header">
           <h1>{t('products.title')}</h1>
@@ -232,25 +243,55 @@ const ProductsPage: React.FC = () => {
         </div>
       )}
 
-      <div className="table-container">
-        {isMobile ? (
-          <div className="products-mobile-container">
-            {loading ? (
-              <div className="products-mobile-loading">
-                <LoadingSpinner text={t('common.loading')} />
-              </div>
-            ) : products.length > 0 ? (
-              products.map(product => renderMobileProductCard(product))
-            ) : (
-              <div className="products-mobile-empty">
-                {t('products.noProducts')}
-              </div>
-            )}
+      {isMobile && (
+        <div className="mobile-search-container">
+          <div className="search-container">
+            <Search className="search-icon" />
+            <input
+              type="text"
+              placeholder={t('products.searchPlaceholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
           </div>
-        ) : (
-          renderDesktopTable()
-        )}
-      </div>
+        </div>
+      )}
+
+      {!isMobile && (
+        <>
+          <div className={`search-container ${searchTerm ? 'has-content' : ''}`}>
+            <Search className="search-icon" />
+            <input
+              type="text"
+              placeholder={t('products.searchPlaceholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
+
+          <div className="table-container">
+            {renderDesktopTable()}
+          </div>
+        </>
+      )}
+
+      {isMobile && (
+        <div className="products-mobile-container">
+          {loading ? (
+            <div className="products-mobile-empty">
+              <LoadingSpinner text={t('common.loading')} />
+            </div>
+          ) : filteredProducts.length > 0 ? (
+            filteredProducts.map(product => renderMobileProductCard(product))
+          ) : (
+            <div className="products-mobile-empty">
+              {searchTerm ? t('products.noSearchResults') : t('products.noProducts')}
+            </div>
+          )}
+        </div>
+      )}
 
       {isModalOpen && (
         <ProductModal

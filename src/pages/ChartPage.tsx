@@ -4,9 +4,11 @@ import { ArrowLeft, Save, X, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import type { Customer, Reservation, ChartType, ChartData } from '../types';
-import { customerService, reservationService } from '../services/firestore';
+import type { Customer, Reservation, ChartType, ChartData, Product } from '../types';
+import { customerService, reservationService, productService } from '../services/firestore';
 import LoadingSpinner from '../components/LoadingSpinner';
+import Button from '../components/Button';
+import CustomerInfo from '../components/CustomerInfo';
 import { useSettingsStore } from '../stores/settingsStore';
 
 const ChartPage: React.FC = () => {
@@ -18,6 +20,7 @@ const ChartPage: React.FC = () => {
   
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [reservation, setReservation] = useState<Reservation | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   
@@ -95,6 +98,10 @@ const ChartPage: React.FC = () => {
         // 고객 정보도 로드
         const customerData = await customerService.getById(reservationData.customerId);
         setCustomer(customerData);
+        
+        // 상품 정보도 로드
+        const productData = await productService.getById(reservationData.productId);
+        setProduct(productData);
       } else {
         navigate('/reservations');
       }
@@ -146,6 +153,20 @@ const ChartPage: React.FC = () => {
     navigate(-1);
   };
 
+  // 소요시간 표시 함수
+  const formatDuration = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    
+    if (hours > 0 && mins > 0) {
+      return `${hours}h ${mins}m`;
+    } else if (hours > 0) {
+      return `${hours}h`;
+    } else {
+      return `${mins}m`;
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ padding: '1.5rem' }}>
@@ -166,80 +187,58 @@ const ChartPage: React.FC = () => {
     <div className="chart-page">
       <div className="chart-page-header">
         <div className="chart-page-header-left">
-          <button
+          <Button
             onClick={handleCancel}
+            variant="icon"
             className="chart-page-back-icon"
           >
-            <ArrowLeft style={{ width: '1.5rem', height: '1.5rem' }} />
-          </button>
+            <ArrowLeft style={{ width: '1.25rem', height: '1.25rem' }} />
+          </Button>
         </div>
         <div className="chart-page-header-center">
           <h1 className="chart-page-title">{t('chart.createChart')}</h1>
-          <p className="chart-page-subtitle">
-            {customer.name} - {format(new Date(reservation.date), 'yyyy.MM.dd', { locale: ko })} {reservation.time}
-          </p>
         </div>
         <div className="chart-page-btn-group">
-          <button
+          <Button
             onClick={handleCancel}
-            className="chart-page-btn chart-page-btn-cancel"
+            variant="secondary"
           >
             {t('common.cancel')}
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleSave}
             disabled={saving}
-            className="chart-page-btn chart-page-btn-save"
+            loading={saving}
+            variant="primary"
           >
             <Save style={{ width: '1rem', height: '1rem' }} />
-            {saving ? t('common.saving') : t('common.save')}
-          </button>
+            {t('common.save')}
+          </Button>
         </div>
       </div>
 
       {/* 고객 정보 섹션 */}
       <div className="chart-page-customer-info">
         <h2 className="chart-page-section-title">{t('customers.customerInfo')}</h2>
-        <div className="chart-page-customer-grid">
-          <div className="chart-page-customer-section">
-            <h3 className="chart-page-subsection-title">{t('customers.basicInfo')}</h3>
-            <div className="chart-page-info-list">
-              <div className="chart-page-info-item">
-                <span className="chart-page-info-label">{t('customers.name')}:</span>
-                <span className="chart-page-info-value">{customer.name}</span>
-              </div>
-              <div className="chart-page-info-item">
-                <span className="chart-page-info-label">{t('customers.phone')}:</span>
-                <span className="chart-page-info-value">{customer.phone}</span>
-              </div>
-              <div className="chart-page-info-item">
-                <span className="chart-page-info-label">{t('customers.gender')}:</span>
-                <span className="chart-page-info-value">
-                  {customer?.gender ? t(`customers.genders.${customer.gender}`) : '-'}
-                </span>
-              </div>
-              <div className="chart-page-info-item">
-                <span className="chart-page-info-label">{t('customers.age')}:</span>
-                <span className="chart-page-info-value">{customer.age || '-'}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="chart-page-customer-section">
-            <h3 className="chart-page-subsection-title">{t('customers.memo')}</h3>
-            <div className="chart-page-info-list">
-              <div className="chart-page-info-item full-width">
-                <span className="chart-page-info-value">{customer?.memo || '-'}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <CustomerInfo customer={customer} />
       </div>
 
       {/* 차트 입력 섹션 */}
       <div className="chart-page-chart-info">
+        <div className="chart-page-time-info">
+          <p className="chart-page-time-text">
+            {format(new Date(reservation.date), 'yyyy.MM.dd (eee)', { locale: ko })} {reservation.time}
+          </p>
+          <p className="chart-page-product-text">
+            {reservation.productName}
+            {product && (
+              <span className="chart-page-duration">
+                ({formatDuration(product.duration)})
+              </span>
+            )}
+          </p>
+        </div>
         <div className="chart-page-section-header">
-          <h2 className="chart-page-section-title">{t('chart.title')}</h2>
           <div className="chart-page-type-select">
             <label htmlFor="chartType">{t('chart.type.label')}:</label>
             <select

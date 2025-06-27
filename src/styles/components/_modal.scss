@@ -169,7 +169,94 @@
 }
 
 @media (max-width: 480px) {
+  .modal-overlay {
+    padding: 0.125rem;
+  }
+  
   .modal-content {
     padding: 0.75rem;
+    max-width: calc(100vw - 0.25rem);
+    max-height: calc(100vh - 0.25rem);
+  }
+}
+
+@media (max-width: 360px) {
+  .modal-overlay {
+    padding: 0.0625rem;
+  }
+  
+  .modal-content {
+    padding: 0.5rem;
+    max-width: calc(100vw - 0.125rem);
+    max-height: calc(100vh - 0.125rem);
+  }
+}
+
+// 예약 상태 선택 스타일
+.status-select {
+  position: relative;
+  
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    option {
+      padding: 0.5rem;
+      font-weight: 500;
+    }
+  }
+  
+  // 상태별 색상 스타일 (변수 사용)
+  &.status-confirmed select {
+    background-color: $reservation-confirmed-bg;
+    color: $reservation-confirmed-text;
+    border-color: $reservation-confirmed-hover;
+    
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+    }
+  }
+  
+  &.status-completed select {
+    background-color: $reservation-completed-bg;
+    color: $reservation-completed-text;
+    border-color: $reservation-completed-hover;
+    
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(6, 95, 70, 0.1);
+    }
+  }
+  
+  &.status-noshow select {
+    background-color: $reservation-noshow-bg;
+    color: $reservation-noshow-text;
+    border-color: $reservation-noshow-hover;
+    
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(190, 24, 93, 0.1);
+    }
+  }
+  
+  &.status-cancelled select {
+    background-color: $reservation-cancelled-bg;
+    color: $reservation-cancelled-text;
+    border-color: $reservation-cancelled-hover;
+    
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
+    }
   }
 } 

@@ -228,7 +228,7 @@ const CustomersPage: React.FC = () => {
 
       {!isMobile && (
         <>
-          <div className="search-container">
+          <div className={`search-container ${searchTerm ? 'has-content' : ''}`}>
             <Search className="search-icon" />
             <input
               type="text"

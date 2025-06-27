@@ -49,8 +49,8 @@
     "price": "Price",
     "status": "Status",
     "statusConfirmed": "Confirmed",
-    "statusCompleted": "Completed",
-    "statusNoshow": "No-show",
+    "statusCompleted": "Chart Completed",
+    "statusNoshow": "No Show",
     "statusCancelled": "Cancelled",
     "memo": "Memo",
     "selectCustomer": "Select Customer",
@@ -132,7 +132,7 @@
     "saveError": "Failed to save customer"
   },
   "products": {
-    "title": "Product/Service Management",
+    "title": "Products/Services Management",
     "newProduct": "New Product",
     "editProduct": "Edit Product",
     "name": "Product Name",
@@ -145,8 +145,10 @@
     "inactive": "Inactive",
     "activeDescription": "Active (shown in reservation list)",
     "noProducts": "No products registered.",
+    "noSearchResults": "No search results found.",
+    "searchPlaceholder": "Search by product name or category",
     "deleteConfirm": "Are you sure you want to delete this product?",
-    "saveSuccess": "Product information saved successfully.",
+    "saveSuccess": "Product information has been saved.",
     "saveError": "Failed to save product information.",
     "categoryPlaceholder": "e.g., Nail, Eyelash",
     "loadError": "Failed to load product list.",
@@ -206,7 +208,7 @@
   },
   "chart": {
     "title": "Chart",
-    "createChart": "Create Chart",
+    "createChart": "Chart",
     "type": {
       "label": "Chart Type",
       "eyelash": "Eyelash",
