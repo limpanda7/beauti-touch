@@ -12,19 +12,33 @@ import CustomerDetailPage from './pages/CustomerDetailPage';
 import ProductsPage from './pages/ProductsPage';
 import SettingsPage from './pages/SettingsPage';
 import ChartPage from './pages/ChartPage';
+import { useAuthStore } from './stores/authStore';
+import { useSettingsStore } from './stores/settingsStore';
 import './styles/main.scss';
 
 function App() {
-  // 앱 시작 시 브라우저 언어 감지
+  const { user } = useAuthStore();
+  const { language } = useSettingsStore();
+
+  // 사용자 설정에 따른 언어 변경
   useEffect(() => {
-    const browserLang = getBrowserLanguage();
-    const currentLang = i18n.language;
-    
-    // 현재 언어가 설정되지 않았거나 브라우저 언어와 다른 경우
-    if (!currentLang || currentLang !== browserLang) {
-      i18n.changeLanguage(browserLang);
+    if (language && language !== i18n.language) {
+      i18n.changeLanguage(language);
     }
-  }, []);
+  }, [language]);
+
+  // 앱 시작 시 브라우저 언어 감지 (사용자가 로그인하지 않은 경우)
+  useEffect(() => {
+    if (!user && !language) {
+      const browserLang = getBrowserLanguage();
+      const currentLang = i18n.language;
+      
+      // 현재 언어가 설정되지 않았거나 브라우저 언어와 다른 경우
+      if (!currentLang || currentLang !== browserLang) {
+        i18n.changeLanguage(browserLang);
+      }
+    }
+  }, [user, language]);
 
   return (
     <I18nextProvider i18n={i18n}>

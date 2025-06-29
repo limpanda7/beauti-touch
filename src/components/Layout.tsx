@@ -4,12 +4,16 @@ import { Menu, X, Calendar, Users, ClipboardList, Settings, Plus } from 'lucide-
 import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
 import { useUIStore } from '../stores/uiStore';
+import { useAuthStore } from '../stores/authStore';
+import { useSettingsStore } from '../stores/settingsStore';
 import '../styles/main.scss';
 
 const Layout: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuthStore();
+  const { initializeSettings } = useSettingsStore();
   
   const {
     isMobile,
@@ -21,6 +25,20 @@ const Layout: React.FC = () => {
     closeSidebar,
     checkScreenSize
   } = useUIStore();
+
+  // 사용자 설정 초기화
+  useEffect(() => {
+    if (user?.uid) {
+      const initSettings = async () => {
+        try {
+          await initializeSettings(user.uid);
+        } catch (error) {
+          console.error('설정 초기화 실패:', error);
+        }
+      };
+      initSettings();
+    }
+  }, [user?.uid, initializeSettings]);
 
   // 페이지 타이틀 다국어 처리
   useEffect(() => {

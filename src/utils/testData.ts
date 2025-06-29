@@ -1,5 +1,8 @@
 import { customerService, productService, autoCompleteService } from '../services/firestore';
 import { getAuth } from 'firebase/auth';
+import type { Customer, Product } from '../types';
+import { doc, setDoc, Timestamp } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export const createTestData = async () => {
   try {
@@ -151,5 +154,109 @@ const createAutoCompleteTestData = async () => {
     for (let i = 0; i < Math.floor(Math.random() * 5) + 1; i++) {
       await autoCompleteService.saveFieldValue(data.fieldName, data.value, data.chartType);
     }
+  }
+};
+
+// 테스트 고객 데이터 생성 (마스킹 없이)
+export const createTestCustomer = async (): Promise<string> => {
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error('사용자가 로그인되지 않았습니다.');
+    }
+
+    const now = new Date();
+    const customerId = '0001'; // 테스트용 고정 ID
+    
+    const testCustomer = {
+      id: customerId,
+      name: '테스트 고객', // 마스킹하지 않음
+      phone: '1234', // 연락처 뒤 4자리만
+      memo: '회원가입 시 자동 생성된 테스트 고객입니다.',
+      createdAt: Timestamp.fromDate(now),
+      updatedAt: Timestamp.fromDate(now)
+    };
+
+    // 직접 Firestore에 저장 (마스킹 없이)
+    const collectionPath = `users/${user.uid}/customers`;
+    const docRef = doc(db, collectionPath, customerId);
+    await setDoc(docRef, testCustomer);
+    
+    console.log('테스트 고객 생성 완료:', customerId);
+    return customerId;
+  } catch (error) {
+    console.error('테스트 고객 생성 실패:', error);
+    throw new Error('테스트 고객 생성에 실패했습니다.');
+  }
+};
+
+// 테스트 상품 데이터 생성
+export const createTestProduct = async (): Promise<string> => {
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error('사용자가 로그인되지 않았습니다.');
+    }
+
+    const now = new Date();
+    const productId = 'test-product-001'; // 테스트용 고정 ID
+    
+    const testProduct = {
+      id: productId,
+      name: '테스트 상품',
+      price: 50000,
+      duration: 60, // 60분
+      description: '회원가입 시 자동 생성된 테스트 상품입니다.',
+      category: '미정',
+      isActive: true,
+      createdAt: Timestamp.fromDate(now),
+      updatedAt: Timestamp.fromDate(now)
+    };
+
+    // 직접 Firestore에 저장
+    const collectionPath = `users/${user.uid}/products`;
+    const docRef = doc(db, collectionPath, productId);
+    await setDoc(docRef, testProduct);
+    
+    console.log('테스트 상품 생성 완료:', productId);
+    return productId;
+  } catch (error) {
+    console.error('테스트 상품 생성 실패:', error);
+    throw new Error('테스트 상품 생성에 실패했습니다.');
+  }
+};
+
+// 모든 테스트 데이터 생성
+export const createAllTestData = async (): Promise<{
+  customerId: string;
+  productId: string;
+}> => {
+  try {
+    console.log('테스트 데이터 생성 시작...');
+    
+    // 현재 사용자 확인
+    const auth = getAuth();
+    const user = auth.currentUser;
+    console.log('현재 인증된 사용자:', user?.uid);
+    
+    if (!user) {
+      throw new Error('사용자가 로그인되지 않았습니다.');
+    }
+    
+    // 테스트 고객과 상품을 병렬로 생성
+    console.log('테스트 고객과 상품 생성 시작...');
+    const [customerId, productId] = await Promise.all([
+      createTestCustomer(),
+      createTestProduct()
+    ]);
+
+    console.log('모든 테스트 데이터 생성 완료:', { customerId, productId });
+    
+    return { customerId, productId };
+  } catch (error) {
+    console.error('테스트 데이터 생성 실패:', error);
+    throw new Error('테스트 데이터 생성에 실패했습니다.');
   }
 }; 

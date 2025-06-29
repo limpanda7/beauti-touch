@@ -3,8 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ChevronDown, Globe } from 'lucide-react';
 import { 
   SUPPORTED_LANGUAGES, 
-  LANGUAGE_NAMES, 
-  LANGUAGE_FLAGS,
+  LANGUAGE_NAMES,
   type SupportedLanguage 
 } from '../utils/languageUtils';
 
@@ -40,7 +39,6 @@ const LanguageSelector: React.FC = () => {
         type="button"
       >
         <Globe size={16} />
-        <span className="language-flag">{LANGUAGE_FLAGS[currentLanguage]}</span>
         <span className="language-name">{LANGUAGE_NAMES[currentLanguage]}</span>
         <ChevronDown size={16} className={`chevron ${isOpen ? 'open' : ''}`} />
       </button>
@@ -56,7 +54,6 @@ const LanguageSelector: React.FC = () => {
                 onClick={() => handleLanguageChange(langCode)}
                 type="button"
               >
-                <span className="language-flag">{LANGUAGE_FLAGS[langCode]}</span>
                 <span className="language-name">{LANGUAGE_NAMES[langCode]}</span>
               </button>
             );

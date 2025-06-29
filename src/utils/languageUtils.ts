@@ -2,10 +2,11 @@
 export const SUPPORTED_LANGUAGES = {
   ko: 'ko',
   en: 'en',
-  es: 'es',
-  pt: 'pt',
+  vi: 'vi',
   th: 'th',
-  vi: 'vi'
+  id: 'id',
+  es: 'es',
+  pt: 'pt'
 } as const;
 
 export type SupportedLanguage = keyof typeof SUPPORTED_LANGUAGES;
@@ -30,18 +31,9 @@ export const getBrowserLanguage = (): SupportedLanguage => {
 export const LANGUAGE_NAMES: Record<SupportedLanguage, string> = {
   ko: '한국어',
   en: 'English',
+  vi: 'Tiếng Việt',
+  th: 'ไทย',
+  id: 'Bahasa Indonesia',
   es: 'Español',
   pt: 'Português',
-  th: 'ไทย',
-  vi: 'Tiếng Việt'
 };
-
-// 언어 플래그 이모지 매핑
-export const LANGUAGE_FLAGS: Record<SupportedLanguage, string> = {
-  ko: '🇰🇷',
-  en: '🇺🇸',
-  es: '🇪🇸',
-  pt: '🇧🇷',
-  th: '🇹🇭',
-  vi: '🇻🇳'
-}; 

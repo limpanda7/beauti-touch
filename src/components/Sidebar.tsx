@@ -67,7 +67,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose, isMobile = false, className 
             </div>
             <div className="user-details">
               <div className="user-name">{user.displayName || user.email}</div>
-              <div className="user-email">{user.email}</div>
+              {
+                user.displayName &&
+                <div className="user-email">{user.email}</div>
+              }
             </div>
           </div>
         )}

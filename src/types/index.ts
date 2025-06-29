@@ -2,23 +2,9 @@ export interface Customer {
   id: string; // 4자리 고유 ID
   name: string; // 마스킹된 이름
   phone: string; // 마스킹된 연락처 (뒤 4자리만)
-  gender?: 'male' | 'female' | 'other'; // 성별
-  age?: number; // 나이
-  skinType?: string; // 피부관리 타입
-  allergies?: string; // 알레르기 정보
-  notes?: string; // 기타 메모
-  procedures?: CustomerProcedure[];
-  contraindications?: string;
-  memo?: string;
-  photos?: string[]; // 이미지 URL 배열
+  memo?: string; // 메모
   createdAt: Date;
   updatedAt: Date;
-}
-
-export interface CustomerProcedure {
-  date: string; // ISO 날짜
-  description: string; // 시술명/내용
-  note?: string; // 비고
 }
 
 export interface Product {

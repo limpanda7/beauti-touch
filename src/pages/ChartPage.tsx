@@ -165,9 +165,9 @@ const ChartPage: React.FC = () => {
     try {
       if (chartType) {
         const savePromises = Object.entries(chartData)
-          .filter(([_, value]) => value && value.trim())
+          .filter(([_, value]) => typeof value === 'string' && value.trim())
           .map(([fieldName, fieldValue]) => 
-            autoCompleteService.saveFieldValue(fieldName, fieldValue.trim(), chartType)
+            autoCompleteService.saveFieldValue(fieldName, (fieldValue as string).trim(), chartType)
           );
         
         await Promise.all(savePromises);

@@ -9,7 +9,7 @@ import Button from '../components/Button';
 
 const SettingsPage: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { language, currency, businessType, updateSettings } = useSettingsStore();
+  const { language, currency, businessType, updateSettings, isLoading } = useSettingsStore();
   const { signOut } = useAuthStore();
   const user = useUser();
   
@@ -98,15 +98,20 @@ const SettingsPage: React.FC = () => {
     }
   }, [selectedChartType, selectedField]);
 
-  const handleSettingChange = (key: keyof { language: string; currency: string; businessType: string }, value: string) => {
-    if (key === 'businessType') {
-      updateSettings({ [key]: value as ChartType });
-    } else {
-      updateSettings({ [key]: value });
-    }
-    
-    if (key === 'language') {
-      i18n.changeLanguage(value);
+  const handleSettingChange = async (key: keyof { language: string; currency: string; businessType: string }, value: string) => {
+    try {
+      if (key === 'businessType') {
+        await updateSettings({ [key]: value as ChartType });
+      } else {
+        await updateSettings({ [key]: value });
+      }
+      
+      if (key === 'language') {
+        i18n.changeLanguage(value);
+      }
+    } catch (error) {
+      console.error('설정 변경 실패:', error);
+      alert(t('settings.saveError'));
     }
   };
 
@@ -163,6 +168,7 @@ const SettingsPage: React.FC = () => {
             value={language}
             onChange={(e) => handleSettingChange('language', e.target.value)}
             className="settings-select"
+            disabled={isLoading}
           >
             {languages.map(lang => (
               <option key={lang.code} value={lang.code}>{lang.name}</option>
@@ -180,9 +186,10 @@ const SettingsPage: React.FC = () => {
             value={currency}
             onChange={(e) => handleSettingChange('currency', e.target.value)}
             className="settings-select"
+            disabled={isLoading}
           >
-            {currencies.map(currency => (
-              <option key={currency.code} value={currency.code}>{currency.name}</option>
+            {currencies.map(curr => (
+              <option key={curr.code} value={curr.code}>{curr.name}</option>
             ))}
           </select>
         </div>
@@ -197,6 +204,7 @@ const SettingsPage: React.FC = () => {
             value={businessType}
             onChange={(e) => handleSettingChange('businessType', e.target.value)}
             className="settings-select"
+            disabled={isLoading}
           >
             {businessTypes.map(businessType => (
               <option key={businessType.code} value={businessType.code}>{businessType.name}</option>
@@ -289,7 +297,10 @@ const SettingsPage: React.FC = () => {
               </div>
               <div className="user-details-mobile">
                 <div className="user-name-mobile">{user.displayName || user.email}</div>
-                <div className="user-email-mobile">{user.email}</div>
+                {
+                  user.displayName &&
+                  <div className="user-email-mobile">{user.email}</div>
+                }
               </div>
             </div>
           )}

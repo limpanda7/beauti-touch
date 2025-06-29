@@ -148,10 +148,6 @@ export const maskCustomerData = (customerData: any) => {
   return {
     ...customerData,
     name: maskName(customerData.name),
-    phone: maskPhone(customerData.phone),
-    // 성별, 나이 등 민감한 정보 제거
-    gender: undefined,
-    age: undefined,
-    birthDate: undefined
+    phone: maskPhone(customerData.phone)
   };
 }; 

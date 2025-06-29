@@ -15,6 +15,8 @@ import th from './locales/th.json';
 import pt from './locales/pt.json';
 // 스페인어
 import es from './locales/es.json';
+// 인도네시아어
+import id from './locales/id.json';
 
 const resources = {
   ko: { translation: ko },
@@ -23,6 +25,7 @@ const resources = {
   th: { translation: th },
   pt: { translation: pt },
   es: { translation: es },
+  id: { translation: id },
 };
 
 i18n
@@ -36,8 +39,8 @@ i18n
       escapeValue: false,
     },
     detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage'],
+      order: ['querystring', 'navigator'],
+      caches: [],
     },
   });
 

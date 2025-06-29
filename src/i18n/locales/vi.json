@@ -160,8 +160,19 @@
     "languageDescription": "Chọn ngôn ngữ hiển thị cho ứng dụng.",
     "currency": "Tiền tệ",
     "currencyDescription": "Chọn tiền tệ để hiển thị giá.",
-    "businessType": "Loại kinh doanh",
-    "businessTypeDescription": "Đặt loại kinh doanh mặc định sẽ được chọn khi nhập thông tin biểu đồ khách hàng.",
+    "businessType": "Loại hình kinh doanh",
+    "businessTypeDescription": "Đặt loại hình kinh doanh mặc định sẽ được chọn khi nhập thông tin biểu đồ khách hàng.",
+    "autoComplete": "Quản lý tự động hoàn thành",
+    "autoCompleteDescription": "Quản lý dữ liệu tự động hoàn thành cho các trường nhập biểu đồ. Các giá trị đã nhập trước đó sẽ được đề xuất làm tùy chọn tự động hoàn thành.",
+    "selectChartType": "Chọn loại biểu đồ",
+    "selectField": "Chọn trường",
+    "deleteAll": "Xóa tất cả",
+    "confirmDeleteAutoComplete": "Bạn có chắc chắn muốn xóa tất cả dữ liệu tự động hoàn thành cho trường này không?",
+    "autoCompleteDeleted": "Dữ liệu tự động hoàn thành đã được xóa.",
+    "noAutoCompleteData": "Không có dữ liệu tự động hoàn thành.",
+    "account": "Tài khoản",
+    "accountDescription": "Thông tin tài khoản và đăng xuất",
+    "saveError": "Không thể lưu cài đặt.",
     "languages": {
       "ko": "한국어",
       "en": "English",
@@ -182,7 +193,7 @@
     "businessTypes": {
       "eyelash": "Lông mi",
       "waxing": "Tẩy lông",
-      "nail": "Nail",
+      "nail": "Móng tay",
       "skin": "Chăm sóc da",
       "massage": "Massage"
     }

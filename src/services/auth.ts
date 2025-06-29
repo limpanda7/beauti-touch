@@ -11,6 +11,7 @@ import type { User as FirebaseUser, AuthError as FirebaseAuthError } from 'fireb
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import type { User, LoginCredentials, SignUpCredentials, AuthError } from '../types';
+import { createAllTestData } from '../utils/testData';
 
 // 에러 코드를 한국어 메시지로 변환
 const getErrorMessage = (errorCode: string): string => {
@@ -111,6 +112,14 @@ export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
     // Firestore에 사용자 정보 저장
     await saveUserToFirestore(user);
 
+    // 테스트 데이터 생성 (비동기로 실행하되 에러는 무시)
+    try {
+      await createAllTestData();
+      console.log('회원가입 후 테스트 데이터 생성 완료');
+    } catch (testDataError) {
+      console.warn('테스트 데이터 생성 실패 (무시됨):', testDataError);
+    }
+
     return user;
   } catch (error) {
     if (error instanceof Error) {
@@ -166,10 +175,55 @@ export const getCurrentUser = (): User | null => {
 
 // 인증 상태 변경 감지
 export const onAuthStateChange = (callback: (user: User | null) => void) => {
-  return onAuthStateChanged(auth, (firebaseUser) => {
+  return onAuthStateChanged(auth, async (firebaseUser) => {
     console.log('인증 상태 변경 감지:', firebaseUser);
     const user = firebaseUser ? convertFirebaseUser(firebaseUser) : null;
     console.log('변환된 사용자 정보 (상태 변경):', user);
+
+    // 사용자가 있고 신규 사용자인 경우 테스트 데이터 생성
+    if (user && firebaseUser) {
+      try {
+        // Firestore에서 기존 사용자 정보 확인
+        const userRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userRef);
+        const isNewUser = !userDoc.exists();
+        
+        // 계정 생성 시간과 현재 시간을 비교하여 신규 사용자 판단
+        const creationTime = new Date(firebaseUser.metadata.creationTime || Date.now());
+        const currentTime = new Date();
+        const timeDiff = currentTime.getTime() - creationTime.getTime();
+        const isRecentlyCreated = timeDiff < 60000; // 1분 이내에 생성된 계정
+        
+        console.log('인증 상태 변경 - 사용자 신규 여부 확인:', { 
+          uid: user.uid, 
+          isNewUser, 
+          docExists: userDoc.exists(),
+          creationTime: creationTime.toISOString(),
+          timeDiff: timeDiff / 1000 + '초',
+          isRecentlyCreated
+        });
+
+        // Firestore에 사용자 정보 저장
+        await saveUserToFirestore(user);
+
+        // 새 사용자인 경우에만 테스트 데이터 생성
+        if (isNewUser && isRecentlyCreated) {
+          console.log('인증 상태 변경 - 신규 사용자 감지, 테스트 데이터 생성 시작');
+          try {
+            const result = await createAllTestData();
+            console.log('인증 상태 변경 - 테스트 데이터 생성 완료 (신규 사용자):', result);
+          } catch (testDataError) {
+            console.error('인증 상태 변경 - 테스트 데이터 생성 실패 (상세):', testDataError);
+            console.warn('인증 상태 변경 - 테스트 데이터 생성 실패 (무시됨):', testDataError);
+          }
+        } else {
+          console.log('인증 상태 변경 - 기존 사용자 또는 오래된 계정, 테스트 데이터 생성 건너뜀');
+        }
+      } catch (error) {
+        console.error('인증 상태 변경 - 사용자 정보 처리 중 오류:', error);
+      }
+    }
+
     callback(user);
   });
 };
@@ -237,8 +291,42 @@ export const signInWithGoogle = async (): Promise<User> => {
     const user = convertFirebaseUser(firebaseUser);
     console.log('변환된 사용자 정보:', user);
 
+    // Firestore에서 기존 사용자 정보 확인
+    const userRef = doc(db, 'users', user.uid);
+    const userDoc = await getDoc(userRef);
+    const isNewUser = !userDoc.exists();
+    
+    // 계정 생성 시간과 현재 시간을 비교하여 신규 사용자 판단
+    const creationTime = new Date(firebaseUser.metadata.creationTime || Date.now());
+    const currentTime = new Date();
+    const timeDiff = currentTime.getTime() - creationTime.getTime();
+    const isRecentlyCreated = timeDiff < 60000; // 1분 이내에 생성된 계정
+    
+    console.log('사용자 신규 여부 확인:', { 
+      uid: user.uid, 
+      isNewUser, 
+      docExists: userDoc.exists(),
+      creationTime: creationTime.toISOString(),
+      timeDiff: timeDiff / 1000 + '초',
+      isRecentlyCreated
+    });
+
     // Firestore에 사용자 정보 저장
     await saveUserToFirestore(user);
+
+    // 새 사용자인 경우에만 테스트 데이터 생성
+    if (isNewUser && isRecentlyCreated) {
+      console.log('신규 사용자 감지 - 테스트 데이터 생성 시작');
+      try {
+        const result = await createAllTestData();
+        console.log('Google 로그인 후 테스트 데이터 생성 완료 (신규 사용자):', result);
+      } catch (testDataError) {
+        console.error('테스트 데이터 생성 실패 (상세):', testDataError);
+        console.warn('테스트 데이터 생성 실패 (무시됨):', testDataError);
+      }
+    } else {
+      console.log('기존 사용자 또는 오래된 계정 - 테스트 데이터 생성 건너뜀');
+    }
 
     return user;
   } catch (error) {
