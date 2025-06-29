@@ -11,6 +11,25 @@ import Button from '../components/Button';
 import CustomerInfo from '../components/CustomerInfo';
 import AutoCompleteInput from '../components/AutoCompleteInput';
 import { useSettingsStore } from '../stores/settingsStore';
+import ChartDrawingTool from '../components/ChartDrawingTool';
+
+// Shape 타입 정의 (ChartDrawingTool과 동일하게 맞춤)
+type Shape = {
+  id: number;
+  type: 'circle';
+  x: number;
+  y: number;
+  text?: string;
+};
+
+// ChartData 타입 확장: drawings 필드 추가
+interface ChartDataWithDrawings extends ChartData {
+  drawings?: {
+    faceSide: Shape[];
+    faceFront: Shape[];
+    body: Shape[];
+  };
+}
 
 const ChartPage: React.FC = () => {
   const { t } = useTranslation();
@@ -27,7 +46,10 @@ const ChartPage: React.FC = () => {
   
   // 차트 관련 상태
   const [chartType, setChartType] = useState<ChartType>('');
-  const [chartData, setChartData] = useState<ChartData>({});
+  const [chartData, setChartData] = useState<ChartDataWithDrawings>({});
+  const [faceSideShapes, setFaceSideShapes] = useState<Shape[]>([]);
+  const [faceFrontShapes, setFaceFrontShapes] = useState<Shape[]>([]);
+  const [bodyShapes, setBodyShapes] = useState<Shape[]>([]);
 
   // 차트 타입 옵션
   const chartTypeOptions = [
@@ -96,6 +118,11 @@ const ChartPage: React.FC = () => {
         setReservation(reservationData);
         setChartType(reservationData.chartType || businessType || '');
         setChartData(reservationData.chartData || {});
+        // 도형 정보 복원
+        const drawings = (reservationData.chartData as ChartDataWithDrawings)?.drawings as any || {};
+        setFaceSideShapes(drawings.faceSide || []);
+        setFaceFrontShapes(drawings.faceFront || []);
+        setBodyShapes(drawings.body || []);
         
         // 고객 정보도 로드
         const customerData = await customerService.getById(reservationData.customerId);
@@ -136,7 +163,6 @@ const ChartPage: React.FC = () => {
     
     setSaving(true);
     try {
-      // 차트 데이터에서 빈 값이 아닌 것들만 자동완성에 저장
       if (chartType) {
         const savePromises = Object.entries(chartData)
           .filter(([_, value]) => value && value.trim())
@@ -145,12 +171,19 @@ const ChartPage: React.FC = () => {
           );
         
         await Promise.all(savePromises);
-        console.log('자동완성 데이터 저장 완료:', Object.entries(chartData).filter(([_, value]) => value && value.trim()));
       }
-      
+      // 도형 정보 포함
+      const newChartData = {
+        ...chartData,
+        drawings: {
+          faceSide: faceSideShapes,
+          faceFront: faceFrontShapes,
+          body: bodyShapes,
+        },
+      };
       await reservationService.update(reservation.id, {
         chartType,
-        chartData,
+        chartData: newChartData,
         status: 'completed',
       });
       alert(t('common.saveSuccess'));
@@ -301,6 +334,18 @@ const ChartPage: React.FC = () => {
             ))}
           </div>
         )}
+      </div>
+      {/* 차트 드로잉 도구 (SVG 기반) */}
+      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div>
+          <ChartDrawingTool imageUrl="/chart-templates/face-side.png" width={300} height={300} shapes={faceSideShapes} setShapes={setFaceSideShapes} />
+        </div>
+        <div>
+          <ChartDrawingTool imageUrl="/chart-templates/face-front.png" width={300} height={300} shapes={faceFrontShapes} setShapes={setFaceFrontShapes} />
+        </div>
+        <div>
+          <ChartDrawingTool imageUrl="/chart-templates/body.png" width={300} height={300} shapes={bodyShapes} setShapes={setBodyShapes} />
+        </div>
       </div>
     </div>
   );
