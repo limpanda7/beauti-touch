@@ -203,7 +203,7 @@ const CustomerDetailPage: React.FC = () => {
           <Button
             onClick={() => navigate('/customers')}
             variant="icon"
-            className="customer-detail-back-icon"
+            className="back-icon-btn"
           >
             <ArrowLeft style={{ width: '1.25rem', height: '1.25rem' }} />
           </Button>

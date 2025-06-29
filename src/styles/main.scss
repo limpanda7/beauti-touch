@@ -11,6 +11,8 @@
 @use 'components/modal';
 @use 'components/calendar';
 @use 'components/customer-info';
+@use 'components/loading';
+@use 'components/autocomplete';
 
 // Import page styles
 @use 'pages/reservations';
@@ -18,7 +20,34 @@
 @use 'pages/products';
 @use 'pages/settings';
 @use 'pages/chart';
+@use 'pages/auth';
 
 // Import utility styles
 @use 'utilities/responsive';
-@use 'utilities/animations'; 
+@use 'utilities/animations';
+
+.back-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  border: 1px solid #e5e7eb;
+  transition: box-shadow 0.15s, background 0.15s;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover, &:focus {
+    background: #f3f4f6;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+
+  svg {
+    color: #222;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+} 

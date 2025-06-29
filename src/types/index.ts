@@ -4,7 +4,7 @@ export interface Customer {
   phone: string; // 마스킹된 연락처 (뒤 4자리만)
   gender?: 'male' | 'female' | 'other'; // 성별
   age?: number; // 나이
-  skinType?: string; // 피부 타입
+  skinType?: string; // 피부관리 타입
   allergies?: string; // 알레르기 정보
   notes?: string; // 기타 메모
   procedures?: CustomerProcedure[];
@@ -51,7 +51,7 @@ export interface Reservation {
   chartData?: ChartData; // 업종별 세부 정보
 }
 
-export type ChartType = 'eyelash' | 'waxing' | 'nail' | 'skin' | 'massage' | '';
+export type ChartType = 'eyelash' | 'waxing' | 'nail' | 'skin' | 'massage' | 'default' | '';
 
 export interface ChartData {
   // 속눈썹
@@ -96,3 +96,47 @@ export interface ChartCommon {
   caution?: string;
 }
 */ 
+
+// 인증 관련 타입들
+export interface User {
+  uid: string;
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+  emailVerified: boolean;
+  createdAt: Date;
+  lastLoginAt: Date;
+}
+
+export interface AuthError {
+  code: string;
+  message: string;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface SignUpCredentials extends LoginCredentials {
+  displayName: string;
+  confirmPassword: string;
+}
+
+// 자동완성 관련 타입들
+export interface AutoCompleteData {
+  id: string;
+  userId: string;
+  fieldName: string;
+  fieldValue: string;
+  chartType: ChartType;
+  usageCount: number;
+  lastUsed: Date;
+  createdAt: Date;
+}
+
+export interface AutoCompleteSuggestion {
+  value: string;
+  usageCount: number;
+  lastUsed: Date;
+} 

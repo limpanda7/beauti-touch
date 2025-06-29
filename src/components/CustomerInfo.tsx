@@ -75,24 +75,28 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
               </td>
             </tr>
             {/* 모바일에서 메모를 별도 행으로 표시 */}
-            <tr className="customer-info-table-row customer-info-memo-row-mobile">
-              <td className="customer-info-table-label" colSpan={3}>{t('customers.memo')}</td>
-            </tr>
-            <tr className="customer-info-table-row customer-info-memo-row-mobile">
-              <td className="customer-info-table-value" colSpan={3}>
-                {isEdit ? (
-                  <textarea
-                    name="memo"
-                    value={formData?.memo || ''}
-                    onChange={onFormChange}
-                    className="customer-info-table-textarea"
-                    rows={4}
-                  />
-                ) : (
-                  <span className="customer-info-memo-text">{customer.memo || '-'}</span>
-                )}
-              </td>
-            </tr>
+            { (isEdit || customer.memo) && (
+              <>
+                <tr className="customer-info-table-row customer-info-memo-row-mobile">
+                  <td className="customer-info-table-label" colSpan={3}>{t('customers.memo')}</td>
+                </tr>
+                <tr className="customer-info-table-row customer-info-memo-row-mobile">
+                  <td className="customer-info-table-value" colSpan={3}>
+                    {isEdit ? (
+                      <textarea
+                        name="memo"
+                        value={formData?.memo || ''}
+                        onChange={onFormChange}
+                        className="customer-info-table-textarea"
+                        rows={4}
+                      />
+                    ) : (
+                      <span className="customer-info-memo-text">{customer.memo || '-'}</span>
+                    )}
+                  </td>
+                </tr>
+              </>
+            )}
           </tbody>
         </table>
       </div>

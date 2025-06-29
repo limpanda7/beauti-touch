@@ -143,8 +143,24 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
       let hNum = parseInt(h, 10);
       setSelectedTime(`${hNum.toString().padStart(2, '0')}:${m}`);
     } else {
-      // 새 예약 생성 시 기본값 설정
-      setSelectedTime('');
+      // 새 예약 생성 시 현재시간을 10분 단위로 올림하여 기본값 설정
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      
+      // 10분 단위로 올림
+      const roundedMinutes = Math.ceil(minutes / 10) * 10;
+      let finalHours = hours;
+      let finalMinutes = roundedMinutes;
+      
+      // 60분이 되면 다음 시간으로
+      if (finalMinutes === 60) {
+        finalMinutes = 0;
+        finalHours = (finalHours + 1) % 24;
+      }
+      
+      const timeString = `${finalHours.toString().padStart(2, '0')}:${finalMinutes.toString().padStart(2, '0')}`;
+      setSelectedTime(timeString);
     }
   }, [reservation]);
 

@@ -5,10 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import type { Customer, Reservation, ChartType, ChartData, Product } from '../types';
-import { customerService, reservationService, productService } from '../services/firestore';
+import { customerService, reservationService, productService, autoCompleteService } from '../services/firestore';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Button from '../components/Button';
 import CustomerInfo from '../components/CustomerInfo';
+import AutoCompleteInput from '../components/AutoCompleteInput';
 import { useSettingsStore } from '../stores/settingsStore';
 
 const ChartPage: React.FC = () => {
@@ -77,6 +78,7 @@ const ChartPage: React.FC = () => {
       { name: 'massagePreference', label: t('chart.fields.massagePreference') },
       { name: 'massageMuscle', label: t('chart.fields.massageMuscle') },
     ],
+    default: [], // 기본 타입은 빈 배열
     '': [],
   };
 
@@ -134,6 +136,18 @@ const ChartPage: React.FC = () => {
     
     setSaving(true);
     try {
+      // 차트 데이터에서 빈 값이 아닌 것들만 자동완성에 저장
+      if (chartType) {
+        const savePromises = Object.entries(chartData)
+          .filter(([_, value]) => value && value.trim())
+          .map(([fieldName, fieldValue]) => 
+            autoCompleteService.saveFieldValue(fieldName, fieldValue.trim(), chartType)
+          );
+        
+        await Promise.all(savePromises);
+        console.log('자동완성 데이터 저장 완료:', Object.entries(chartData).filter(([_, value]) => value && value.trim()));
+      }
+      
       await reservationService.update(reservation.id, {
         chartType,
         chartData,
@@ -190,7 +204,7 @@ const ChartPage: React.FC = () => {
           <Button
             onClick={handleCancel}
             variant="icon"
-            className="chart-page-back-icon"
+            className="back-icon-btn"
           >
             <ArrowLeft style={{ width: '1.25rem', height: '1.25rem' }} />
           </Button>
@@ -233,7 +247,7 @@ const ChartPage: React.FC = () => {
             {reservation.productName}
             {product && (
               <span className="chart-page-duration">
-                ({formatDuration(product.duration)})
+                {' '}({formatDuration(product.duration)})
               </span>
             )}
           </p>
@@ -273,12 +287,14 @@ const ChartPage: React.FC = () => {
                     ))}
                   </select>
                 ) : (
-                  <input
-                    type="text"
+                  <AutoCompleteInput
+                    key={`${field.name}-${chartType}`}
                     id={field.name}
                     name={field.name}
                     value={chartData[field.name] as string || ''}
                     onChange={handleChartDataChange}
+                    chartType={chartType}
+                    placeholder={field.label}
                   />
                 )}
               </div>

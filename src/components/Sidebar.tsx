@@ -1,7 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Calendar, Users, ClipboardList, Settings, X } from 'lucide-react';
+import { Calendar, Users, ClipboardList, Settings, X, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useAuthStore, useUser } from '../stores/authStore';
 
 interface SidebarProps {
   onClose?: () => void;
@@ -11,6 +12,8 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ onClose, isMobile = false, className = '' }) => {
   const { t } = useTranslation();
+  const { signOut } = useAuthStore();
+  const user = useUser();
   
   const menuItems = [
     { id: 'reservations', label: t('navigation.reservations'), icon: Calendar, path: '/reservations' },
@@ -22,6 +25,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose, isMobile = false, className 
   const handleNavClick = () => {
     if (isMobile && onClose) {
       onClose();
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
     }
   };
 
@@ -47,6 +58,30 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose, isMobile = false, className 
           ))}
         </ul>
       </nav>
+
+      <div className="sidebar-footer">
+        {user && (
+          <div className="user-info">
+            <div className="user-avatar">
+              {user.displayName ? user.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
+            </div>
+            <div className="user-details">
+              <div className="user-name">{user.displayName || user.email}</div>
+              <div className="user-email">{user.email}</div>
+            </div>
+          </div>
+        )}
+        
+        <button
+          type="button"
+          className="logout-btn"
+          onClick={handleLogout}
+          title={t('auth.logout')}
+        >
+          <LogOut size={20} />
+          <span>{t('auth.logout')}</span>
+        </button>
+      </div>
     </div>
   );
 };

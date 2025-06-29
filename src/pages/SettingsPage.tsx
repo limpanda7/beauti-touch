@@ -1,12 +1,102 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Settings as SettingsIcon, Globe, DollarSign, Briefcase } from 'lucide-react';
+import { Settings as SettingsIcon, Globe, DollarSign, Briefcase, LogOut, User, Trash2, Search } from 'lucide-react';
 import { useSettingsStore } from '../stores/settingsStore';
-import type { ChartType } from '../types';
+import { useAuthStore, useUser } from '../stores/authStore';
+import { autoCompleteService } from '../services/firestore';
+import type { ChartType, AutoCompleteSuggestion } from '../types';
+import Button from '../components/Button';
 
 const SettingsPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { language, currency, businessType, updateSettings } = useSettingsStore();
+  const { signOut } = useAuthStore();
+  const user = useUser();
+  
+  // 자동완성 관리 상태
+  const [autoCompleteData, setAutoCompleteData] = useState<Record<string, AutoCompleteSuggestion[]>>({});
+  const [selectedChartType, setSelectedChartType] = useState<ChartType>('');
+  const [selectedField, setSelectedField] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+
+  // 차트 필드 정의
+  const chartFieldDefs: Record<ChartType, { name: string; label: string }[]> = {
+    eyelash: [
+      { name: 'eyelashMaterial', label: t('chart.fields.eyelashMaterial') },
+      { name: 'eyelashMix', label: t('chart.fields.eyelashMix') },
+      { name: 'eyelashGlue', label: t('chart.fields.eyelashGlue') },
+      { name: 'eyelashFeedback', label: t('chart.fields.eyelashFeedback') },
+    ],
+    waxing: [
+      { name: 'waxingArea', label: t('chart.fields.waxingArea') },
+      { name: 'waxingCycle', label: t('chart.fields.waxingCycle') },
+      { name: 'waxingProduct', label: t('chart.fields.waxingProduct') },
+      { name: 'waxingAftercare', label: t('chart.fields.waxingAftercare') },
+    ],
+    nail: [
+      { name: 'nailColor', label: t('chart.fields.nailColor') },
+      { name: 'nailBaseTop', label: t('chart.fields.nailBaseTop') },
+      { name: 'nailFeedback', label: t('chart.fields.nailFeedback') },
+    ],
+    skin: [
+      { name: 'skinTypeDetail', label: t('chart.fields.skinTypeDetail') },
+      { name: 'skinPurpose', label: t('chart.fields.skinPurpose') },
+      { name: 'skinTrouble', label: t('chart.fields.skinTrouble') },
+      { name: 'skinFeedback', label: t('chart.fields.skinFeedback') },
+    ],
+    massage: [
+      { name: 'massageArea', label: t('chart.fields.massageArea') },
+      { name: 'massagePreference', label: t('chart.fields.massagePreference') },
+      { name: 'massageMuscle', label: t('chart.fields.massageMuscle') },
+    ],
+    default: [], // 기본 타입은 빈 배열
+    '': [],
+  };
+
+  // 자동완성 데이터 로드
+  const loadAutoCompleteData = async (chartType: ChartType, fieldName: string) => {
+    if (!chartType || !fieldName) return;
+    
+    try {
+      setLoading(true);
+      const suggestions = await autoCompleteService.getSuggestions(fieldName, chartType, 50);
+      setAutoCompleteData(prev => ({
+        ...prev,
+        [fieldName]: suggestions
+      }));
+    } catch (error) {
+      console.error('자동완성 데이터 로드 실패:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 자동완성 데이터 삭제
+  const handleDeleteAutoComplete = async (fieldName: string) => {
+    if (!selectedChartType || !fieldName) return;
+    
+    if (window.confirm(t('settings.confirmDeleteAutoComplete'))) {
+      try {
+        await autoCompleteService.deleteFieldSuggestions(fieldName, selectedChartType);
+        setAutoCompleteData(prev => {
+          const newData = { ...prev };
+          delete newData[fieldName];
+          return newData;
+        });
+        alert(t('settings.autoCompleteDeleted'));
+      } catch (error) {
+        console.error('자동완성 데이터 삭제 실패:', error);
+        alert(t('common.deleteError'));
+      }
+    }
+  };
+
+  // 필드 선택 시 자동완성 데이터 로드
+  useEffect(() => {
+    if (selectedChartType && selectedField) {
+      loadAutoCompleteData(selectedChartType, selectedField);
+    }
+  }, [selectedChartType, selectedField]);
 
   const handleSettingChange = (key: keyof { language: string; currency: string; businessType: string }, value: string) => {
     if (key === 'businessType') {
@@ -17,6 +107,14 @@ const SettingsPage: React.FC = () => {
     
     if (key === 'language') {
       i18n.changeLanguage(value);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
     }
   };
 
@@ -104,6 +202,106 @@ const SettingsPage: React.FC = () => {
               <option key={businessType.code} value={businessType.code}>{businessType.name}</option>
             ))}
           </select>
+        </div>
+
+        {/* 자동완성 관리 섹션 */}
+        <div className="settings-item">
+          <div className="settings-item-header">
+            <Search className="settings-item-icon" />
+            <h2 className="settings-item-title">{t('settings.autoComplete')}</h2>
+          </div>
+          <p className="settings-item-description">{t('settings.autoCompleteDescription')}</p>
+          
+          <div className="autocomplete-management">
+            <div className="autocomplete-filters">
+              <select
+                value={selectedChartType}
+                onChange={(e) => setSelectedChartType(e.target.value as ChartType)}
+                className="settings-select"
+              >
+                <option value="">{t('settings.selectChartType')}</option>
+                {businessTypes.filter(bt => bt.code !== '').map(businessType => (
+                  <option key={businessType.code} value={businessType.code}>{businessType.name}</option>
+                ))}
+              </select>
+              
+              {selectedChartType && (
+                <select
+                  value={selectedField}
+                  onChange={(e) => setSelectedField(e.target.value)}
+                  className="settings-select"
+                >
+                  <option value="">{t('settings.selectField')}</option>
+                  {chartFieldDefs[selectedChartType]?.map(field => (
+                    <option key={field.name} value={field.name}>{field.label}</option>
+                  ))}
+                </select>
+              )}
+            </div>
+            
+            {selectedField && (
+              <div className="autocomplete-data">
+                <div className="autocomplete-data-header">
+                  <h3>{chartFieldDefs[selectedChartType]?.find(f => f.name === selectedField)?.label}</h3>
+                  <Button
+                    onClick={() => handleDeleteAutoComplete(selectedField)}
+                    variant="danger"
+                    size="sm"
+                  >
+                    <Trash2 size={16} />
+                    {t('settings.deleteAll')}
+                  </Button>
+                </div>
+                
+                {loading ? (
+                  <div className="autocomplete-loading">{t('common.loading')}...</div>
+                ) : (
+                  <div className="autocomplete-suggestions-list">
+                    {autoCompleteData[selectedField]?.length > 0 ? (
+                      autoCompleteData[selectedField].map((suggestion, index) => (
+                        <div key={index} className="autocomplete-suggestion-item-settings">
+                          <span className="suggestion-text">{suggestion.value}</span>
+                          <span className="suggestion-count">{suggestion.usageCount}회</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="autocomplete-empty">{t('settings.noAutoCompleteData')}</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 모바일에서만 표시되는 로그아웃 섹션 */}
+        <div className="settings-item settings-item-mobile-only">
+          <div className="settings-item-header">
+            <User className="settings-item-icon" />
+            <h2 className="settings-item-title">{t('settings.account')}</h2>
+          </div>
+          <p className="settings-item-description">{t('settings.accountDescription')}</p>
+          
+          {user && (
+            <div className="user-info-mobile">
+              <div className="user-avatar-mobile">
+                {user.displayName ? user.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
+              </div>
+              <div className="user-details-mobile">
+                <div className="user-name-mobile">{user.displayName || user.email}</div>
+                <div className="user-email-mobile">{user.email}</div>
+              </div>
+            </div>
+          )}
+          
+          <button
+            type="button"
+            className="logout-btn-mobile"
+            onClick={handleLogout}
+          >
+            <LogOut size={20} />
+            <span>{t('auth.logout')}</span>
+          </button>
         </div>
       </div>
     </div>

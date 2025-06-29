@@ -177,3 +177,105 @@
     opacity: 0;
   }
 } 
+
+// 사이드바 푸터 (사용자 정보 및 로그아웃)
+.sidebar-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-top: 1px solid #dee2e6;
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+    .user-avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1rem;
+      margin-right: 0.75rem;
+      flex-shrink: 0;
+    }
+    
+    .user-details {
+      flex: 1;
+      min-width: 0;
+      
+      .user-name {
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      .user-email {
+        color: #718096;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+  
+  .logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+    
+    svg {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+}
+
+// 모바일에서 사이드바 푸터 조정
+.sidebar-mobile .sidebar-footer {
+  position: relative;
+  margin-top: auto;
+  padding: 1rem 2rem;
+  
+  // 모바일에서는 로그아웃 버튼 숨김 (설정 페이지에서 처리)
+  .logout-btn {
+    display: none;
+  }
+} 

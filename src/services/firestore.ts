@@ -11,12 +11,30 @@ import {
   orderBy,
   Timestamp,
   setDoc,
-  onSnapshot
+  onSnapshot,
+  limit
 } from 'firebase/firestore';
 import type { QuerySnapshot, DocumentData } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { Customer, Product, Reservation } from '../types';
+import type { Customer, Product, Reservation, AutoCompleteData, AutoCompleteSuggestion, ChartType } from '../types';
 import { generateCustomerId, maskCustomerData, generateUniqueCustomerId } from '../utils/customerUtils';
+import { getAuth } from 'firebase/auth';
+
+// 현재 사용자의 UID를 가져오는 함수
+const getCurrentUserId = (): string => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error('사용자가 로그인되지 않았습니다.');
+  }
+  return user.uid;
+};
+
+// 사용자별 컬렉션 경로를 생성하는 함수
+const getUserCollectionPath = (collectionName: string): string => {
+  const userId = getCurrentUserId();
+  return `users/${userId}/${collectionName}`;
+};
 
 // Firestore 오류 처리를 위한 헬퍼 함수
 const handleFirestoreError = (error: any, operation: string) => {
@@ -60,7 +78,8 @@ const retryOperation = async <T>(
 // 고객 관리
 export const customerService = {
   async getAll(): Promise<Customer[]> {
-    const querySnapshot = await getDocs(collection(db, 'customers'));
+    const collectionPath = getUserCollectionPath('customers');
+    const querySnapshot = await getDocs(collection(db, collectionPath));
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
@@ -70,7 +89,8 @@ export const customerService = {
   },
 
   async getById(id: string): Promise<Customer | null> {
-    const docRef = doc(db, 'customers', id);
+    const collectionPath = getUserCollectionPath('customers');
+    const docRef = doc(db, collectionPath, id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       return {
@@ -110,7 +130,8 @@ export const customerService = {
       );
       
       // 4자리 ID를 문서 ID로 직접 사용
-      const docRef = doc(db, 'customers', customerId);
+      const collectionPath = getUserCollectionPath('customers');
+      const docRef = doc(db, collectionPath, customerId);
       await setDoc(docRef, cleanData);
       
       return customerId;
@@ -122,7 +143,8 @@ export const customerService = {
 
   async update(id: string, customer: Partial<Customer>): Promise<void> {
     try {
-      const docRef = doc(db, 'customers', id);
+      const collectionPath = getUserCollectionPath('customers');
+      const docRef = doc(db, collectionPath, id);
       
       // 고객 데이터 마스킹 처리 (언어 자동 감지)
       const maskedData = maskCustomerData(customer);
@@ -145,7 +167,8 @@ export const customerService = {
   },
 
   async delete(id: string): Promise<void> {
-    const docRef = doc(db, 'customers', id);
+    const collectionPath = getUserCollectionPath('customers');
+    const docRef = doc(db, collectionPath, id);
     await deleteDoc(docRef);
   }
 };
@@ -155,7 +178,8 @@ export const productService = {
   async getAll(): Promise<Product[]> {
     try {
       return await retryOperation(async () => {
-        const querySnapshot = await getDocs(collection(db, 'products'));
+        const collectionPath = getUserCollectionPath('products');
+        const querySnapshot = await getDocs(collection(db, collectionPath));
         return querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
@@ -170,8 +194,9 @@ export const productService = {
   },
 
   async getActive(): Promise<Product[]> {
+    const collectionPath = getUserCollectionPath('products');
     const q = query(
-      collection(db, 'products'),
+      collection(db, collectionPath),
       where('isActive', '==', true)
     );
     const querySnapshot = await getDocs(q);
@@ -187,7 +212,8 @@ export const productService = {
   },
 
   async getById(id: string): Promise<Product | null> {
-    const docRef = doc(db, 'products', id);
+    const collectionPath = getUserCollectionPath('products');
+    const docRef = doc(db, collectionPath, id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       return {
@@ -208,7 +234,8 @@ export const productService = {
       Object.entries(product).filter(([_, value]) => value !== undefined)
     );
     
-    const docRef = await addDoc(collection(db, 'products'), {
+    const collectionPath = getUserCollectionPath('products');
+    const docRef = await addDoc(collection(db, collectionPath), {
       ...cleanProduct,
       createdAt: Timestamp.fromDate(now),
       updatedAt: Timestamp.fromDate(now)
@@ -217,7 +244,8 @@ export const productService = {
   },
 
   async update(id: string, product: Partial<Product>): Promise<void> {
-    const docRef = doc(db, 'products', id);
+    const collectionPath = getUserCollectionPath('products');
+    const docRef = doc(db, collectionPath, id);
     
     // undefined 값을 필터링하여 Firebase 오류 방지
     const cleanProduct = Object.fromEntries(
@@ -231,7 +259,8 @@ export const productService = {
   },
 
   async delete(id: string): Promise<void> {
-    const docRef = doc(db, 'products', id);
+    const collectionPath = getUserCollectionPath('products');
+    const docRef = doc(db, collectionPath, id);
     await deleteDoc(docRef);
   }
 };
@@ -239,7 +268,8 @@ export const productService = {
 // 예약 관리
 export const reservationService = {
   async getAll(): Promise<Reservation[]> {
-    const q = query(collection(db, 'reservations'));
+    const collectionPath = getUserCollectionPath('reservations');
+    const q = query(collection(db, collectionPath));
     const querySnapshot = await getDocs(q);
     const reservations = querySnapshot.docs.map(doc => ({
       id: doc.id,
@@ -265,8 +295,9 @@ export const reservationService = {
     const startOfDay = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0));
     const endOfDay = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999));
 
+    const collectionPath = getUserCollectionPath('reservations');
     const q = query(
-      collection(db, 'reservations'),
+      collection(db, collectionPath),
       where('date', '>=', Timestamp.fromDate(startOfDay)),
       where('date', '<=', Timestamp.fromDate(endOfDay))
     );
@@ -289,8 +320,9 @@ export const reservationService = {
     const utcStartDate = new Date(Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), 0, 0, 0, 0));
     const utcEndDate = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23, 59, 59, 999));
     
+    const collectionPath = getUserCollectionPath('reservations');
     const q = query(
-      collection(db, "reservations"),
+      collection(db, collectionPath),
       where("date", ">=", Timestamp.fromDate(utcStartDate)),
       where("date", "<=", Timestamp.fromDate(utcEndDate))
     );
@@ -315,8 +347,9 @@ export const reservationService = {
   },
 
   async getByCustomerId(customerId: string): Promise<Reservation[]> {
+    const collectionPath = getUserCollectionPath('reservations');
     const q = query(
-      collection(db, 'reservations'),
+      collection(db, collectionPath),
       where('customerId', '==', customerId)
     );
     const querySnapshot = await getDocs(q);
@@ -333,7 +366,8 @@ export const reservationService = {
   },
 
   async getById(id: string): Promise<Reservation | null> {
-    const docRef = doc(db, 'reservations', id);
+    const collectionPath = getUserCollectionPath('reservations');
+    const docRef = doc(db, collectionPath, id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       return {
@@ -360,7 +394,8 @@ export const reservationService = {
       reservation.date.getMilliseconds()
     ));
     
-    const docRef = await addDoc(collection(db, 'reservations'), {
+    const collectionPath = getUserCollectionPath('reservations');
+    const docRef = await addDoc(collection(db, collectionPath), {
       ...reservation,
       date: Timestamp.fromDate(utcDate),
       createdAt: Timestamp.fromDate(now),
@@ -370,7 +405,8 @@ export const reservationService = {
   },
 
   async update(id: string, reservation: Partial<Reservation>): Promise<void> {
-    const docRef = doc(db, 'reservations', id);
+    const collectionPath = getUserCollectionPath('reservations');
+    const docRef = doc(db, collectionPath, id);
     const updateData: any = {
       ...reservation,
       updatedAt: Timestamp.fromDate(new Date())
@@ -402,7 +438,142 @@ export const reservationService = {
   },
 
   async delete(id: string): Promise<void> {
-    const docRef = doc(db, 'reservations', id);
+    const collectionPath = getUserCollectionPath('reservations');
+    const docRef = doc(db, collectionPath, id);
     await deleteDoc(docRef);
+  }
+};
+
+// 자동완성 관리
+export const autoCompleteService = {
+  // 특정 필드의 자동완성 제안 가져오기
+  async getSuggestions(fieldName: string, chartType: ChartType, limitCount: number = 10): Promise<AutoCompleteSuggestion[]> {
+    try {
+      const userId = getCurrentUserId();
+      const collectionPath = getUserCollectionPath('autocomplete');
+      
+      // chartType이 'default'이면 모든 업종에서 제안을 가져옴
+      const conditions = chartType === 'default' 
+        ? [
+            where('userId', '==', userId),
+            where('fieldName', '==', fieldName)
+          ]
+        : [
+            where('userId', '==', userId),
+            where('fieldName', '==', fieldName),
+            where('chartType', '==', chartType)
+          ];
+      
+      // 인덱스 오류를 피하기 위해 orderBy를 제거하고 클라이언트에서 정렬
+      const q = query(
+        collection(db, collectionPath),
+        ...conditions,
+        limit(limitCount)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const suggestions = querySnapshot.docs.map(doc => ({
+        value: doc.data().fieldValue,
+        usageCount: doc.data().usageCount,
+        lastUsed: doc.data().lastUsed?.toDate()
+      })) as AutoCompleteSuggestion[];
+      
+      // 클라이언트에서 정렬 (사용 횟수 내림차순, 마지막 사용 시간 내림차순)
+      suggestions.sort((a, b) => {
+        if (a.usageCount !== b.usageCount) {
+          return b.usageCount - a.usageCount;
+        }
+        if (a.lastUsed && b.lastUsed) {
+          return b.lastUsed.getTime() - a.lastUsed.getTime();
+        }
+        return 0;
+      });
+      
+      console.log(`자동완성 제안 조회: ${fieldName} (${chartType})`, suggestions.length, '개');
+      return suggestions;
+    } catch (error) {
+      console.error('자동완성 제안 조회 실패:', error);
+      return [];
+    }
+  },
+
+  // 자동완성 데이터 저장/업데이트
+  async saveFieldValue(fieldName: string, fieldValue: string, chartType: ChartType): Promise<void> {
+    try {
+      const userId = getCurrentUserId();
+      const collectionPath = getUserCollectionPath('autocomplete');
+      
+      // 기존 데이터가 있는지 확인
+      const q = query(
+        collection(db, collectionPath),
+        where('userId', '==', userId),
+        where('fieldName', '==', fieldName),
+        where('fieldValue', '==', fieldValue),
+        where('chartType', '==', chartType)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const now = new Date();
+      
+      if (querySnapshot.empty) {
+        // 새로운 자동완성 데이터 생성
+        const newData: Omit<AutoCompleteData, 'id'> = {
+          userId,
+          fieldName,
+          fieldValue,
+          chartType,
+          usageCount: 1,
+          lastUsed: now,
+          createdAt: now
+        };
+        
+        await addDoc(collection(db, collectionPath), {
+          ...newData,
+          lastUsed: Timestamp.fromDate(now),
+          createdAt: Timestamp.fromDate(now)
+        });
+        
+        console.log(`새 자동완성 데이터 생성: ${fieldName} = "${fieldValue}" (${chartType})`);
+      } else {
+        // 기존 데이터 업데이트 (사용 횟수 증가, 마지막 사용 시간 업데이트)
+        const docRef = doc(db, collectionPath, querySnapshot.docs[0].id);
+        const currentData = querySnapshot.docs[0].data();
+        
+        await updateDoc(docRef, {
+          usageCount: currentData.usageCount + 1,
+          lastUsed: Timestamp.fromDate(now)
+        });
+        
+        console.log(`자동완성 데이터 업데이트: ${fieldName} = "${fieldValue}" (${chartType}) - ${currentData.usageCount + 1}회 사용`);
+      }
+    } catch (error) {
+      console.error('자동완성 데이터 저장 실패:', error);
+    }
+  },
+
+  // 특정 필드의 모든 자동완성 데이터 삭제
+  async deleteFieldSuggestions(fieldName: string, chartType: ChartType): Promise<void> {
+    try {
+      const userId = getCurrentUserId();
+      const collectionPath = getUserCollectionPath('autocomplete');
+      
+      const q = query(
+        collection(db, collectionPath),
+        where('userId', '==', userId),
+        where('fieldName', '==', fieldName),
+        where('chartType', '==', chartType)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      
+      // 배치 삭제
+      const deletePromises = querySnapshot.docs.map(doc => 
+        deleteDoc(doc.ref)
+      );
+      
+      await Promise.all(deletePromises);
+    } catch (error) {
+      console.error('자동완성 데이터 삭제 실패:', error);
+    }
   }
 }; 

@@ -135,22 +135,21 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave, o
           </button>
         </div>
         <form onSubmit={handleSubmit} className="product-modal-form">
-          <div>
-            <label className="product-modal-label" htmlFor="name">
-              {t('products.name')} *
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="product-modal-input"
-              required
-            />
-          </div>
-          
           <div className="product-modal-grid">
+            <div>
+              <label className="product-modal-label" htmlFor="name">
+                {t('products.name')} *
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="product-modal-input"
+                required
+              />
+            </div>
             <div>
               <label className="product-modal-label" htmlFor="category">
                 {t('products.category')}
@@ -161,7 +160,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave, o
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                placeholder={t('products.categoryPlaceholder')}
                 className="product-modal-input"
               />
             </div>

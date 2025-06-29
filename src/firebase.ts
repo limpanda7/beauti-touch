@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import { getAuth, connectAuthEmulator, setPersistence, browserLocalPersistence } from "firebase/auth";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -25,6 +26,16 @@ try {
 }
 
 export const db = getFirestore(app);
+export const auth = getAuth(app);
+
+// 로그인 지속성 설정 (한 달간 유지)
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+    console.log('Firebase Auth 지속성이 LOCAL로 설정되었습니다.');
+  })
+  .catch((error) => {
+    console.error('Firebase Auth 지속성 설정 실패:', error);
+  });
 
 // 개발 환경에서 에뮬레이터 연결 (선택사항)
 if (
@@ -36,5 +47,18 @@ if (
     connectFirestoreEmulator(db, 'localhost', 8080);
   } catch (error) {
     console.log('Firestore 에뮬레이터가 이미 연결되어 있습니다.');
+  }
+}
+
+// Auth 에뮬레이터 연결 (개발 환경)
+if (
+  typeof import.meta !== 'undefined' &&
+  import.meta.env.MODE === 'development' &&
+  import.meta.env.VITE_USE_AUTH_EMULATOR === 'true'
+) {
+  try {
+    connectAuthEmulator(auth, 'http://localhost:9099');
+  } catch (error) {
+    console.log('Auth 에뮬레이터가 이미 연결되어 있습니다.');
   }
 }

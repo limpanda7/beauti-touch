@@ -464,8 +464,7 @@
 @media (max-width: 480px) {
   .product-modal {
     padding: 16px;
-    max-width: calc(100vw - 16px);
-    margin: 8px;
+    max-width: calc(100vw - 32px);
   }
   
   .product-modal-form {
@@ -486,8 +485,7 @@
 @media (max-width: 360px) {
   .product-modal {
     padding: 12px;
-    max-width: calc(100vw - 12px);
-    margin: 6px;
+    max-width: calc(100vw - 24px);
   }
   
   .product-modal-form {
