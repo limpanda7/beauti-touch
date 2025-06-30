@@ -180,26 +180,11 @@ const SettingsPage: React.FC = () => {
             ))}
           </select>
           
-          {/* 날짜 형식 미리보기 */}
-          <div className="date-format-preview">
-            <div className="date-format-preview-header">
-              <Calendar className="date-format-preview-icon" size={16} />
-              <span className="date-format-preview-title">{t('settings.dateFormatPreview')}</span>
-            </div>
-            <div className="date-format-examples">
-              <div className="date-format-example">
-                <span className="date-format-label">{t('settings.dayFormat')}:</span>
-                <span className="date-format-value">{formatDate(sampleDate, 'day', language)}</span>
-              </div>
-              <div className="date-format-example">
-                <span className="date-format-label">{t('settings.mediumFormat')}:</span>
-                <span className="date-format-value">{formatDate(sampleDate, 'medium', language)}</span>
-              </div>
-              <div className="date-format-example">
-                <span className="date-format-label">{t('settings.monthFormat')}:</span>
-                <span className="date-format-value">{formatDate(sampleDate, 'month', language)}</span>
-              </div>
-            </div>
+          {/* 날짜 형식 */}
+          <div className="date-format">
+            <Calendar size={16} />
+            <span>{t('settings.dateFormat')}: </span>
+            <span>{formatDate(sampleDate, 'medium', language)}</span>
           </div>
         </div>
 

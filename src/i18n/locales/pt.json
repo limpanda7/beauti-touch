@@ -348,7 +348,7 @@
     "deleteConfirm": "Tem certeza de que deseja excluir este item?",
     "deleteSuccess": "Item excluído com sucesso.",
     "deleteError": "Erro ao excluir item.",
-    "dateFormatPreview": "Prévia do Formato de Data",
+    "dateFormat": "Formato de Data",
     "shortFormat": "Formato Curto",
     "mediumFormat": "Formato Médio",
     "longFormat": "Formato Longo"

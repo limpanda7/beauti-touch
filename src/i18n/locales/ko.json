@@ -199,7 +199,7 @@
       "skin": "피부관리",
       "massage": "마사지"
     },
-    "dateFormatPreview": "날짜 형식 미리보기",
+    "dateFormat": "날짜 형식",
     "dayFormat": "일별 형식",
     "mediumFormat": "중간 형식",
     "monthFormat": "월별 형식"

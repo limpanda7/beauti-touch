@@ -200,7 +200,7 @@
     "deleteConfirm": "Bạn có chắc chắn muốn xóa mục này?",
     "deleteSuccess": "Xóa mục thành công.",
     "deleteError": "Xóa mục thất bại.",
-    "dateFormatPreview": "Xem Trước Định Dạng Ngày",
+    "dateFormat": "Định Dạng Ngày",
     "shortFormat": "Định Dạng Ngắn",
     "mediumFormat": "Định Dạng Trung Bình",
     "longFormat": "Định Dạng Dài"

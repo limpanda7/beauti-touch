@@ -83,7 +83,7 @@
     "deleteConfirm": "¿Estás seguro de que quieres eliminar este elemento?",
     "deleteSuccess": "Elemento eliminado exitosamente.",
     "deleteError": "Error al eliminar elemento.",
-    "dateFormatPreview": "Vista Previa del Formato de Fecha",
+    "dateFormat": "Formato de Fecha",
     "dayFormat": "Formato de Día",
     "mediumFormat": "Formato Mediano",
     "monthFormat": "Formato de Mes",

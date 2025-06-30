@@ -171,7 +171,7 @@
     "deleteConfirm": "Apakah Anda yakin ingin menghapus item ini?",
     "deleteSuccess": "Item berhasil dihapus.",
     "deleteError": "Gagal menghapus item.",
-    "dateFormatPreview": "Pratinjau Format Tanggal",
+    "dateFormat": "Format Tanggal",
     "dayFormat": "Format Hari",
     "mediumFormat": "Format Menengah",
     "monthFormat": "Format Bulan"

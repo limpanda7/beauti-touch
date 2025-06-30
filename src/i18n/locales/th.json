@@ -351,7 +351,7 @@
     "deleteConfirm": "คุณแน่ใจหรือไม่ที่จะลบรายการนี้?",
     "deleteSuccess": "ลบรายการสำเร็จแล้ว",
     "deleteError": "ลบรายการไม่สำเร็จ",
-    "dateFormatPreview": "ตัวอย่างรูปแบบวันที่",
+    "dateFormat": "รูปแบบวันที่",
     "shortFormat": "รูปแบบสั้น",
     "mediumFormat": "รูปแบบกลาง",
     "longFormat": "รูปแบบยาว"

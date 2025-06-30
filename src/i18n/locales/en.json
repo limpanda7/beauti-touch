@@ -199,7 +199,7 @@
       "skin": "Skin Care",
       "massage": "Massage"
     },
-    "dateFormatPreview": "Date Format Preview",
+    "dateFormat": "Date Format",
     "dayFormat": "Day Format",
     "mediumFormat": "Medium Format",
     "monthFormat": "Month Format"
