@@ -2,12 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Search, Edit, Trash2, Phone, Calendar, User } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
 import type { Customer } from '../types';
 import { customerService, reservationService } from '../services/firestore';
 import CustomerModal from '../components/CustomerModal';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { formatDate } from '../utils/dateUtils';
 
 interface CustomerWithVisitDate extends Customer {
   lastVisit?: Date | null;
@@ -15,7 +14,7 @@ interface CustomerWithVisitDate extends Customer {
 }
 
 const CustomersPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [customers, setCustomers] = useState<CustomerWithVisitDate[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -141,14 +140,14 @@ const CustomersPage: React.FC = () => {
           <Calendar className="customer-card-icon" />
           <span className="customer-card-visit-label">{t('customers.lastVisit')}:</span>
           <span className="customer-card-visit-date">
-            {customer.lastVisit ? format(customer.lastVisit, 'yyyy.MM.dd', { locale: ko }) : '-'}
+            {customer.lastVisit ? formatDate(customer.lastVisit, 'medium', i18n.language) : '-'}
           </span>
         </div>
         <div className="customer-card-visit-item">
           <Calendar className="customer-card-icon" />
           <span className="customer-card-visit-label">{t('customers.nextVisit')}:</span>
           <span className="customer-card-visit-date">
-            {customer.nextVisit ? format(customer.nextVisit, 'yyyy.MM.dd', { locale: ko }) : '-'}
+            {customer.nextVisit ? formatDate(customer.nextVisit, 'medium', i18n.language) : '-'}
           </span>
         </div>
       </div>
@@ -181,8 +180,8 @@ const CustomersPage: React.FC = () => {
               </td>
               <td className="name">{customer.name}</td>
               <td>{customer.phone}</td>
-              <td>{customer.lastVisit ? format(customer.lastVisit, 'yyyy.MM.dd', { locale: ko }) : '-'}</td>
-              <td>{customer.nextVisit ? format(customer.nextVisit, 'yyyy.MM.dd', { locale: ko }) : '-'}</td>
+              <td>{customer.lastVisit ? formatDate(customer.lastVisit, 'medium', i18n.language) : '-'}</td>
+              <td>{customer.nextVisit ? formatDate(customer.nextVisit, 'medium', i18n.language) : '-'}</td>
             </tr>
           ))
         ) : (

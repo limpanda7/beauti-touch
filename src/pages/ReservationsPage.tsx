@@ -22,6 +22,12 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { useCurrencyFormat } from '../utils/currency';
 import { getTimeRange, formatDuration } from '../utils/timeUtils';
 import { useUIStore } from '../stores/uiStore';
+import { 
+  formatDate, 
+  formatDateRange, 
+  formatWeekday, 
+  formatDayNumber 
+} from '../utils/dateUtils';
 
 type ViewType = 'month' | 'week' | 'day';
 
@@ -48,26 +54,6 @@ const ReservationsPage: React.FC = () => {
   const [swipeFeedback, setSwipeFeedback] = useState<'left' | 'right' | null>(null);
 
   const minSwipeDistance = 50;
-
-  // 현재 언어에 맞는 date-fns 로케일을 반환하는 함수
-  const getCurrentLocale = () => {
-    switch (i18n.language) {
-      case 'ko':
-        return ko;
-      case 'en':
-        return enUS;
-      case 'es':
-        return es;
-      case 'pt':
-        return pt;
-      case 'th':
-        return th;
-      case 'vi':
-        return vi;
-      default:
-        return enUS;
-    }
-  };
 
   // 마지막으로 본 뷰 상태를 localStorage에서 복원
   useEffect(() => {
@@ -138,10 +124,10 @@ const ReservationsPage: React.FC = () => {
     return { timeAndCustomer, productAndDuration };
   };
 
+  // 스와이프 제스처 이벤트 핸들러들
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
-    setSwipeFeedback(null);
   };
 
   const onTouchMove = (e: React.TouchEvent) => {
@@ -154,21 +140,16 @@ const ReservationsPage: React.FC = () => {
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
-
+    
     if (isLeftSwipe) {
       setSwipeFeedback('left');
-      setTimeout(() => {
-        changeDate('next');
-        setSwipeFeedback(null);
-      }, 150);
-    }
-    if (isRightSwipe) {
+      changeDate('next');
+    } else if (isRightSwipe) {
       setSwipeFeedback('right');
-      setTimeout(() => {
-        changeDate('prev');
-        setSwipeFeedback(null);
-      }, 150);
+      changeDate('prev');
     }
+    
+    setTimeout(() => setSwipeFeedback(null), 300);
   };
 
   // 모바일에서 스와이프 힌트 표시
@@ -197,18 +178,18 @@ const ReservationsPage: React.FC = () => {
       case 'week':
         start = startOfWeek(currentDate, { weekStartsOn: 0 }); // Sunday
         end = endOfWeek(currentDate, { weekStartsOn: 0 });
-        text = `${format(start, 'MM.dd')} - ${format(end, 'MM.dd')}`;
+        text = formatDateRange(start, end, i18n.language);
         break;
       case 'day':
         start = currentDate;
         end = currentDate;
-        text = format(currentDate, 'MM.dd (eee)', { locale: getCurrentLocale() });
+        text = formatDate(currentDate, 'day', i18n.language);
         break;
       case 'month':
       default:
         start = startOfMonth(currentDate);
         end = endOfMonth(currentDate);
-        text = format(currentDate, 'yyyy.MM');
+        text = formatDate(currentDate, 'month', i18n.language);
         break;
     }
     
@@ -216,7 +197,7 @@ const ReservationsPage: React.FC = () => {
       dateRange: { start, end }, 
       headerText: text 
     };
-  }, [currentDate, view]);
+  }, [currentDate, view, i18n.language]);
 
   const loadReservations = async () => {
     try {
@@ -342,7 +323,7 @@ const ReservationsPage: React.FC = () => {
                   onClick={() => handleOpenModal(null, day)}
                 >
                   <div className="calendar-mobile-day-number">
-                    {format(day, 'd')}
+                    {formatDayNumber(day, i18n.language)}
                   </div>
                   
                   <div className="calendar-mobile-events">
@@ -404,10 +385,10 @@ const ReservationsPage: React.FC = () => {
                     onClick={() => setSelectedDay(day)}
                   >
                     <span className="calendar-week-mobile-day-name">
-                      {format(day, 'eee', { locale: getCurrentLocale() })}
+                      {formatWeekday(day, i18n.language)}
                     </span>
                     <span className={`calendar-week-mobile-day-number ${isToday ? 'today' : ''}`}>
-                      {format(day, 'd')}
+                      {formatDayNumber(day, i18n.language)}
                     </span>
                   </div>
                 );
@@ -457,10 +438,10 @@ const ReservationsPage: React.FC = () => {
               return (
                 <div key={index} className={`calendar-week-mobile-day-header ${isToday ? 'today' : ''}`}>
                   <span className="calendar-week-mobile-day-name">
-                    {format(day, 'eee', { locale: getCurrentLocale() })}
+                    {formatWeekday(day, i18n.language)}
                   </span>
                   <span className={`calendar-week-mobile-day-number ${isToday ? 'today' : ''}`}>
-                    {format(day, 'd')}
+                    {formatDayNumber(day, i18n.language)}
                   </span>
                 </div>
               );

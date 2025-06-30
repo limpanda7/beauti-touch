@@ -12,6 +12,8 @@ import CustomerInfo from '../components/CustomerInfo';
 import AutoCompleteInput from '../components/AutoCompleteInput';
 import { useSettingsStore } from '../stores/settingsStore';
 import ChartDrawingTool from '../components/ChartDrawingTool';
+import { formatDuration } from '../utils/timeUtils';
+import { formatDate } from '../utils/dateUtils';
 
 // Shape 타입 정의 (ChartDrawingTool과 동일하게 맞춤)
 type Shape = {
@@ -32,7 +34,7 @@ interface ChartDataWithDrawings extends ChartData {
 }
 
 const ChartPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { reservationId } = useParams<{ reservationId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -200,20 +202,6 @@ const ChartPage: React.FC = () => {
     navigate(-1);
   };
 
-  // 소요시간 표시 함수
-  const formatDuration = (minutes: number): string => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    
-    if (hours > 0 && mins > 0) {
-      return `${hours}h ${mins}m`;
-    } else if (hours > 0) {
-      return `${hours}h`;
-    } else {
-      return `${mins}m`;
-    }
-  };
-
   if (loading) {
     return (
       <div style={{ padding: '1.5rem' }}>
@@ -274,7 +262,7 @@ const ChartPage: React.FC = () => {
       <div className="chart-page-chart-info">
         <div className="chart-page-time-info">
           <p className="chart-page-time-text">
-            {format(new Date(reservation.date), 'yyyy.MM.dd (eee)', { locale: ko })} {reservation.time}
+            {formatDate(new Date(reservation.date), 'day', i18n.language)} {reservation.time}
           </p>
           <p className="chart-page-product-text">
             {reservation.productName}

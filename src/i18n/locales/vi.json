@@ -164,8 +164,8 @@
     "businessTypeDescription": "Đặt loại hình kinh doanh mặc định sẽ được chọn khi nhập thông tin biểu đồ khách hàng.",
     "autoComplete": "Quản lý tự động hoàn thành",
     "autoCompleteDescription": "Quản lý dữ liệu tự động hoàn thành cho các trường nhập biểu đồ. Các giá trị đã nhập trước đó sẽ được đề xuất làm tùy chọn tự động hoàn thành.",
-    "selectChartType": "Chọn loại biểu đồ",
-    "selectField": "Chọn trường",
+    "selectChartType": "Chọn Loại Biểu Đồ",
+    "selectField": "Chọn Trường",
     "deleteAll": "Xóa tất cả",
     "confirmDeleteAutoComplete": "Bạn có chắc chắn muốn xóa tất cả dữ liệu tự động hoàn thành cho trường này không?",
     "autoCompleteDeleted": "Dữ liệu tự động hoàn thành đã được xóa.",
@@ -196,7 +196,14 @@
       "nail": "Móng tay",
       "skin": "Chăm sóc da",
       "massage": "Massage"
-    }
+    },
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa mục này?",
+    "deleteSuccess": "Xóa mục thành công.",
+    "deleteError": "Xóa mục thất bại.",
+    "dateFormatPreview": "Xem Trước Định Dạng Ngày",
+    "shortFormat": "Định Dạng Ngắn",
+    "mediumFormat": "Định Dạng Trung Bình",
+    "longFormat": "Định Dạng Dài"
   },
   "errors": {
     "requiredFields": "Vui lòng điền tất cả các trường bắt buộc.",

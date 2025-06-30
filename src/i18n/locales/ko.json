@@ -166,7 +166,7 @@
     "businessTypeDescription": "고객 차트 정보 입력 시 기본으로 선택될 업종을 설정하세요.",
     "autoComplete": "자동완성 관리",
     "autoCompleteDescription": "차트 입력 필드의 자동완성 데이터를 관리합니다. 과거에 입력한 값들이 자동완성으로 제안됩니다.",
-    "selectChartType": "업종 선택",
+    "selectChartType": "차트 종류 선택",
     "selectField": "필드 선택",
     "deleteAll": "전체 삭제",
     "confirmDeleteAutoComplete": "이 필드의 모든 자동완성 데이터를 삭제하시겠습니까?",
@@ -198,7 +198,11 @@
       "nail": "네일",
       "skin": "피부관리",
       "massage": "마사지"
-    }
+    },
+    "dateFormatPreview": "날짜 형식 미리보기",
+    "dayFormat": "일별 형식",
+    "mediumFormat": "중간 형식",
+    "monthFormat": "월별 형식"
   },
   "errors": {
     "requiredFields": "필수 항목을 모두 입력해주세요.",

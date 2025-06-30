@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit, Trash2, Plus, Save, X, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
-import type { Customer, Reservation } from '../types';
-import { customerService, reservationService } from '../services/firestore';
+import type { Customer, Reservation, Product } from '../types';
+import { customerService, reservationService, productService } from '../services/firestore';
 import CustomerModal from '../components/CustomerModal';
 import ReservationModal from '../components/ReservationModal';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -14,9 +12,11 @@ import CustomerInfo from '../components/CustomerInfo';
 import { useCurrencyFormat } from '../utils/currency';
 import { useSettingsStore } from '../stores/settingsStore';
 import { maskCustomerData } from '../utils/customerUtils';
+import { formatDate } from '../utils/dateUtils';
+import { formatDuration } from '../utils/timeUtils';
 
 const CustomerDetailPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { formatCurrency } = useCurrencyFormat();
   const { businessType } = useSettingsStore();
   const { id } = useParams<{ id: string }>();
@@ -24,6 +24,7 @@ const CustomerDetailPage: React.FC = () => {
   
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailEdit, setIsDetailEdit] = useState(false);
@@ -59,6 +60,10 @@ const CustomerDetailPage: React.FC = () => {
         });
         const reservationData = await reservationService.getByCustomerId(id);
         setReservations(reservationData);
+        
+        // 상품 데이터 로드
+        const productData = await productService.getAll();
+        setProducts(productData);
       } else {
         navigate('/customers', { replace: true });
       }
@@ -180,6 +185,63 @@ const CustomerDetailPage: React.FC = () => {
     return t(`reservations.status${status.charAt(0).toUpperCase() + status.slice(1)}`);
   };
 
+  // 상품 정보를 ID로 빠르게 찾기 위한 Map
+  const productsMap = new Map<string, Product>();
+  products.forEach(product => {
+    productsMap.set(product.id, product);
+  });
+
+  // 예약의 시간 범위를 계산하는 함수
+  const getReservationTimeRange = (reservation: Reservation): string => {
+    // 상품 정보가 없으면 원래 시간 반환
+    return reservation.time;
+  };
+
+  // 캘린더에서 표시할 예약 정보를 포맷팅하는 함수
+  const formatReservationForCalendar = (reservation: Reservation): { dateTime: string; customerName: string; productAndDuration: string } => {
+    const dateTime = `${formatDate(reservation.date, 'medium', i18n.language)} ${reservation.time}`;
+    const customerName = reservation.customerName;
+    
+    // 상품의 소요시간 가져오기
+    const product = productsMap.get(reservation.productId);
+    let productAndDuration = reservation.productName;
+    if (product && product.duration) {
+      const durationText = formatDuration(product.duration);
+      productAndDuration = `${reservation.productName} (${durationText})`;
+    }
+    
+    return { dateTime, customerName, productAndDuration };
+  };
+
+  const renderReservationItem = (reservation: Reservation) => {
+    const { dateTime, customerName, productAndDuration } = formatReservationForCalendar(reservation);
+
+    return (
+      <div key={reservation.id} 
+           className={`reservations-day-item ${reservation.status}`}
+      >
+        <div>
+          <p className="reservations-day-item-time">{dateTime}</p>
+          <p className="reservations-day-item-product">{productAndDuration}</p>
+        </div>
+        <div className="reservations-day-item-details">
+          <span className={`reservation-status ${reservation.status}`}>
+            {t(`reservations.status${reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}`)}
+          </span>
+          {reservation.memo && <p className="reservations-day-item-memo">{reservation.memo}</p>}
+          <Button
+            onClick={() => navigate(`/chart/${reservation.id}`)}
+            variant="chart"
+            size="sm"
+          >
+            <FileText style={{ width: '0.875rem', height: '0.875rem' }} />
+            {t('chart.createChart')}
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div style={{ padding: '1.5rem' }}>
@@ -283,35 +345,11 @@ const CustomerDetailPage: React.FC = () => {
             </div>
           </div>
           {reservations.length > 0 ? (
-            <div className="customer-detail-reservation-list">
-              {reservations.map(reservation => (
-                <div 
-                  key={reservation.id} 
-                  className={`customer-detail-reservation-item ${reservation.status}`}
-                >
-                  <div className="customer-detail-reservation-info">
-                    <p className="customer-detail-reservation-date">{format(new Date(reservation.date), 'yyyy.MM.dd (eee)', { locale: ko })} - {reservation.time}</p>
-                    <p className="customer-detail-reservation-product">{reservation.productName}</p>
-                  </div>
-                  <div className="customer-detail-reservation-price">
-                    <p className="customer-detail-reservation-price-value">{formatCurrency(reservation.price)}</p>
-                    <p className="customer-detail-reservation-status">{reservationStatusLabel(reservation.status)}</p>
-                  </div>
-                  <div className="customer-detail-reservation-actions">
-                    <Button
-                      onClick={() => handleChartClick(reservation.id)}
-                      variant="chart"
-                      size="sm"
-                    >
-                      <FileText style={{ width: '1rem', height: '1rem' }} />
-                      {t('customers.createChart')}
-                    </Button>
-                  </div>
-                </div>
-              ))}
+            <div className="reservations-day-view customer-detail-reservation-list">
+              {reservations.map(reservation => renderReservationItem(reservation))}
             </div>
           ) : (
-            <p className="customer-detail-no-reservations">{t('customers.noReservations')}</p>
+            <div className="reservations-day-empty">{t('customers.noReservations')}</div>
           )}
         </div>
       </div>

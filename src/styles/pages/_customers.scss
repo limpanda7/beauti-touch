@@ -1151,4 +1151,21 @@
       }
     }
   }
+}
+
+// 고객 디테일 페이지 예약 내역 스타일
+.customer-detail-reservation-list {
+  .reservations-day-item {
+    .reservations-day-item-time {
+      font-size: 0.875rem;
+      line-height: 1.2;
+      margin-bottom: 0.25rem;
+    }
+    
+    .reservations-day-item-product {
+      font-size: 0.8rem;
+      line-height: 1.2;
+      margin-bottom: 0;
+    }
+  }
 } 

@@ -38,6 +38,15 @@ const getDefaultSettings = (): Settings => {
   };
 };
 
+// Settings 필드만 추출하는 유틸 함수
+function pickSettingsOnly(obj: any): Settings {
+  return {
+    language: obj.language,
+    currency: obj.currency,
+    businessType: obj.businessType,
+  };
+}
+
 export const useSettingsStore = create<SettingsStore>()(
   subscribeWithSelector((set, get) => ({
     ...defaultSettings,
@@ -107,7 +116,9 @@ export const useSettingsStore = create<SettingsStore>()(
           console.log(`언어 변경: ${newSettings.language}, 기본 통화 설정: ${defaultCurrency}`);
         }
         
-        await setDoc(settingsRef, updatedSettings);
+        // Settings 필드만 저장
+        const settingsToSave = pickSettingsOnly(updatedSettings);
+        await setDoc(settingsRef, settingsToSave);
         set({ isLoading: false });
       } catch (error) {
         console.error('설정 업데이트 실패:', error);

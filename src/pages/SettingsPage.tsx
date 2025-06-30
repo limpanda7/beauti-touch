@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Settings as SettingsIcon, Globe, DollarSign, Briefcase, LogOut, User, Trash2, Search } from 'lucide-react';
+import { Settings as SettingsIcon, Globe, DollarSign, Briefcase, LogOut, User, Trash2, Search, Calendar } from 'lucide-react';
 import { useSettingsStore } from '../stores/settingsStore';
 import { useAuthStore, useUser } from '../stores/authStore';
 import { autoCompleteService } from '../services/firestore';
 import type { ChartType, AutoCompleteSuggestion } from '../types';
 import Button from '../components/Button';
+import { formatDate } from '../utils/dateUtils';
 
 const SettingsPage: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -18,6 +19,9 @@ const SettingsPage: React.FC = () => {
   const [selectedChartType, setSelectedChartType] = useState<ChartType>('');
   const [selectedField, setSelectedField] = useState<string>('');
   const [loading, setLoading] = useState(false);
+
+  // 날짜 형식 미리보기를 위한 샘플 날짜
+  const sampleDate = new Date(2024, 11, 25); // 2024년 12월 25일
 
   // 차트 필드 정의
   const chartFieldDefs: Record<ChartType, { name: string; label: string }[]> = {
@@ -129,7 +133,8 @@ const SettingsPage: React.FC = () => {
     { code: 'vi', name: t('settings.languages.vi') },
     { code: 'th', name: t('settings.languages.th') },
     { code: 'pt', name: t('settings.languages.pt') },
-    { code: 'es', name: t('settings.languages.es') }
+    { code: 'es', name: t('settings.languages.es') },
+    { code: 'id', name: t('settings.languages.id') }
   ];
 
   const currencies = [
@@ -174,6 +179,28 @@ const SettingsPage: React.FC = () => {
               <option key={lang.code} value={lang.code}>{lang.name}</option>
             ))}
           </select>
+          
+          {/* 날짜 형식 미리보기 */}
+          <div className="date-format-preview">
+            <div className="date-format-preview-header">
+              <Calendar className="date-format-preview-icon" size={16} />
+              <span className="date-format-preview-title">{t('settings.dateFormatPreview')}</span>
+            </div>
+            <div className="date-format-examples">
+              <div className="date-format-example">
+                <span className="date-format-label">{t('settings.dayFormat')}:</span>
+                <span className="date-format-value">{formatDate(sampleDate, 'day', language)}</span>
+              </div>
+              <div className="date-format-example">
+                <span className="date-format-label">{t('settings.mediumFormat')}:</span>
+                <span className="date-format-value">{formatDate(sampleDate, 'medium', language)}</span>
+              </div>
+              <div className="date-format-example">
+                <span className="date-format-label">{t('settings.monthFormat')}:</span>
+                <span className="date-format-value">{formatDate(sampleDate, 'month', language)}</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="settings-item">
