@@ -361,7 +361,8 @@
         "strong": "Mạnh"
       }
     },
-    "saveError": "Lưu thông tin biểu đồ thất bại.",
-    "loadError": "Tải thông tin biểu đồ thất bại."
+    "saveError": "Không thể lưu thông tin biểu đồ.",
+    "loadError": "Không thể tải thông tin biểu đồ.",
+    "unsavedChangesConfirm": "Nội dung biểu đồ chưa lưu sẽ bị mất. Bạn có chắc chắn muốn rời đi?"
   }
 } 

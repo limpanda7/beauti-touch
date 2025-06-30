@@ -341,8 +341,8 @@
         "strong": "Forte"
       }
     },
-    "saveError": "Falha ao salvar informações do gráfico.",
-    "loadError": "Falha ao carregar informações do gráfico.",
+    "saveError": "Erro ao salvar informações do gráfico.",
+    "loadError": "Erro ao carregar informações do gráfico.",
     "selectChartType": "Selecionar Tipo de Chart",
     "selectField": "Selecionar Campo",
     "deleteConfirm": "Tem certeza de que deseja excluir este item?",
@@ -351,6 +351,7 @@
     "dateFormat": "Formato de Data",
     "shortFormat": "Formato Curto",
     "mediumFormat": "Formato Médio",
-    "longFormat": "Formato Longo"
+    "longFormat": "Formato Longo",
+    "unsavedChangesConfirm": "O conteúdo do gráfico não salvo será perdido. Tem certeza de que quer sair?"
   }
 } 

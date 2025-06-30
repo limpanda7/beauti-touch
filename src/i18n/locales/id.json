@@ -266,7 +266,8 @@
     },
     "saveSuccess": "Chart berhasil disimpan.",
     "saveError": "Gagal menyimpan chart.",
-    "loadError": "Gagal memuat chart."
+    "loadError": "Gagal memuat chart.",
+    "unsavedChangesConfirm": "Konten chart yang belum disimpan akan hilang. Apakah Anda yakin ingin keluar?"
   },
   "errors": {
     "requiredFields": "Semua field wajib diisi.",

@@ -52,6 +52,23 @@ const ChartPage: React.FC = () => {
   const [faceSideShapes, setFaceSideShapes] = useState<Shape[]>([]);
   const [faceFrontShapes, setFaceFrontShapes] = useState<Shape[]>([]);
   const [bodyShapes, setBodyShapes] = useState<Shape[]>([]);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  // 브라우저 뒤로가기 및 페이지 새로고침 시 unsaved changes 확인
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = t('chart.unsavedChangesConfirm');
+        return t('chart.unsavedChangesConfirm');
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [hasUnsavedChanges, t]);
 
   // 차트 타입 옵션
   const chartTypeOptions = [
@@ -133,6 +150,9 @@ const ChartPage: React.FC = () => {
         // 상품 정보도 로드
         const productData = await productService.getById(reservationData.productId);
         setProduct(productData);
+        
+        // 데이터 로드 완료 후 unsaved changes 플래그 리셋
+        setHasUnsavedChanges(false);
       } else {
         navigate('/reservations');
       }
@@ -148,6 +168,7 @@ const ChartPage: React.FC = () => {
   const handleChartTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setChartType(e.target.value as ChartType);
     setChartData({}); // 업종 변경 시 세부 입력 초기화
+    setHasUnsavedChanges(true);
   };
 
   // 차트 데이터 변경 핸들러
@@ -157,7 +178,24 @@ const ChartPage: React.FC = () => {
     // 차트 데이터 필드들
     if (chartType && chartFieldDefs[chartType]?.some(field => field.name === name)) {
       setChartData(prev => ({ ...prev, [name]: value }));
+      setHasUnsavedChanges(true);
     }
+  };
+
+  // 도형 변경 시 unsaved changes 플래그 설정
+  const handleFaceSideShapesChange: React.Dispatch<React.SetStateAction<Shape[]>> = (shapes) => {
+    setFaceSideShapes(shapes);
+    setHasUnsavedChanges(true);
+  };
+
+  const handleFaceFrontShapesChange: React.Dispatch<React.SetStateAction<Shape[]>> = (shapes) => {
+    setFaceFrontShapes(shapes);
+    setHasUnsavedChanges(true);
+  };
+
+  const handleBodyShapesChange: React.Dispatch<React.SetStateAction<Shape[]>> = (shapes) => {
+    setBodyShapes(shapes);
+    setHasUnsavedChanges(true);
   };
 
   const handleSave = async () => {
@@ -188,6 +226,7 @@ const ChartPage: React.FC = () => {
         chartData: newChartData,
         status: 'completed',
       });
+      setHasUnsavedChanges(false);
       alert(t('common.saveSuccess'));
       navigate(-1); // 이전 페이지로 돌아가기
     } catch (error) {
@@ -199,7 +238,13 @@ const ChartPage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate(-1);
+    if (hasUnsavedChanges) {
+      if (window.confirm(t('chart.unsavedChangesConfirm'))) {
+        navigate(-1);
+      }
+    } else {
+      navigate(-1);
+    }
   };
 
   if (loading) {
@@ -326,13 +371,13 @@ const ChartPage: React.FC = () => {
       {/* 차트 드로잉 도구 (SVG 기반) */}
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
         <div>
-          <ChartDrawingTool imageUrl="/chart-templates/face-side.png" width={300} height={300} shapes={faceSideShapes} setShapes={setFaceSideShapes} />
+          <ChartDrawingTool imageUrl="/chart-templates/face-side.png" width={300} height={300} shapes={faceSideShapes} setShapes={handleFaceSideShapesChange} />
         </div>
         <div>
-          <ChartDrawingTool imageUrl="/chart-templates/face-front.png" width={300} height={300} shapes={faceFrontShapes} setShapes={setFaceFrontShapes} />
+          <ChartDrawingTool imageUrl="/chart-templates/face-front.png" width={300} height={300} shapes={faceFrontShapes} setShapes={handleFaceFrontShapesChange} />
         </div>
         <div>
-          <ChartDrawingTool imageUrl="/chart-templates/body.png" width={300} height={300} shapes={bodyShapes} setShapes={setBodyShapes} />
+          <ChartDrawingTool imageUrl="/chart-templates/body.png" width={300} height={300} shapes={bodyShapes} setShapes={handleBodyShapesChange} />
         </div>
       </div>
     </div>

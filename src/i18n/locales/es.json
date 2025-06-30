@@ -353,7 +353,8 @@
         "strong": "Fuerte"
       }
     },
-    "saveError": "Error al guardar información del gráfico.",
-    "loadError": "Error al cargar información del gráfico."
+    "saveError": "Error al guardar la información del gráfico.",
+    "loadError": "Error al cargar la información del gráfico.",
+    "unsavedChangesConfirm": "El contenido del gráfico sin guardar se perderá. ¿Estás seguro de que quieres salir?"
   }
 } 

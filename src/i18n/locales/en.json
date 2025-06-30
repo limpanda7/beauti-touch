@@ -361,6 +361,7 @@
       }
     },
     "saveError": "Failed to save chart information.",
-    "loadError": "Failed to load chart information."
+    "loadError": "Failed to load chart information.",
+    "unsavedChangesConfirm": "Unsaved chart content will be lost. Are you sure you want to leave?"
   }
 } 

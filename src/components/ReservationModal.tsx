@@ -212,8 +212,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
 
   const handleDelete = async () => {
     if (!reservation || !onDelete) return;
-    
-    if (!confirm(t('reservations.deleteConfirm'))) {
+
+    if (!window.confirm(t('reservations.deleteConfirm'))) {
       return;
     }
 
@@ -293,7 +293,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
       onSave(savedReservation, 'close');
     } catch (error) {
       console.error(t('reservations.saveError'), error);
-      alert(`${t('reservations.saveError')}: ${error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'}`);
+      alert(t('reservations.saveError'));
     } finally {
       setLoading(false);
     }

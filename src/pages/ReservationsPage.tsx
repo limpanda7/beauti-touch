@@ -155,14 +155,10 @@ const ReservationsPage: React.FC = () => {
   // 모바일에서 스와이프 힌트 표시
   useEffect(() => {
     if (isMobile && view && (view === 'month' || view === 'week')) {
-      const hasShownHint = localStorage.getItem('swipeHintShown');
-      if (!hasShownHint) {
-        setShowSwipeHint(true);
-        setTimeout(() => {
-          setShowSwipeHint(false);
-          localStorage.setItem('swipeHintShown', 'true');
-        }, 4000);
-      }
+      setShowSwipeHint(true);
+      setTimeout(() => {
+        setShowSwipeHint(false);
+      }, 4000);
     }
   }, [isMobile, view]);
 
