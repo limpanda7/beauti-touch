@@ -1,5 +1,91 @@
 @use '../base/variables' as *;
 
+// 데스크탑 (901px 이상)
+@media (min-width: 901px) {
+  .sidebar {
+    display: block;
+  }
+
+  // 데스크탑에서 모바일 하단 네비게이션 바 숨김
+  .mobile-bottom-nav {
+    display: none;
+  }
+
+  // 데스크탑에서 모바일 카드 숨김
+  .customers-mobile-container {
+    display: none;
+  }
+
+  .table-container table {
+    display: table;
+  }
+
+  .customer-card {
+    display: none;
+  }
+
+  // 데스크탑에서 캘린더 높이 설정
+  .calendar-container {
+    height: calc(100vh - 10rem); // 헤더와 패딩을 고려한 높이 (여유 공간 추가)
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; // 스크롤 방지
+    padding: 0; // 패딩 제거하여 캘린더가 전체 너비 사용
+
+    .calendar-mobile-container,
+    .calendar-week-mobile-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden; // 스크롤 방지
+      padding: 0; // 패딩 제거
+
+      .calendar-mobile,
+      .calendar-week-mobile {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden; // 스크롤 방지
+
+        .calendar-mobile-grid,
+        .calendar-week-mobile-grid {
+          flex: 1;
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          overflow: hidden; // 스크롤 방지
+
+          .calendar-mobile-day,
+          .calendar-week-mobile-day-slot {
+            height: auto;
+            min-height: 0;
+            flex: 1;
+            overflow: hidden; // 스크롤 방지
+          }
+        }
+      }
+    }
+  }
+
+  .card {
+    height: calc(100vh - 8rem); // 데스크탑에서는 사이드바를 고려한 높이 (여유 공간 추가)
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; // 스크롤 방지
+
+    .page-header {
+      flex-shrink: 0;
+    }
+
+    .calendar-container {
+      flex: 1;
+      height: auto;
+      overflow: hidden; // 스크롤 방지
+    }
+  }
+}
+
 // Responsive styles
 @media (max-width: 900px) {
   .layout {
@@ -43,7 +129,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 0.5rem 0.25rem;
+      padding: 1rem 0.25rem 1.5rem;
       text-decoration: none;
       color: $gray-500;
       transition: all 0.2s ease;
@@ -261,7 +347,8 @@
   }
   
   .card {
-    padding: 0.75rem;
+    background: none;
+    padding: 1rem;
     margin: 0;
     border-radius: 0;
     box-shadow: none;
@@ -432,100 +519,26 @@
       }
     }
   }
-}
-
-// 데스크탑 (901px 이상)
-@media (min-width: 901px) {
-  .sidebar {
-    display: block;
-  }
   
-  // 데스크탑에서 모바일 하단 네비게이션 바 숨김
-  .mobile-bottom-nav {
-    display: none;
+  // 예약 카드 모바일 폰트 크기 조정 (900px 이하)
+  .reservations-day-item {
+    font-size: 0.875rem;
+    padding: 0.75rem;
+    .reservations-day-item-time { font-size: 0.875rem; }
+    .reservations-day-item-product { font-size: 0.8rem; }
+    .reservations-day-item-memo { font-size: 0.75rem; }
   }
-  
-  // 데스크탑에서 모바일 카드 숨김
-  .customers-mobile-container {
-    display: none;
-  }
-  
-  .table-container table {
-    display: table;
-  }
-  
-  .customer-card {
-    display: none;
-  }
-  
-  // 데스크탑에서 캘린더 높이 설정
-  .calendar-container {
-    height: calc(100vh - 10rem); // 헤더와 패딩을 고려한 높이 (여유 공간 추가)
-    display: flex;
-    flex-direction: column;
-    overflow: hidden; // 스크롤 방지
-    padding: 0; // 패딩 제거하여 캘린더가 전체 너비 사용
-    
-    .calendar-mobile-container,
-    .calendar-week-mobile-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      overflow: hidden; // 스크롤 방지
-      padding: 0; // 패딩 제거
-      
-      .calendar-mobile,
-      .calendar-week-mobile {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        overflow: hidden; // 스크롤 방지
-        
-        .calendar-mobile-grid,
-        .calendar-week-mobile-grid {
-          flex: 1;
-          display: grid;
-          grid-template-columns: repeat(7, 1fr);
-          overflow: hidden; // 스크롤 방지
-          
-          .calendar-mobile-day,
-          .calendar-week-mobile-day-slot {
-            height: auto;
-            min-height: 0;
-            flex: 1;
-            overflow: hidden; // 스크롤 방지
-          }
-        }
-      }
-    }
-  }
-  
-  .card {
-    height: calc(100vh - 8rem); // 데스크탑에서는 사이드바를 고려한 높이 (여유 공간 추가)
-    display: flex;
-    flex-direction: column;
-    overflow: hidden; // 스크롤 방지
-    
-    .page-header {
-      flex-shrink: 0;
-    }
-    
-    .calendar-container {
-      flex: 1;
-      height: auto;
-      overflow: hidden; // 스크롤 방지
-    }
+  .customer-detail-reservation-list .reservations-day-item {
+    font-size: 0.875rem;
+    padding: 0.75rem;
+    .reservations-day-item-time { font-size: 0.875rem; }
+    .reservations-day-item-product { font-size: 0.8rem; }
+    .reservations-day-item-memo { font-size: 0.75rem; }
   }
 }
 
 // 400px 이하 매우 작은 화면 최적화
 @media (max-width: 400px) {
-  .card {
-    padding: 0.5rem;
-  }
-  
   .page-header {
     padding: 0.25rem 0;
     margin-bottom: 0.5rem;
@@ -642,5 +655,21 @@
         }
       }
     }
+  }
+  
+  // 아주 작은 화면용 (400px 이하)
+  .reservations-day-item {
+    font-size: 0.8rem;
+    padding: 0.625rem;
+    .reservations-day-item-time { font-size: 0.8rem; }
+    .reservations-day-item-product { font-size: 0.75rem; }
+    .reservations-day-item-memo { font-size: 0.7rem; }
+  }
+  .customer-detail-reservation-list .reservations-day-item {
+    font-size: 0.8rem;
+    padding: 0.625rem;
+    .reservations-day-item-time { font-size: 0.8rem; }
+    .reservations-day-item-product { font-size: 0.75rem; }
+    .reservations-day-item-memo { font-size: 0.7rem; }
   }
 } 

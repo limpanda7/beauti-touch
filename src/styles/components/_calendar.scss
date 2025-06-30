@@ -403,7 +403,6 @@
 
 // 모바일 주간 뷰 스타일 (구글 캘린더 모바일 뷰 스타일)
 .calendar-week-mobile {
-  background-color: $white;
   border-radius: 0.5rem;
   overflow: hidden;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
@@ -471,7 +470,7 @@
       
       .calendar-week-mobile-day-number {
         display: block;
-        font-size: 0.9rem;
+        font-size: 0.875rem;
         font-weight: 700;
         color: $gray-700;
         

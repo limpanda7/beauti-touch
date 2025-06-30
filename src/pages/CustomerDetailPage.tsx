@@ -223,11 +223,11 @@ const CustomerDetailPage: React.FC = () => {
         <div>
           <p className="reservations-day-item-time">{dateTime}</p>
           <p className="reservations-day-item-product">{productAndDuration}</p>
-        </div>
-        <div className="reservations-day-item-details">
           <span className={`reservation-status ${reservation.status}`}>
             {t(`reservations.status${reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}`)}
           </span>
+        </div>
+        <div className="reservations-day-item-details">
           {reservation.memo && <p className="reservations-day-item-memo">{reservation.memo}</p>}
           <Button
             onClick={() => navigate(`/chart/${reservation.id}`)}

@@ -155,43 +155,6 @@
   }
 }
 
-// 모바일 최적화
-@media (max-width: 768px) {
-  .modal-overlay {
-    padding: 0.25rem;
-  }
-  
-  .modal-content {
-    padding: 1rem;
-    max-width: calc(100vw - 0.5rem);
-    max-height: calc(100vh - 0.5rem);
-  }
-}
-
-@media (max-width: 480px) {
-  .modal-overlay {
-    padding: 0.125rem;
-  }
-  
-  .modal-content {
-    padding: 0.75rem;
-    max-width: calc(100vw - 0.25rem);
-    max-height: calc(100vh - 0.25rem);
-  }
-}
-
-@media (max-width: 360px) {
-  .modal-overlay {
-    padding: 0.0625rem;
-  }
-  
-  .modal-content {
-    padding: 0.5rem;
-    max-width: calc(100vw - 0.125rem);
-    max-height: calc(100vh - 0.125rem);
-  }
-}
-
 // 예약 상태 선택 스타일
 .status-select {
   position: relative;
