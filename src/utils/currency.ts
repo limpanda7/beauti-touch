@@ -32,6 +32,12 @@ export const formatCurrency = (amount: number, currency: string = 'KRW'): string
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     }),
+    IDR: new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }),
     BRL: new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
@@ -57,11 +63,27 @@ export const getCurrencySymbol = (currency: string): string => {
     EUR: '€',
     VND: '₫',
     THB: '฿',
+    IDR: 'Rp',
     BRL: 'R$',
     MXN: '$',
   };
 
   return symbols[currency] || '₩';
+};
+
+// 언어별 기본 통화 반환
+export const getDefaultCurrencyForLanguage = (language: string): string => {
+  const languageCurrencyMap: Record<string, string> = {
+    ko: 'KRW', // 한국어 - 원화
+    en: 'USD', // 영어 - 달러
+    vi: 'VND', // 베트남어 - 동
+    th: 'THB', // 태국어 - 바트
+    id: 'IDR', // 인도네시아어 - 루피아
+    es: 'MXN', // 스페인어 - 페소
+    pt: 'BRL', // 포르투갈어 - 헤알
+  };
+
+  return languageCurrencyMap[language] || 'KRW';
 };
 
 // 설정 스토어와 연동하는 훅

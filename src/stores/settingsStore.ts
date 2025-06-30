@@ -4,6 +4,8 @@ import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import type { Unsubscribe } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { ChartType } from '../types';
+import { getDefaultCurrencyForLanguage } from '../utils/currency';
+import { getBrowserLanguage } from '../utils/languageUtils';
 
 export interface Settings {
   language: string;
@@ -22,6 +24,18 @@ const defaultSettings: Settings = {
   language: 'ko',
   currency: 'KRW',
   businessType: ''
+};
+
+// 브라우저 언어에 따른 기본 설정 생성
+const getDefaultSettings = (): Settings => {
+  const browserLanguage = getBrowserLanguage();
+  const defaultCurrency = getDefaultCurrencyForLanguage(browserLanguage);
+  
+  return {
+    language: browserLanguage,
+    currency: defaultCurrency,
+    businessType: ''
+  };
 };
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -48,12 +62,14 @@ export const useSettingsStore = create<SettingsStore>()(
               isLoading: false
             });
           } else {
-            // 설정이 없으면 기본값으로 초기화
-            set({ ...defaultSettings, isLoading: false });
+            // 설정이 없으면 브라우저 언어에 따른 기본값으로 초기화
+            const dynamicDefaults = getDefaultSettings();
+            set({ ...dynamicDefaults, isLoading: false });
           }
         }, (error) => {
           console.error('설정 로드 실패:', error);
-          set({ ...defaultSettings, isLoading: false });
+          const dynamicDefaults = getDefaultSettings();
+          set({ ...dynamicDefaults, isLoading: false });
         });
         
         // 컴포넌트 언마운트 시 리스너 정리를 위해 반환
@@ -79,10 +95,17 @@ export const useSettingsStore = create<SettingsStore>()(
         const settingsRef = doc(db, 'users', user.uid, 'settings', 'userSettings');
         const currentSettings = get();
         
-        const updatedSettings = {
+        // 언어가 변경되는 경우 해당 언어의 기본 통화로 자동 설정
+        let updatedSettings = {
           ...currentSettings,
           ...newSettings
         };
+        
+        if (newSettings.language && newSettings.language !== currentSettings.language) {
+          const defaultCurrency = getDefaultCurrencyForLanguage(newSettings.language);
+          updatedSettings.currency = defaultCurrency;
+          console.log(`언어 변경: ${newSettings.language}, 기본 통화 설정: ${defaultCurrency}`);
+        }
         
         await setDoc(settingsRef, updatedSettings);
         set({ isLoading: false });
