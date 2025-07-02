@@ -47,7 +47,7 @@
 
   .hero-subtitle {
     font-size: 1.25rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     opacity: 0.9;
     max-width: 600px;
     margin-left: auto;
@@ -55,6 +55,21 @@
 
     @media (max-width: 768px) {
       font-size: 1rem;
+    }
+  }
+
+  .hero-beta-description {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    opacity: 0.8;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #8B735A;
+    font-weight: 500;
+
+    @media (max-width: 768px) {
+      font-size: 0.9rem;
     }
   }
 

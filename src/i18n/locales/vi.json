@@ -172,7 +172,9 @@
       "subtitle": "Giải pháp quản lý đặt lịch, khách hàng và sản phẩm hoàn hảo cho tiệm làm đẹp cá nhân",
       "startFree": "Bắt đầu miễn phí",
       "login": "Đăng nhập",
-      "freeTrial": "Dùng thử miễn phí 1 tháng"
+      "freeTrial": "Dùng thử miễn phí 1 tháng",
+      "betaBadge": "Giai đoạn Beta",
+      "betaDescription": "Hiện tại đang trong giai đoạn beta với quyền truy cập miễn phí 1 tháng"
     },
     "sectionTitle": "Tất cả cho Quản lý Tiệm làm đẹp",
     "sectionDescription": "Từ đặt lịch đến quản lý khách hàng, chúng tôi cung cấp tất cả tính năng bạn cần để vận hành tiệm làm đẹp",

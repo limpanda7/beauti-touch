@@ -7,7 +7,7 @@ import { getBrowserLanguage, getLanguageFromStorage, saveLanguageToStorage } fro
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import AuthPage from './pages/AuthPage';
-import FeaturesPage from './pages/FeaturesPage';
+import LandingPage from './pages/LandingPage';
 import ReservationsPage from './pages/ReservationsPage';
 import CustomersPage from './pages/CustomersPage';
 import CustomerDetailPage from './pages/CustomerDetailPage';
@@ -63,8 +63,8 @@ function App() {
         <div className="app-container">
           <Router>
             <Routes>
-              {/* Features 페이지 (랜딩 페이지) */}
-              <Route path="/" element={<FeaturesPage />} />
+              {/* Landing 페이지 (랜딩 페이지) */}
+              <Route path="/" element={<LandingPage />} />
               
               {/* 인증 페이지 */}
               <Route path="/auth" element={<AuthPage />} />

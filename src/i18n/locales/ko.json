@@ -174,7 +174,9 @@
       "subtitle": "1인 뷰티샵을 위한 완벽한 예약·고객·상품 관리 솔루션",
       "startFree": "무료로 시작하기",
       "login": "로그인",
-      "freeTrial": "1개월 무료 체험"
+      "freeTrial": "1개월 무료 체험",
+      "betaBadge": "베타 기간",
+      "betaDescription": "현재 베타 기간으로 1개월 무료 이용"
     },
     "sectionTitle": "뷰티샵 운영의 모든 것",
     "sectionDescription": "예약부터 고객 관리까지, 뷰티샵 운영에 필요한 모든 기능을 제공합니다",

@@ -182,7 +182,9 @@
       "subtitle": "Solución perfecta de gestión de reservas, clientes y productos para salones de belleza individuales",
       "startFree": "Comenzar Gratis",
       "login": "Iniciar Sesión",
-      "freeTrial": "1 Mes de Prueba Gratuita"
+      "freeTrial": "1 Mes de Prueba Gratuita",
+      "betaBadge": "Período Beta",
+      "betaDescription": "Actualmente en período beta con acceso gratuito por 1 mes"
     },
     "sectionTitle": "Todo para la Gestión de Salones de Belleza",
     "sectionDescription": "Desde reservas hasta gestión de clientes, proporcionamos todas las funciones que necesitas para administrar tu salón de belleza",

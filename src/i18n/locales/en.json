@@ -174,7 +174,9 @@
       "subtitle": "Perfect reservation, customer, and product management solution for solo beauty shops",
       "startFree": "Start Free",
       "login": "Login",
-      "freeTrial": "1 Month Free Trial"
+      "freeTrial": "1 Month Free Trial",
+      "betaBadge": "Beta Period",
+      "betaDescription": "Currently in beta period with 1 month free access"
     },
     "sectionTitle": "Everything for Beauty Shop Management",
     "sectionDescription": "From reservations to customer management, we provide all the features you need to run your beauty shop",

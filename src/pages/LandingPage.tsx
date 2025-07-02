@@ -17,9 +17,9 @@ import {
 import LanguageSelector from '../components/LanguageSelector';
 import SEO from '../components/SEO';
 import Button from '../components/Button';
-import '../styles/pages/_features.scss';
+import '../styles/pages/_landing.scss';
 
-const FeaturesPage: React.FC = () => {
+const LandingPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -111,6 +111,15 @@ const FeaturesPage: React.FC = () => {
           </div>
           <h1 className="hero-title">{t('features.hero.title')}</h1>
           <p className="hero-subtitle">{t('features.hero.subtitle')}</p>
+          
+          {/* 베타 배지 */}
+          <div className="hero-badge">
+            <Star size={16} />
+            <span>{t('features.hero.betaBadge')}</span>
+          </div>
+          
+          <p className="hero-beta-description">{t('features.hero.betaDescription')}</p>
+          
           <div className="hero-buttons">
             <Button onClick={handleLogin} variant="primary" size="lg">
               {t('features.hero.startFree')}
@@ -191,4 +200,4 @@ const FeaturesPage: React.FC = () => {
   );
 };
 
-export default FeaturesPage; 
+export default LandingPage; 

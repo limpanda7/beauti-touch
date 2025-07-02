@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 import LoginForm from '../components/LoginForm';
 import SignUpForm from '../components/SignUpForm';
 import LanguageSelector from '../components/LanguageSelector';
@@ -41,10 +40,6 @@ const AuthPage: React.FC = () => {
     setIsLogin(true);
   };
 
-  const handleGoBack = () => {
-    navigate('/');
-  };
-
   return (
     <div className="auth-page">
       <SEO 
@@ -53,28 +48,24 @@ const AuthPage: React.FC = () => {
         keywords={t('navigation.seoKeywords.auth')}
       />
       
-      <button 
-        className="auth-back-button" 
-        onClick={handleGoBack}
-        type="button"
-        aria-label={t('common.back')}
-      >
-        <ArrowLeft size={20} />
-      </button>
+      <div className="auth-header">
+        <div></div> {/* 왼쪽 공간 */}
+        <LanguageSelector />
+      </div>
       
-      <LanguageSelector />
-      
-      <div className="auth-container">
-        <div className="auth-logo">
-          <img src="/logo.png" alt="Beauti-Touch" />
-        </div>
-        
-        <div className="auth-content">
-          {isLogin ? (
-            <LoginForm onSwitchToSignUp={handleSwitchToSignUp} />
-          ) : (
-            <SignUpForm onSwitchToLogin={handleSwitchToLogin} />
-          )}
+      <div className="auth-main">
+        <div className="auth-container">
+          <div className="auth-logo">
+            <img src="/logo.png" alt="Beauti-Touch" />
+          </div>
+          
+          <div className="auth-content">
+            {isLogin ? (
+              <LoginForm onSwitchToSignUp={handleSwitchToSignUp} />
+            ) : (
+              <SignUpForm onSwitchToLogin={handleSwitchToLogin} />
+            )}
+          </div>
         </div>
       </div>
     </div>
