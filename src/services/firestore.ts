@@ -17,7 +17,7 @@ import {
 import type { QuerySnapshot, DocumentData } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Customer, Product, Reservation, AutoCompleteData, AutoCompleteSuggestion, ChartType } from '../types';
-import { generateCustomerId, maskCustomerData, generateUniqueCustomerId } from '../utils/customerUtils';
+import { generateCustomerNumber, maskCustomerData, generateUniqueCustomerNumber } from '../utils/customerUtils';
 import { getAuth } from 'firebase/auth';
 
 // 현재 사용자의 UID를 가져오는 함수
@@ -103,23 +103,23 @@ export const customerService = {
     return null;
   },
 
-  async create(customer: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  async create(customer: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>, isSignUpCustomer: boolean = false): Promise<string> {
     try {
       const now = new Date();
       
       // 고객 데이터 마스킹 처리 (언어 자동 감지)
       const maskedData = maskCustomerData(customer);
       
-      // 기존 고객 ID 목록 가져오기
+      // 기존 고객 번호 목록 가져오기
       const existingCustomers = await this.getAll();
-      const existingIds = existingCustomers.map(c => c.id);
+      const existingNumbers = existingCustomers.map(c => c.id);
       
-      // 고유한 4자리 영문 대문자 ID 생성
-      const customerId = await generateUniqueCustomerId(existingIds);
+      // 고유한 4자리 숫자 고객번호 생성
+      const customerNumber = await generateUniqueCustomerNumber(existingNumbers, isSignUpCustomer);
       
       const customerData = {
         ...maskedData,
-        id: customerId, // 4자리 영문 대문자 고유 ID
+        id: customerNumber, // 4자리 숫자 고객번호
         createdAt: Timestamp.fromDate(now),
         updatedAt: Timestamp.fromDate(now)
       };
@@ -129,12 +129,12 @@ export const customerService = {
         Object.entries(customerData).filter(([_, value]) => value !== undefined)
       );
       
-      // 4자리 영문 대문자 ID를 문서 ID로 직접 사용
+      // 4자리 숫자 고객번호를 문서 ID로 직접 사용
       const collectionPath = getUserCollectionPath('customers');
-      const docRef = doc(db, collectionPath, customerId);
+      const docRef = doc(db, collectionPath, customerNumber);
       await setDoc(docRef, cleanData);
       
-      return customerId;
+      return customerNumber;
     } catch (error) {
       console.error('고객 생성 실패:', error);
       throw new Error('고객 생성에 실패했습니다.');

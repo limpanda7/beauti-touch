@@ -1,5 +1,5 @@
 export interface Customer {
-  id: string; // 4자리 영문 대문자 고유 ID
+  id: string; // 4자리 숫자 고객번호 (0000: 회원가입 고객, 0001~9999: 일반 고객)
   name: string; // 마스킹된 이름
   phone: string; // 마스킹된 연락처 (뒤 4자리만)
   memo?: string; // 메모

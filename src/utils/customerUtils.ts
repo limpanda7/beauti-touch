@@ -1,51 +1,46 @@
 // 고객 정보 마스킹 유틸리티
 
 /**
- * 4자리 영문 대문자 고유 ID 생성
- * 알파벳 대문자만 사용 (A-Z)
+ * 4자리 숫자 고객번호 생성 (Auto Increment)
+ * 회원가입 고객: 0000
+ * 일반 고객: 0001, 0002, 0003...
  */
-export const generateCustomerId = (): string => {
-  // 영문 대문자만 사용
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let result = '';
-  
-  for (let i = 0; i < 4; i++) {
-    const randomIndex = Math.floor(Math.random() * chars.length);
-    result += chars[randomIndex];
+export const generateCustomerNumber = (isSignUpCustomer: boolean = false): string => {
+  if (isSignUpCustomer) {
+    return '0000';
   }
   
-  return result;
+  // 일반 고객은 0001부터 시작 (실제로는 Firestore에서 최대값을 조회하여 +1)
+  return '0001';
 };
 
 /**
- * 고유한 4자리 영문 대문자 ID 생성 (중복 확인 포함)
+ * 고유한 4자리 숫자 고객번호 생성 (중복 확인 포함)
+ * @param existingNumbers 기존 고객번호 배열
+ * @param isSignUpCustomer 회원가입 고객 여부
  */
-export const generateUniqueCustomerId = async (existingIds: string[]): Promise<string> => {
-  let attempts = 0;
-  const maxAttempts = 100;
-  
-  while (attempts < maxAttempts) {
-    const newId = generateCustomerId();
-    if (!existingIds.includes(newId)) {
-      return newId;
-    }
-    attempts++;
+export const generateUniqueCustomerNumber = async (
+  existingNumbers: string[], 
+  isSignUpCustomer: boolean = false
+): Promise<string> => {
+  if (isSignUpCustomer) {
+    return '0000';
   }
   
-  // 최대 시도 횟수를 초과한 경우 타임스탬프 기반 ID 생성
-  const timestamp = Date.now();
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let result = '';
+  // 기존 고객번호 중 숫자만 필터링 (알파벳이 섞여있을 수 있음)
+  const numericNumbers = existingNumbers
+    .filter(num => /^\d{4}$/.test(num))
+    .map(num => parseInt(num))
+    .sort((a, b) => a - b);
   
-  // 타임스탬프의 마지막 4자리를 사용하여 ID 생성
-  const timestampStr = timestamp.toString();
-  for (let i = 0; i < 4; i++) {
-    const digit = parseInt(timestampStr[timestampStr.length - 4 + i] || '0');
-    const charIndex = digit % chars.length;
-    result += chars[charIndex];
-  }
+  // 최대 번호 찾기
+  const maxNumber = numericNumbers.length > 0 ? Math.max(...numericNumbers) : 0;
   
-  return result;
+  // 다음 번호 생성 (최대 9999)
+  const nextNumber = Math.min(maxNumber + 1, 9999);
+  
+  // 4자리 문자열로 변환
+  return nextNumber.toString().padStart(4, '0');
 };
 
 /**

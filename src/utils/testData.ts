@@ -25,8 +25,8 @@ const getTestDataByLanguage = (language: string) => {
         { name: '속눈썹 연장', price: 80000, duration: 120, description: '속눈썹 연장 시술', category: '속눈썹' },
         { name: '아이라인', price: 25000, duration: 30, description: '아이라인 시술', category: '메이크업' }
       ],
-      testCustomer: { name: '테스트 고객', phone: '1234', memo: '회원가입 시 자동 생성된 테스트 고객입니다.' },
-      testProduct: { name: '테스트 상품', price: 50000, duration: 60, description: '회원가입 시 자동 생성된 테스트 상품입니다.', category: '미정' }
+      testCustomer: { name: '테스트 고객', phone: '1234', memo: '자동 생성된 테스트 고객입니다.' },
+      testProduct: { name: '테스트 상품', price: 50000, duration: 60, description: '자동 생성된 테스트 상품입니다.', category: '미정' }
     },
     en: {
       customers: [
@@ -40,8 +40,8 @@ const getTestDataByLanguage = (language: string) => {
         { name: 'Eyelash Extension', price: 80, duration: 120, description: 'Eyelash extension service', category: 'Eyelash' },
         { name: 'Eyeliner', price: 25, duration: 30, description: 'Eyeliner service', category: 'Makeup' }
       ],
-      testCustomer: { name: 'Test Customer', phone: '1234', memo: 'Test customer created automatically upon signup.' },
-      testProduct: { name: 'Test Product', price: 50, duration: 60, description: 'Test product created automatically upon signup.', category: 'General' }
+      testCustomer: { name: 'Test Customer', phone: '1234', memo: 'Automatically generated test customer.' },
+      testProduct: { name: 'Test Product', price: 50, duration: 60, description: 'Automatically generated test product.', category: 'Undefined' }
     },
     es: {
       customers: [
@@ -55,8 +55,8 @@ const getTestDataByLanguage = (language: string) => {
         { name: 'Extensión de Pestañas', price: 80, duration: 120, description: 'Servicio de extensión de pestañas', category: 'Pestañas' },
         { name: 'Delineador', price: 25, duration: 30, description: 'Servicio de delineador', category: 'Maquillaje' }
       ],
-      testCustomer: { name: 'Cliente de Prueba', phone: '1234', memo: 'Cliente de prueba creado automáticamente al registrarse.' },
-      testProduct: { name: 'Producto de Prueba', price: 50, duration: 60, description: 'Producto de prueba creado automáticamente al registrarse.', category: 'General' }
+      testCustomer: { name: 'Cliente de Prueba', phone: '1234', memo: 'Cliente de prueba generado automáticamente.' },
+      testProduct: { name: 'Producto de Prueba', price: 50, duration: 60, description: 'Producto de prueba generado automáticamente.', category: 'Sin Definir' }
     },
     pt: {
       customers: [
@@ -70,8 +70,8 @@ const getTestDataByLanguage = (language: string) => {
         { name: 'Extensão de Cílios', price: 80, duration: 120, description: 'Serviço de extensão de cílios', category: 'Cílios' },
         { name: 'Delineador', price: 25, duration: 30, description: 'Serviço de delineador', category: 'Maquiagem' }
       ],
-      testCustomer: { name: 'Cliente Teste', phone: '1234', memo: 'Cliente teste criado automaticamente ao se registrar.' },
-      testProduct: { name: 'Produto Teste', price: 50, duration: 60, description: 'Produto teste criado automaticamente ao se registrar.', category: 'Geral' }
+      testCustomer: { name: 'Cliente Teste', phone: '1234', memo: 'Cliente teste gerado automaticamente.' },
+      testProduct: { name: 'Produto Teste', price: 50, duration: 60, description: 'Produto teste gerado automaticamente.', category: 'Não Definido' }
     },
     th: {
       customers: [
@@ -85,8 +85,8 @@ const getTestDataByLanguage = (language: string) => {
         { name: 'ต่อขนตา', price: 2000, duration: 120, description: 'บริการต่อขนตา', category: 'ขนตา' },
         { name: 'อายไลเนอร์', price: 600, duration: 30, description: 'บริการอายไลเนอร์', category: 'เมคอัพ' }
       ],
-      testCustomer: { name: 'ลูกค้าทดสอบ', phone: '1234', memo: 'ลูกค้าทดสอบที่สร้างอัตโนมัติเมื่อสมัครสมาชิก' },
-      testProduct: { name: 'สินค้าทดสอบ', price: 1000, duration: 60, description: 'สินค้าทดสอบที่สร้างอัตโนมัติเมื่อสมัครสมาชิก', category: 'ทั่วไป' }
+      testCustomer: { name: 'ลูกค้าทดสอบ', phone: '1234', memo: 'ลูกค้าทดสอบที่สร้างอัตโนมัติ' },
+      testProduct: { name: 'สินค้าทดสอบ', price: 1000, duration: 60, description: 'สินค้าทดสอบที่สร้างอัตโนมัติ', category: 'ไม่ระบุ' }
     },
     vi: {
       customers: [
@@ -100,8 +100,8 @@ const getTestDataByLanguage = (language: string) => {
         { name: 'Nối Mi', price: 800000, duration: 120, description: 'Dịch vụ nối mi', category: 'Mi' },
         { name: 'Kẻ Mắt', price: 250000, duration: 30, description: 'Dịch vụ kẻ mắt', category: 'Trang điểm' }
       ],
-      testCustomer: { name: 'Khách Hàng Test', phone: '1234', memo: 'Khách hàng test được tạo tự động khi đăng ký.' },
-      testProduct: { name: 'Sản Phẩm Test', price: 500000, duration: 60, description: 'Sản phẩm test được tạo tự động khi đăng ký.', category: 'Chung' }
+      testCustomer: { name: 'Khách Hàng Test', phone: '1234', memo: 'Khách hàng test được tạo tự động.' },
+      testProduct: { name: 'Sản Phẩm Test', price: 500000, duration: 60, description: 'Sản phẩm test được tạo tự động.', category: 'Chưa Xác Định' }
     },
     id: {
       customers: [
@@ -115,8 +115,8 @@ const getTestDataByLanguage = (language: string) => {
         { name: 'Ekstensi Bulu Mata', price: 800000, duration: 120, description: 'Layanan ekstensi bulu mata', category: 'Bulu Mata' },
         { name: 'Eyeliner', price: 250000, duration: 30, description: 'Layanan eyeliner', category: 'Makeup' }
       ],
-      testCustomer: { name: 'Pelanggan Test', phone: '1234', memo: 'Pelanggan test yang dibuat otomatis saat mendaftar.' },
-      testProduct: { name: 'Produk Test', price: 500000, duration: 60, description: 'Produk test yang dibuat otomatis saat mendaftar.', category: 'Umum' }
+      testCustomer: { name: 'Pelanggan Test', phone: '1234', memo: 'Pelanggan test yang dibuat otomatis.' },
+      testProduct: { name: 'Produk Test', price: 500000, duration: 60, description: 'Produk test yang dibuat otomatis.', category: 'Belum Ditentukan' }
     }
   };
 
@@ -154,23 +154,17 @@ export const createTestData = async () => {
     const existingCustomers = await customerService.getAll();
     const existingProducts = await productService.getAll();
     
-    // 고객 데이터가 없으면 생성
-    if (existingCustomers.length === 0) {
-      console.log('테스트 고객 데이터 생성 중...');
-      for (const customer of languageData.customers) {
-        await customerService.create(customer);
-      }
-    }
+    // 고객 데이터는 회원가입 시 createTestCustomer()에서 0000번으로 생성됨
+    // 일반 테스트 고객들은 제거 (회원가입 시 불필요)
     
-    // 상품 데이터가 없으면 생성
+    // 테스트 상품 1개만 생성 (첫 번째 상품만)
     if (existingProducts.length === 0) {
       console.log('테스트 상품 데이터 생성 중...');
-      for (const product of languageData.products) {
-        await productService.create({
-          ...product,
-          isActive: true
-        });
-      }
+      const testProduct = languageData.products[0]; // 첫 번째 상품만 사용
+      await productService.create({
+        ...testProduct,
+        isActive: true
+      });
     }
     
     // 자동완성 테스트 데이터 생성
@@ -259,21 +253,20 @@ export const createTestCustomer = async (): Promise<string> => {
     // 기존 테스트 고객이 있는지 확인
     const existingCustomers = await customerService.getAll();
     const testCustomerExists = existingCustomers.some(customer => 
-      customer.id === 'TEST' ||
+      customer.id === '0000' ||
       customer.memo === i18n.t('settings.testData.customerMemo')
     );
 
     if (testCustomerExists) {
       console.log('테스트 고객이 이미 존재합니다. 기존 ID를 반환합니다.');
       const existingTestCustomer = existingCustomers.find(customer => 
-        customer.id === 'TEST' ||
+        customer.id === '0000' ||
         customer.memo === i18n.t('settings.testData.customerMemo')
       );
-      return existingTestCustomer?.id || 'TEST';
+      return existingTestCustomer?.id || '0000';
     }
 
     const now = new Date();
-    const customerId = 'TEST'; // 테스트용 고정 ID (4자리 영문 대문자)
     
     // 현재 언어에 맞는 테스트 데이터 가져오기
     const currentLanguage = i18n.language || 'en';
@@ -283,23 +276,18 @@ export const createTestCustomer = async (): Promise<string> => {
     console.log('createTestCustomer - 선택된 테스트 고객:', languageData.testCustomer);
     
     const testCustomer = {
-      id: customerId,
       name: languageData.testCustomer.name,
       phone: languageData.testCustomer.phone,
       memo: i18n.t('settings.testData.customerMemo'),
-      createdAt: Timestamp.fromDate(now),
-      updatedAt: Timestamp.fromDate(now)
     };
 
     console.log('createTestCustomer - 생성할 고객 데이터:', testCustomer);
 
-    // 직접 Firestore에 저장 (마스킹 없이)
-    const collectionPath = `users/${user.uid}/customers`;
-    const docRef = doc(db, collectionPath, customerId);
-    await setDoc(docRef, testCustomer);
+    // 회원가입 고객으로 생성 (0000번)
+    const customerNumber = await customerService.create(testCustomer, true);
     
-    console.log('테스트 고객 생성 완료:', customerId);
-    return customerId;
+    console.log('테스트 고객 생성 완료:', customerNumber);
+    return customerNumber;
   } catch (error) {
     console.error('테스트 고객 생성 실패:', error);
     throw new Error('테스트 고객 생성에 실패했습니다.');

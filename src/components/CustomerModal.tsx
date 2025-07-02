@@ -85,7 +85,7 @@ const CustomerModal: React.FC<CustomerModalProps> = ({ customer, onClose, onSave
           memo: formData.memo,
         };
         
-        const newCustomerId = await customerService.create(newCustomerData);
+        const newCustomerId = await customerService.create(newCustomerData, false);
         const newCustomer = await customerService.getById(newCustomerId);
         if (!newCustomer) {
           throw new Error(t('customers.createError'));
