@@ -199,6 +199,11 @@
       "skin": "Skin Care",
       "massage": "Massage"
     },
+    "testData": {
+      "customerMemo": "Test customer created automatically upon signup.",
+      "productDescription": "Test product created automatically upon signup.",
+      "reservationMemo": "Test reservation created automatically upon signup."
+    },
     "dateFormat": "Date Format",
     "dayFormat": "Day Format",
     "mediumFormat": "Medium Format",

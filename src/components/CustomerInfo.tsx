@@ -32,7 +32,7 @@ const CustomerInfo: React.FC<CustomerInfoProps> = ({
             </tr>
             <tr className="customer-info-table-row">
               <td className="customer-info-table-value">
-                {customer.id.length === 4 && /^\d{4}$/.test(customer.id) ? customer.id : customer.id.slice(0, 4)}
+                {customer.id}
               </td>
               <td className="customer-info-table-value">
                 {isEdit ? (

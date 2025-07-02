@@ -114,12 +114,12 @@ export const customerService = {
       const existingCustomers = await this.getAll();
       const existingIds = existingCustomers.map(c => c.id);
       
-      // 고유한 4자리 ID 생성
+      // 고유한 4자리 영문 대문자 ID 생성
       const customerId = await generateUniqueCustomerId(existingIds);
       
       const customerData = {
         ...maskedData,
-        id: customerId, // 4자리 고유 ID
+        id: customerId, // 4자리 영문 대문자 고유 ID
         createdAt: Timestamp.fromDate(now),
         updatedAt: Timestamp.fromDate(now)
       };
@@ -129,7 +129,7 @@ export const customerService = {
         Object.entries(customerData).filter(([_, value]) => value !== undefined)
       );
       
-      // 4자리 ID를 문서 ID로 직접 사용
+      // 4자리 영문 대문자 ID를 문서 ID로 직접 사용
       const collectionPath = getUserCollectionPath('customers');
       const docRef = doc(db, collectionPath, customerId);
       await setDoc(docRef, cleanData);

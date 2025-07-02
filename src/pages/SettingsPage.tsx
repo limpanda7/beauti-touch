@@ -297,8 +297,8 @@ const SettingsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* 모바일에서만 표시되는 로그아웃 섹션 */}
-        <div className="settings-item settings-item-mobile-only">
+        {/* 계정 정보 섹션 - 모든 디바이스에서 표시 */}
+        <div className="settings-item">
           <div className="settings-item-header">
             <User className="settings-item-icon" />
             <h2 className="settings-item-title">{t('settings.account')}</h2>
@@ -306,15 +306,15 @@ const SettingsPage: React.FC = () => {
           <p className="settings-item-description">{t('settings.accountDescription')}</p>
           
           {user && (
-            <div className="user-info-mobile">
-              <div className="user-avatar-mobile">
+            <div className="user-info">
+              <div className="user-avatar">
                 {user.displayName ? user.displayName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
               </div>
-              <div className="user-details-mobile">
-                <div className="user-name-mobile">{user.displayName || user.email}</div>
+              <div className="user-details">
+                <div className="user-name">{user.displayName || user.email}</div>
                 {
                   user.displayName &&
-                  <div className="user-email-mobile">{user.email}</div>
+                  <div className="user-email">{user.email}</div>
                 }
               </div>
             </div>
@@ -322,7 +322,7 @@ const SettingsPage: React.FC = () => {
           
           <button
             type="button"
-            className="logout-btn-mobile"
+            className="logout-btn"
             onClick={handleLogout}
           >
             <LogOut size={20} />

@@ -15,6 +15,7 @@
   padding: 0.5rem;
   overflow-y: auto;
   transform: translateZ(0); // 새로운 stacking context 생성
+  animation: fadeIn 0.3s ease-out;
 }
 
 .modal-content {
@@ -30,6 +31,7 @@
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   margin: auto;
   transform: translateZ(0); // 새로운 stacking context 생성
+  animation: slideUp 0.4s ease-out;
 }
 
 // Nested modal (for CustomerModal inside ReservationModal)

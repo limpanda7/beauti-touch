@@ -33,6 +33,7 @@ body {
     
     .content-wrapper {
       padding: 1.5rem 2rem;
+      animation: fadeIn 0.4s ease-out;
     }
   }
 }
@@ -41,6 +42,7 @@ body {
 .page-header {
   @include flex-between;
   margin-bottom: 1.5rem;
+  animation: slideInFromLeft 0.5s ease-out;
   
   h1 {
     font-size: 1.875rem;
@@ -56,4 +58,6 @@ body {
   border-radius: $border-radius;
   box-shadow: $shadow;
   padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideUp 0.5s ease-out;
 } 

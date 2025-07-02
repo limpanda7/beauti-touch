@@ -54,16 +54,16 @@
   background-color: white;
 } 
 
-// 모바일 전용 로그아웃 섹션
-.settings-item-mobile-only {
-  display: none; // 기본적으로 숨김
-  
-  @media (max-width: 900px) {
-    display: flex; // 모바일에서만 표시
-  }
-}
+// 모바일 전용 로그아웃 섹션 (제거됨 - 모든 디바이스에서 표시)
+// .settings-item-mobile-only {
+//   display: none; // 기본적으로 숨김
+//   
+//   @media (max-width: 900px) {
+//     display: flex; // 모바일에서만 표시
+//   }
+// }
 
-.user-info-mobile {
+.user-info {
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
@@ -72,7 +72,7 @@
   border-radius: 8px;
   border: 1px solid #e9ecef;
   
-  .user-avatar-mobile {
+  .user-avatar {
     width: 3rem;
     height: 3rem;
     border-radius: 50%;
@@ -87,11 +87,11 @@
     flex-shrink: 0;
   }
   
-  .user-details-mobile {
+  .user-details {
     flex: 1;
     min-width: 0;
     
-    .user-name-mobile {
+    .user-name {
       font-weight: 600;
       color: #2d3748;
       font-size: 1rem;
@@ -101,7 +101,7 @@
       text-overflow: ellipsis;
     }
     
-    .user-email-mobile {
+    .user-email {
       color: #718096;
       font-size: 0.875rem;
       white-space: nowrap;
@@ -111,7 +111,7 @@
   }
 }
 
-.logout-btn-mobile {
+.logout-btn {
   width: 100%;
   display: flex;
   align-items: center;

@@ -1,5 +1,5 @@
 export interface Customer {
-  id: string; // 5자리 고유 ID (시각적으로 안전한 알파벳+숫자)
+  id: string; // 4자리 영문 대문자 고유 ID
   name: string; // 마스킹된 이름
   phone: string; // 마스킹된 연락처 (뒤 4자리만)
   memo?: string; // 메모

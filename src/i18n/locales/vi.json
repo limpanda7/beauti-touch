@@ -197,6 +197,11 @@
       "skin": "Chăm sóc da",
       "massage": "Massage"
     },
+    "testData": {
+      "customerMemo": "Khách hàng test được tạo tự động khi đăng ký.",
+      "productDescription": "Sản phẩm test được tạo tự động khi đăng ký.",
+      "reservationMemo": "Đặt chỗ test được tạo tự động khi đăng ký."
+    },
     "deleteConfirm": "Bạn có chắc chắn muốn xóa mục này?",
     "deleteSuccess": "Xóa mục thành công.",
     "deleteError": "Xóa mục thất bại.",

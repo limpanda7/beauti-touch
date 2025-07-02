@@ -4,8 +4,10 @@
   justify-content: center;
   min-height: 100vh;
   background: #FFF8F3;
+  animation: fadeIn 0.5s ease-out;
   
   .loading-spinner {
     color: white;
+    animation: slideUp 0.6s ease-out;
   }
 } 

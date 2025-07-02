@@ -8,6 +8,7 @@ import { customerService, productService, reservationService } from '../services
 import CustomerModal from './CustomerModal';
 import { useCurrencyFormat } from '../utils/currency';
 import { formatDuration } from '../utils/timeUtils';
+import { useSettingsStore } from '../stores/settingsStore';
 
 interface ReservationModalProps {
   reservation: Reservation | null;
@@ -20,8 +21,9 @@ interface ReservationModalProps {
 
 const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initialDate, initialCustomerId, onClose, onSave, onDelete }) => {
   const { t } = useTranslation();
-  const { formatCurrency } = useCurrencyFormat();
+  const { formatCurrency, getCurrencySymbol } = useCurrencyFormat();
   const navigate = useNavigate();
+  const { currency } = useSettingsStore();
   const [formData, setFormData] = useState({
     customerId: reservation?.customerId || initialCustomerId || '',
     productId: reservation?.productId || '',
@@ -479,7 +481,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                 required
                 className="price-input"
               />
-              <span className="price-unit">{t('settings.currencies.KRW').split(' ')[0]}</span>
+              <span className="price-unit">{getCurrencySymbol()}</span>
             </div>
           </div>
 

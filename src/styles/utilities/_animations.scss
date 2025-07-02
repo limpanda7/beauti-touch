@@ -54,4 +54,15 @@
 @keyframes fadeInOut {
   0%, 100% { opacity: 0; transform: translateX(-50%) translateY(0.5rem); }
   20%, 80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 } 

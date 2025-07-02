@@ -1,25 +1,24 @@
 // 고객 정보 마스킹 유틸리티
 
 /**
- * 시각적으로 안전한 5자리 고유 ID 생성
- * 알파벳 대문자(ABCDEFGHJKLMNPQRSTUVWXYZ) + 숫자만 사용
- * 시각적으로 혼동될 수 있는 문자 제외: I, O, 0, 1
+ * 4자리 영문 대문자 고유 ID 생성
+ * 알파벳 대문자만 사용 (A-Z)
  */
 export const generateCustomerId = (): string => {
-  // 시각적으로 안전한 문자들
-  const safeChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  // 영문 대문자만 사용
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let result = '';
   
-  for (let i = 0; i < 5; i++) {
-    const randomIndex = Math.floor(Math.random() * safeChars.length);
-    result += safeChars[randomIndex];
+  for (let i = 0; i < 4; i++) {
+    const randomIndex = Math.floor(Math.random() * chars.length);
+    result += chars[randomIndex];
   }
   
   return result;
 };
 
 /**
- * 고유한 5자리 ID 생성 (중복 확인 포함)
+ * 고유한 4자리 영문 대문자 ID 생성 (중복 확인 포함)
  */
 export const generateUniqueCustomerId = async (existingIds: string[]): Promise<string> => {
   let attempts = 0;
@@ -35,15 +34,15 @@ export const generateUniqueCustomerId = async (existingIds: string[]): Promise<s
   
   // 최대 시도 횟수를 초과한 경우 타임스탬프 기반 ID 생성
   const timestamp = Date.now();
-  const safeChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let result = '';
   
-  // 타임스탬프의 마지막 5자리를 사용하여 ID 생성
+  // 타임스탬프의 마지막 4자리를 사용하여 ID 생성
   const timestampStr = timestamp.toString();
-  for (let i = 0; i < 5; i++) {
-    const digit = parseInt(timestampStr[timestampStr.length - 5 + i] || '0');
-    const charIndex = digit % safeChars.length;
-    result += safeChars[charIndex];
+  for (let i = 0; i < 4; i++) {
+    const digit = parseInt(timestampStr[timestampStr.length - 4 + i] || '0');
+    const charIndex = digit % chars.length;
+    result += chars[charIndex];
   }
   
   return result;

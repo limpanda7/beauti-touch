@@ -183,6 +183,11 @@
       "nail": "Unhas",
       "skin": "Cuidados com a Pele",
       "massage": "Massagem"
+    },
+    "testData": {
+      "customerMemo": "Cliente teste criado automaticamente ao se registrar.",
+      "productDescription": "Produto teste criado automaticamente ao se registrar.",
+      "reservationMemo": "Reserva de teste criada automaticamente ao se registrar."
     }
   },
   "errors": {

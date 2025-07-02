@@ -199,6 +199,11 @@
       "skin": "피부관리",
       "massage": "마사지"
     },
+    "testData": {
+      "customerMemo": "회원가입 시 자동 생성된 테스트 고객입니다.",
+      "productDescription": "회원가입 시 자동 생성된 테스트 상품입니다.",
+      "reservationMemo": "회원가입 시 자동 생성된 테스트 예약입니다."
+    },
     "dateFormat": "날짜 형식",
     "dayFormat": "일별 형식",
     "mediumFormat": "중간 형식",

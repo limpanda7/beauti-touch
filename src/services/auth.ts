@@ -126,9 +126,16 @@ export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
 
     // 테스트 데이터 생성 (비동기로 실행하되 에러는 무시)
     try {
+      console.log('=== 회원가입 후 테스트 데이터 생성 시작 ===');
+      console.log('현재 사용자 UID:', user.uid);
+      console.log('현재 언어 설정:', getCurrentLanguage());
+      
       await createAllTestData();
-      console.log('회원가입 후 테스트 데이터 생성 완료');
+      console.log('=== 회원가입 후 테스트 데이터 생성 완료 ===');
     } catch (testDataError) {
+      console.error('=== 회원가입 후 테스트 데이터 생성 실패 ===');
+      console.error('에러 상세:', testDataError);
+      console.error('에러 스택:', testDataError instanceof Error ? testDataError.stack : '스택 정보 없음');
       console.warn('테스트 데이터 생성 실패 (무시됨):', testDataError);
     }
 
@@ -232,12 +239,18 @@ export const onAuthStateChange = (callback: (user: User | null) => void) => {
 
         // 새 사용자인 경우에만 테스트 데이터 생성
         if (isNewUser && isRecentlyCreated) {
-          console.log('인증 상태 변경 - 신규 사용자 감지, 테스트 데이터 생성 시작');
+          console.log('=== 인증 상태 변경 - 신규 사용자 감지, 테스트 데이터 생성 시작 ===');
+          console.log('사용자 UID:', user.uid);
+          console.log('현재 언어 설정:', getCurrentLanguage());
+          
           try {
             const result = await createAllTestData();
-            console.log('인증 상태 변경 - 테스트 데이터 생성 완료 (신규 사용자):', result);
+            console.log('=== 인증 상태 변경 - 테스트 데이터 생성 완료 (신규 사용자) ===');
+            console.log('생성 결과:', result);
           } catch (testDataError) {
-            console.error('인증 상태 변경 - 테스트 데이터 생성 실패 (상세):', testDataError);
+            console.error('=== 인증 상태 변경 - 테스트 데이터 생성 실패 (상세) ===');
+            console.error('에러 상세:', testDataError);
+            console.error('에러 스택:', testDataError instanceof Error ? testDataError.stack : '스택 정보 없음');
             console.warn('인증 상태 변경 - 테스트 데이터 생성 실패 (무시됨):', testDataError);
           }
         } else {
@@ -352,13 +365,19 @@ export const signInWithGoogle = async (): Promise<User> => {
 
     // 새 사용자인 경우에만 테스트 데이터 생성
     if (isNewUser && isRecentlyCreated) {
-      console.log('신규 사용자 감지 - 테스트 데이터 생성 시작');
+      console.log('=== 인증 상태 변경 - 신규 사용자 감지, 테스트 데이터 생성 시작 ===');
+      console.log('사용자 UID:', user.uid);
+      console.log('현재 언어 설정:', getCurrentLanguage());
+      
       try {
         const result = await createAllTestData();
-        console.log('Google 로그인 후 테스트 데이터 생성 완료 (신규 사용자):', result);
+        console.log('=== 인증 상태 변경 - 테스트 데이터 생성 완료 (신규 사용자) ===');
+        console.log('생성 결과:', result);
       } catch (testDataError) {
-        console.error('테스트 데이터 생성 실패 (상세):', testDataError);
-        console.warn('테스트 데이터 생성 실패 (무시됨):', testDataError);
+        console.error('=== 인증 상태 변경 - 테스트 데이터 생성 실패 (상세) ===');
+        console.error('에러 상세:', testDataError);
+        console.error('에러 스택:', testDataError instanceof Error ? testDataError.stack : '스택 정보 없음');
+        console.warn('인증 상태 변경 - 테스트 데이터 생성 실패 (무시됨):', testDataError);
       }
     } else {
       console.log('기존 사용자 또는 오래된 계정 - 테스트 데이터 생성 건너뜀');

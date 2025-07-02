@@ -1,12 +1,17 @@
-import { customerService, productService, autoCompleteService } from '../services/firestore';
+import { customerService, productService, autoCompleteService, reservationService } from '../services/firestore';
 import { getAuth } from 'firebase/auth';
 import type { Customer, Product } from '../types';
 import { doc, setDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import i18n from '../i18n';
 
+// 테스트 데이터 생성 중복 실행 방지를 위한 플래그
+let isCreatingTestData = false;
+
 // 언어별 테스트 데이터 정의
 const getTestDataByLanguage = (language: string) => {
+  console.log('테스트 데이터 언어 감지:', language);
+  
   const testData = {
     ko: {
       customers: [
@@ -30,43 +35,43 @@ const getTestDataByLanguage = (language: string) => {
         { name: 'Emily Davis', phone: '555-555-1234', memo: '' }
       ],
       products: [
-        { name: 'Basic Nail', price: 25, duration: 60, description: 'Basic nail service', category: 'Nail' },
-        { name: 'Gel Nail', price: 35, duration: 90, description: 'Gel nail service', category: 'Nail' },
-        { name: 'Eyelash Extension', price: 65, duration: 120, description: 'Eyelash extension service', category: 'Eyelash' },
-        { name: 'Eyeliner', price: 20, duration: 30, description: 'Eyeliner service', category: 'Makeup' }
+        { name: 'Basic Nail', price: 30, duration: 60, description: 'Basic nail service', category: 'Nail' },
+        { name: 'Gel Nail', price: 45, duration: 90, description: 'Gel nail service', category: 'Nail' },
+        { name: 'Eyelash Extension', price: 80, duration: 120, description: 'Eyelash extension service', category: 'Eyelash' },
+        { name: 'Eyeliner', price: 25, duration: 30, description: 'Eyeliner service', category: 'Makeup' }
       ],
-      testCustomer: { name: 'Test Customer', phone: '1234', memo: 'Auto-generated test customer on signup.' },
-      testProduct: { name: 'Test Product', price: 40, duration: 60, description: 'Auto-generated test product on signup.', category: 'General' }
+      testCustomer: { name: 'Test Customer', phone: '1234', memo: 'Test customer created automatically upon signup.' },
+      testProduct: { name: 'Test Product', price: 50, duration: 60, description: 'Test product created automatically upon signup.', category: 'General' }
     },
     es: {
       customers: [
-        { name: 'María García', phone: '555-123-4567', memo: 'Cliente por primera vez' },
+        { name: 'María García', phone: '555-123-4567', memo: 'Cliente nueva' },
         { name: 'Carlos López', phone: '555-987-6543', memo: 'Cliente regular' },
         { name: 'Ana Martínez', phone: '555-555-1234', memo: '' }
       ],
       products: [
-        { name: 'Uñas Básicas', price: 20, duration: 60, description: 'Servicio básico de uñas', category: 'Uñas' },
-        { name: 'Uñas con Gel', price: 30, duration: 90, description: 'Servicio de uñas con gel', category: 'Uñas' },
-        { name: 'Extensión de Pestañas', price: 50, duration: 120, description: 'Servicio de extensión de pestañas', category: 'Pestañas' },
-        { name: 'Delineador', price: 15, duration: 30, description: 'Servicio de delineador', category: 'Maquillaje' }
+        { name: 'Uña Básica', price: 30, duration: 60, description: 'Servicio de uñas básico', category: 'Uñas' },
+        { name: 'Uña de Gel', price: 45, duration: 90, description: 'Servicio de uñas de gel', category: 'Uñas' },
+        { name: 'Extensión de Pestañas', price: 80, duration: 120, description: 'Servicio de extensión de pestañas', category: 'Pestañas' },
+        { name: 'Delineador', price: 25, duration: 30, description: 'Servicio de delineador', category: 'Maquillaje' }
       ],
-      testCustomer: { name: 'Cliente de Prueba', phone: '1234', memo: 'Cliente de prueba generado automáticamente al registrarse.' },
-      testProduct: { name: 'Producto de Prueba', price: 25, duration: 60, description: 'Producto de prueba generado automáticamente al registrarse.', category: 'General' }
+      testCustomer: { name: 'Cliente de Prueba', phone: '1234', memo: 'Cliente de prueba creado automáticamente al registrarse.' },
+      testProduct: { name: 'Producto de Prueba', price: 50, duration: 60, description: 'Producto de prueba creado automáticamente al registrarse.', category: 'General' }
     },
     pt: {
       customers: [
-        { name: 'Ana Silva', phone: '555-123-4567', memo: 'Cliente pela primeira vez' },
-        { name: 'João Santos', phone: '555-987-6543', memo: 'Cliente regular' },
-        { name: 'Maria Costa', phone: '555-555-1234', memo: '' }
+        { name: 'Maria Silva', phone: '11-1234-5678', memo: 'Cliente nova' },
+        { name: 'João Santos', phone: '11-9876-5432', memo: 'Cliente regular' },
+        { name: 'Ana Costa', phone: '11-5555-1234', memo: '' }
       ],
       products: [
-        { name: 'Unhas Básicas', price: 25, duration: 60, description: 'Serviço básico de unhas', category: 'Unhas' },
-        { name: 'Unhas com Gel', price: 35, duration: 90, description: 'Serviço de unhas com gel', category: 'Unhas' },
-        { name: 'Extensão de Cílios', price: 60, duration: 120, description: 'Serviço de extensão de cílios', category: 'Cílios' },
-        { name: 'Delineador', price: 20, duration: 30, description: 'Serviço de delineador', category: 'Maquiagem' }
+        { name: 'Unha Básica', price: 30, duration: 60, description: 'Serviço de unha básico', category: 'Unha' },
+        { name: 'Unha de Gel', price: 45, duration: 90, description: 'Serviço de unha de gel', category: 'Unha' },
+        { name: 'Extensão de Cílios', price: 80, duration: 120, description: 'Serviço de extensão de cílios', category: 'Cílios' },
+        { name: 'Delineador', price: 25, duration: 30, description: 'Serviço de delineador', category: 'Maquiagem' }
       ],
-      testCustomer: { name: 'Cliente de Teste', phone: '1234', memo: 'Cliente de teste gerado automaticamente no cadastro.' },
-      testProduct: { name: 'Produto de Teste', price: 30, duration: 60, description: 'Produto de teste gerado automaticamente no cadastro.', category: 'Geral' }
+      testCustomer: { name: 'Cliente Teste', phone: '1234', memo: 'Cliente teste criado automaticamente ao se registrar.' },
+      testProduct: { name: 'Produto Teste', price: 50, duration: 60, description: 'Produto teste criado automaticamente ao se registrar.', category: 'Geral' }
     },
     th: {
       customers: [
@@ -85,37 +90,47 @@ const getTestDataByLanguage = (language: string) => {
     },
     vi: {
       customers: [
-        { name: 'Nguyễn Thị Mai', phone: '090-123-4567', memo: 'Khách hàng lần đầu' },
+        { name: 'Nguyễn Thị Mai', phone: '090-123-4567', memo: 'Khách hàng mới' },
         { name: 'Trần Văn Nam', phone: '090-987-6543', memo: 'Khách hàng thường xuyên' },
         { name: 'Lê Thị Hoa', phone: '090-555-1234', memo: '' }
       ],
       products: [
-        { name: 'Nail Cơ Bản', price: 200000, duration: 60, description: 'Dịch vụ nail cơ bản', category: 'Nail' },
-        { name: 'Nail Gel', price: 300000, duration: 90, description: 'Dịch vụ nail gel', category: 'Nail' },
-        { name: 'Nối Mi', price: 500000, duration: 120, description: 'Dịch vụ nối mi', category: 'Lông mi' },
-        { name: 'Kẻ Mắt', price: 150000, duration: 30, description: 'Dịch vụ kẻ mắt', category: 'Trang điểm' }
+        { name: 'Nail Cơ Bản', price: 300000, duration: 60, description: 'Dịch vụ nail cơ bản', category: 'Nail' },
+        { name: 'Nail Gel', price: 450000, duration: 90, description: 'Dịch vụ nail gel', category: 'Nail' },
+        { name: 'Nối Mi', price: 800000, duration: 120, description: 'Dịch vụ nối mi', category: 'Mi' },
+        { name: 'Kẻ Mắt', price: 250000, duration: 30, description: 'Dịch vụ kẻ mắt', category: 'Trang điểm' }
       ],
       testCustomer: { name: 'Khách Hàng Test', phone: '1234', memo: 'Khách hàng test được tạo tự động khi đăng ký.' },
-      testProduct: { name: 'Sản Phẩm Test', price: 250000, duration: 60, description: 'Sản phẩm test được tạo tự động khi đăng ký.', category: 'Chung' }
+      testProduct: { name: 'Sản Phẩm Test', price: 500000, duration: 60, description: 'Sản phẩm test được tạo tự động khi đăng ký.', category: 'Chung' }
     },
     id: {
       customers: [
-        { name: 'Sari Wijaya', phone: '081-123-4567', memo: 'Pelanggan pertama kali' },
-        { name: 'Budi Santoso', phone: '081-987-6543', memo: 'Pelanggan tetap' },
-        { name: 'Dewi Putri', phone: '081-555-1234', memo: '' }
+        { name: 'Siti Nurhaliza', phone: '081-123-4567', memo: 'Pelanggan baru' },
+        { name: 'Ahmad Hidayat', phone: '081-987-6543', memo: 'Pelanggan tetap' },
+        { name: 'Dewi Sartika', phone: '081-555-1234', memo: '' }
       ],
       products: [
-        { name: 'Nail Dasar', price: 150000, duration: 60, description: 'Layanan nail dasar', category: 'Nail' },
-        { name: 'Nail Gel', price: 250000, duration: 90, description: 'Layanan nail gel', category: 'Nail' },
-        { name: 'Ekstensi Bulu Mata', price: 400000, duration: 120, description: 'Layanan ekstensi bulu mata', category: 'Bulu Mata' },
-        { name: 'Eyeliner', price: 100000, duration: 30, description: 'Layanan eyeliner', category: 'Makeup' }
+        { name: 'Kuku Dasar', price: 300000, duration: 60, description: 'Layanan kuku dasar', category: 'Kuku' },
+        { name: 'Kuku Gel', price: 450000, duration: 90, description: 'Layanan kuku gel', category: 'Kuku' },
+        { name: 'Ekstensi Bulu Mata', price: 800000, duration: 120, description: 'Layanan ekstensi bulu mata', category: 'Bulu Mata' },
+        { name: 'Eyeliner', price: 250000, duration: 30, description: 'Layanan eyeliner', category: 'Makeup' }
       ],
       testCustomer: { name: 'Pelanggan Test', phone: '1234', memo: 'Pelanggan test yang dibuat otomatis saat mendaftar.' },
-      testProduct: { name: 'Produk Test', price: 200000, duration: 60, description: 'Produk test yang dibuat otomatis saat mendaftar.', category: 'Umum' }
+      testProduct: { name: 'Produk Test', price: 500000, duration: 60, description: 'Produk test yang dibuat otomatis saat mendaftar.', category: 'Umum' }
     }
   };
 
-  return testData[language as keyof typeof testData] || testData.en;
+  // 기본값은 영어로 설정
+  const defaultData = testData.en;
+  
+  // 지원하는 언어인지 확인
+  if (language && testData[language as keyof typeof testData]) {
+    console.log('지원하는 언어 감지됨:', language);
+    return testData[language as keyof typeof testData];
+  } else {
+    console.log('지원하지 않는 언어 또는 언어 미감지, 기본값(영어) 사용:', language);
+    return defaultData;
+  }
 };
 
 export const createTestData = async () => {
@@ -241,21 +256,42 @@ export const createTestCustomer = async (): Promise<string> => {
       throw new Error('사용자가 로그인되지 않았습니다.');
     }
 
+    // 기존 테스트 고객이 있는지 확인
+    const existingCustomers = await customerService.getAll();
+    const testCustomerExists = existingCustomers.some(customer => 
+      customer.id === 'TEST' ||
+      customer.memo === i18n.t('settings.testData.customerMemo')
+    );
+
+    if (testCustomerExists) {
+      console.log('테스트 고객이 이미 존재합니다. 기존 ID를 반환합니다.');
+      const existingTestCustomer = existingCustomers.find(customer => 
+        customer.id === 'TEST' ||
+        customer.memo === i18n.t('settings.testData.customerMemo')
+      );
+      return existingTestCustomer?.id || 'TEST';
+    }
+
     const now = new Date();
-    const customerId = 'TEST1'; // 테스트용 고정 ID (새로운 형식)
+    const customerId = 'TEST'; // 테스트용 고정 ID (4자리 영문 대문자)
     
     // 현재 언어에 맞는 테스트 데이터 가져오기
     const currentLanguage = i18n.language || 'en';
+    console.log('createTestCustomer - 현재 언어:', currentLanguage);
+    
     const languageData = getTestDataByLanguage(currentLanguage);
+    console.log('createTestCustomer - 선택된 테스트 고객:', languageData.testCustomer);
     
     const testCustomer = {
       id: customerId,
       name: languageData.testCustomer.name,
       phone: languageData.testCustomer.phone,
-      memo: languageData.testCustomer.memo,
+      memo: i18n.t('settings.testData.customerMemo'),
       createdAt: Timestamp.fromDate(now),
       updatedAt: Timestamp.fromDate(now)
     };
+
+    console.log('createTestCustomer - 생성할 고객 데이터:', testCustomer);
 
     // 직접 Firestore에 저장 (마스킹 없이)
     const collectionPath = `users/${user.uid}/customers`;
@@ -279,24 +315,45 @@ export const createTestProduct = async (): Promise<string> => {
       throw new Error('사용자가 로그인되지 않았습니다.');
     }
 
+    // 기존 테스트 상품이 있는지 확인
+    const existingProducts = await productService.getAll();
+    const testProductExists = existingProducts.some(product => 
+      product.id === 'test-product-001' ||
+      product.description === i18n.t('settings.testData.productDescription')
+    );
+
+    if (testProductExists) {
+      console.log('테스트 상품이 이미 존재합니다. 기존 ID를 반환합니다.');
+      const existingTestProduct = existingProducts.find(product => 
+        product.id === 'test-product-001' ||
+        product.description === i18n.t('settings.testData.productDescription')
+      );
+      return existingTestProduct?.id || 'test-product-001';
+    }
+
     const now = new Date();
     const productId = 'test-product-001'; // 테스트용 고정 ID
     
     // 현재 언어에 맞는 테스트 데이터 가져오기
     const currentLanguage = i18n.language || 'en';
+    console.log('createTestProduct - 현재 언어:', currentLanguage);
+    
     const languageData = getTestDataByLanguage(currentLanguage);
+    console.log('createTestProduct - 선택된 테스트 상품:', languageData.testProduct);
     
     const testProduct = {
       id: productId,
       name: languageData.testProduct.name,
       price: languageData.testProduct.price,
       duration: languageData.testProduct.duration,
-      description: languageData.testProduct.description,
+      description: i18n.t('settings.testData.productDescription'),
       category: languageData.testProduct.category,
       isActive: true,
       createdAt: Timestamp.fromDate(now),
       updatedAt: Timestamp.fromDate(now)
     };
+
+    console.log('createTestProduct - 생성할 상품 데이터:', testProduct);
 
     // 직접 Firestore에 저장
     const collectionPath = `users/${user.uid}/products`;
@@ -311,13 +368,87 @@ export const createTestProduct = async (): Promise<string> => {
   }
 };
 
+// 테스트 예약 데이터 생성
+export const createTestReservation = async (customerId: string, productId: string): Promise<string> => {
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error('사용자가 로그인되지 않았습니다.');
+    }
+
+    // 기존 테스트 예약이 있는지 확인
+    const existingReservations = await reservationService.getAll();
+    const testReservationExists = existingReservations.some(reservation => 
+      reservation.memo === i18n.t('settings.testData.reservationMemo')
+    );
+
+    if (testReservationExists) {
+      console.log('테스트 예약이 이미 존재합니다. 건너뜁니다.');
+      return '';
+    }
+
+    const now = new Date();
+    
+    // 현재 시간을 10분 올림 처리
+    const currentMinutes = now.getMinutes();
+    const roundedMinutes = Math.ceil(currentMinutes / 10) * 10;
+    const reservationTime = new Date(now);
+    reservationTime.setMinutes(roundedMinutes, 0, 0);
+    
+    // 시간이 60분을 넘어가면 다음 시간으로 조정
+    if (roundedMinutes >= 60) {
+      reservationTime.setHours(reservationTime.getHours() + 1);
+      reservationTime.setMinutes(0);
+    }
+    
+    // 시간을 HH:mm 형식으로 포맷팅
+    const timeString = reservationTime.toTimeString().slice(0, 5);
+    
+    // 현재 언어에 맞는 테스트 데이터 가져오기
+    const currentLanguage = i18n.language || 'en';
+    const languageData = getTestDataByLanguage(currentLanguage);
+    
+    const testReservation = {
+      customerId: customerId,
+      customerName: languageData.testCustomer.name,
+      productId: productId,
+      productName: languageData.testProduct.name,
+      date: reservationTime,
+      time: timeString,
+      status: 'confirmed' as const,
+      price: languageData.testProduct.price,
+      memo: i18n.t('settings.testData.reservationMemo')
+    };
+
+    console.log('createTestReservation - 생성할 예약 데이터:', testReservation);
+
+    // 예약 서비스를 통해 저장
+    const reservationId = await reservationService.create(testReservation);
+    
+    console.log('테스트 예약 생성 완료:', reservationId);
+    return reservationId;
+  } catch (error) {
+    console.error('테스트 예약 생성 실패:', error);
+    throw new Error('테스트 예약 생성에 실패했습니다.');
+  }
+};
+
 // 모든 테스트 데이터 생성
 export const createAllTestData = async (): Promise<{
   customerId: string;
   productId: string;
+  reservationId: string;
 }> => {
+  // 중복 실행 방지
+  if (isCreatingTestData) {
+    console.log('=== 테스트 데이터 생성이 이미 진행 중입니다. 건너뜁니다. ===');
+    return { customerId: '', productId: '', reservationId: '' };
+  }
+
   try {
-    console.log('테스트 데이터 생성 시작...');
+    isCreatingTestData = true;
+    console.log('=== 테스트 데이터 생성 시작 ===');
     
     // 현재 사용자 확인
     const auth = getAuth();
@@ -328,6 +459,22 @@ export const createAllTestData = async (): Promise<{
       throw new Error('사용자가 로그인되지 않았습니다.');
     }
     
+    // 현재 언어 확인
+    const currentLanguage = i18n.language || 'en';
+    console.log('현재 i18n 언어:', currentLanguage);
+    console.log('i18n 객체 상태:', {
+      language: i18n.language,
+      resolvedLanguage: i18n.resolvedLanguage,
+      options: i18n.options
+    });
+    
+    // 언어별 테스트 데이터 가져오기
+    const languageData = getTestDataByLanguage(currentLanguage);
+    console.log('선택된 언어 데이터:', {
+      testCustomer: languageData.testCustomer,
+      testProduct: languageData.testProduct
+    });
+    
     // 테스트 고객과 상품을 병렬로 생성
     console.log('테스트 고객과 상품 생성 시작...');
     const [customerId, productId] = await Promise.all([
@@ -335,11 +482,20 @@ export const createAllTestData = async (): Promise<{
       createTestProduct()
     ]);
 
-    console.log('모든 테스트 데이터 생성 완료:', { customerId, productId });
+    // 테스트 예약 생성
+    console.log('테스트 예약 생성 시작...');
+    const reservationId = await createTestReservation(customerId, productId);
+
+    console.log('=== 모든 테스트 데이터 생성 완료 ===');
+    console.log('생성된 데이터:', { customerId, productId, reservationId });
     
-    return { customerId, productId };
+    return { customerId, productId, reservationId: reservationId || '' };
   } catch (error) {
-    console.error('테스트 데이터 생성 실패:', error);
+    console.error('=== 테스트 데이터 생성 실패 ===');
+    console.error('에러 상세:', error);
+    console.error('에러 스택:', error instanceof Error ? error.stack : '스택 정보 없음');
     throw new Error('테스트 데이터 생성에 실패했습니다.');
+  } finally {
+    isCreatingTestData = false;
   }
 }; 

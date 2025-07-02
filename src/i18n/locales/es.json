@@ -195,6 +195,11 @@
       "nail": "Uñas",
       "skin": "Cuidado de la Piel",
       "massage": "Masaje"
+    },
+    "testData": {
+      "customerMemo": "Cliente de prueba creado automáticamente al registrarse.",
+      "productDescription": "Producto de prueba creado automáticamente al registrarse.",
+      "reservationMemo": "Reserva de prueba creada automáticamente al registrarse."
     }
   },
   "errors": {
