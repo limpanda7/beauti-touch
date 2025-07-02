@@ -32,6 +32,16 @@
     "settings": "Configurações",
     "beauti-touch": "Beauti-Touch",
     "adminSystem": "Toque de beleza",
+    "seoDescription": "Serviço de gestão de reservas, clientes e produtos para salões de beleza individuais. Obtenha 1 mês de teste gratuito ao se registrar agora!",
+    "seoKeywords": {
+      "default": "salão de beleza, salão, gestão, reserva, cliente, produto, serviço, beauti-touch, sistema de reservas de salão de beleza, aplicativo de gestão de clientes, salão de beleza individual, operação de salão de beleza, CRM de salão de beleza, recomendação de aplicativo de gestão de salão de beleza, software de salão de beleza, automação de operação de salão de beleza, aplicativo gratuito de gestão de clientes, aplicativo essencial para salão de beleza individual, dicas de operação de salão de beleza, início de negócio de beleza de baixo custo, início de loja individual, dicas de operação de salão de beleza, métodos de aquisição de clientes, como administrar bem um salão de beleza, sistema CRM de salão de beleza, comparação de programas de salão de beleza, solução de gestão de clientes de salão de beleza, aplicativo de calendário de salão de beleza, aplicativo integrado de reservas e gráficos, programa gratuito de gestão de reservas, ferramenta de geração de links de reserva",
+      "reservations": "reserva, agendamento, consulta, salão de beleza, horário, calendário, aplicativo de gestão de reservas de loja, sistema de reservas de salão de beleza, recomendação de programa de reservas, recomendação de aplicativo de reservas, gestão manual de reservas, ferramenta de automação de reservas de salão de beleza, programa gratuito de gestão de reservas, ferramenta de geração de links de reserva, aplicativo de calendário de salão de beleza, aplicativo integrado de reservas e gráficos",
+      "customers": "cliente, gestão, salão de beleza, banco de dados de clientes, informações do cliente, aplicativo de gestão de clientes, programa de gestão de clientes de beleza, gestão de clientes de cílios, gestão de clientes de depilação, gestão de clientes de unhas, programa de organização de informações de clientes, aplicativo de registro de consultas, aplicativo simples de gestão de clientes, recomendação de aplicativo de gráficos de clientes, comparação de programas de gráficos de clientes, aplicativo de gestão de clientes de depilação, sistema de gráficos de clientes de beleza, aplicativo de gestão de memos de clientes, armazenamento de registros de tratamentos específicos do cliente, CRM de salão de beleza, recomendação de CRM de salão de beleza, sistema CRM de salão de beleza",
+      "products": "produto, serviço, beleza, salão, preço, duração, gestão, gestão pré/pós tratamento, automação de operação de salão de beleza, software de salão de beleza",
+      "settings": "configurações, idioma, moeda, tipo de negócio, conta, operação de salão de beleza, dicas de operação de salão de beleza, como administrar bem um salão de beleza, comparação de programas de salão de beleza, recomendação de aplicativo de gestão de salão de beleza",
+      "auth": "login, cadastro, autenticação, gestão de salão de beleza, beauti-touch, salão de beleza individual, aplicativo essencial para salão de beleza individual, início de negócio de beleza de baixo custo, início de loja individual, dicas de operação de salão de beleza, métodos de aquisição de clientes, solução de gestão de clientes de salão de beleza",
+      "chart": "gráfico, gráfico do cliente, tratamento de beleza, registro, ferramenta de desenho, gestão de gráficos de clientes, recomendação de aplicativo de gráficos de clientes, comparação de programas de gráficos de clientes, sistema de gráficos de clientes de beleza, substituição de gráficos em papel, gestão pré/pós tratamento, armazenamento de registros de tratamentos específicos do cliente, aplicativo integrado de reservas e gráficos"
+    },
     "other": "Outro",
     "pageTitle": "Beauti-Touch: Toque de beleza"
   },
@@ -152,6 +162,76 @@
     "statusChangeError": "Falha ao alterar o status do produto.",
     "saveError": "Falha ao salvar as informações do produto."
   },
+  "features": {
+    "pageTitle": "Beauti-Touch - Solução Perfeita de Gestão para Salões de Beleza Individuais",
+    "pageDescription": "Serviço de gestão de reservas, clientes e produtos para salões de beleza individuais. Obtenha 1 mês de teste gratuito ao se registrar agora!",
+    "hero": {
+      "title": "Beleza na Ponta dos Dedos",
+      "subtitle": "Solução perfeita de gestão de reservas, clientes e produtos para salões de beleza individuais",
+      "startFree": "Começar Grátis",
+      "login": "Entrar",
+      "freeTrial": "1 Mês de Teste Gratuito"
+    },
+    "sectionTitle": "Tudo para Gestão de Salões de Beleza",
+    "sectionDescription": "Desde reservas até gestão de clientes, fornecemos todas as funcionalidades que você precisa para administrar seu salão de beleza",
+    "reservation": {
+      "title": "Gestão Inteligente de Reservas",
+      "description": "Gerencie eficientemente as reservas de clientes com um sistema de reservas intuitivo baseado em calendário",
+      "benefit1": "Reservas intuitivas baseadas em calendário",
+      "benefit2": "Histórico de reservas específico por cliente",
+      "benefit3": "Função de compartilhamento de links de reserva"
+    },
+    "customer": {
+      "title": "Gestão de Informações de Clientes",
+      "description": "Gerencie sistematicamente informações detalhadas de clientes e registros de visitas para fornecer serviços personalizados",
+      "benefit1": "Armazenar informações detalhadas de clientes",
+      "benefit2": "Gestão de histórico de visitas e memos",
+      "benefit3": "Mascaramento automático para proteção de privacidade"
+    },
+    "chart": {
+      "title": "Gestão de Gráficos de Clientes",
+      "description": "Gerencie registros de tratamentos e gráficos de clientes digitalmente para fornecer atendimento preciso ao cliente",
+      "benefit1": "Ferramentas de criação de gráficos digitais",
+      "benefit2": "Armazenamento de fotos antes/depois do tratamento",
+      "benefit3": "Registros de atendimento específicos por cliente"
+    },
+    "product": {
+      "title": "Gestão de Produtos/Serviços",
+      "description": "Gerencie sistematicamente vários produtos e serviços para fornecer preços e duração precisos",
+      "benefit1": "Gestão de produtos baseada em categorias",
+      "benefit2": "Configuração de preços e duração",
+      "benefit3": "Gestão de status ativo/inativo"
+    },
+    "advantages": {
+      "title": "Por que Escolher Beauti-Touch?",
+      "description": "Experimente operação eficiente com funcionalidades otimizadas para salões de beleza individuais",
+      "mobile": {
+        "title": "Otimizado para Mobile",
+        "description": "Design responsivo que funciona perfeitamente em smartphones e tablets"
+      },
+      "multilingual": {
+        "title": "Suporte Multiidioma",
+        "description": "Comunique-se com clientes de todo o mundo em 7 idiomas incluindo coreano, inglês, vietnamita e espanhol"
+      },
+      "security": {
+        "title": "Segurança Aprimorada",
+        "description": "Sistema de mascaramento e criptografia automática para proteção de informações de clientes"
+      },
+      "automation": {
+        "title": "Funcionalidades de Automação",
+        "description": "Maximize a eficiência do trabalho automatizando tarefas repetitivas"
+      }
+    },
+    "cta": {
+      "title": "Começar Agora",
+      "description": "Experimente uma nova forma de gestão de salão de beleza com 1 mês de teste gratuito",
+      "startNow": "Começar Grátis",
+      "login": "Entrar com Conta Existente"
+    },
+    "footer": {
+      "rights": "Todos os direitos reservados"
+    }
+  },
   "settings": {
     "title": "Configurações",
     "language": "Idioma",
@@ -184,6 +264,16 @@
       "skin": "Cuidados com a Pele",
       "massage": "Massagem"
     },
+    "billing": "Faturamento",
+    "billingDescription": "Gerencie informações de assinatura e faturamento.",
+    "currentPlan": "Plano Atual",
+    "betaPeriod": "Período Beta",
+    "freeForOneMonth": "Grátis por 1 Mês",
+    "betaDescription": "Atualmente em período beta. Você pode usar gratuitamente por 1 mês.",
+    "subscriptionStatus": "Status da Assinatura",
+    "active": "Ativo",
+    "expiresOn": "Expira Em",
+    "manageSubscription": "Gerenciar Assinatura",
     "testData": {
       "customerMemo": "Cliente teste criado automaticamente ao se registrar.",
       "productDescription": "Produto teste criado automaticamente ao se registrar.",

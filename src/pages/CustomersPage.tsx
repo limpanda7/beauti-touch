@@ -6,7 +6,7 @@ import type { Customer } from '../types';
 import { customerService, reservationService } from '../services/firestore';
 import CustomerModal from '../components/CustomerModal';
 import LoadingSpinner from '../components/LoadingSpinner';
-import SEO from '../components/SEO';
+
 import { formatDate } from '../utils/dateUtils';
 
 interface CustomerWithVisitDate extends Customer {
@@ -98,7 +98,7 @@ const CustomersPage: React.FC = () => {
   }, [customers, searchTerm]);
   
   const handleRowClick = (customerId: string) => {
-    navigate(`/customers/${customerId}`);
+            navigate(`/dashboard/customers/${customerId}`);
   };
 
   const handleOpenModal = () => {
@@ -112,7 +112,7 @@ const CustomersPage: React.FC = () => {
   const handleCustomerCreated = (newCustomer: Customer) => {
     setCustomers(prev => [newCustomer, ...prev]);
     setIsModalOpen(false);
-    navigate(`/customers/${newCustomer.id}`);
+            navigate(`/dashboard/customers/${newCustomer.id}`);
   };
 
   const renderMobileCustomerCard = (customer: CustomerWithVisitDate) => (
@@ -198,13 +198,6 @@ const CustomersPage: React.FC = () => {
 
   return (
     <div className="content-wrapper customers-page">
-      {/* SEO 메타 태그 */}
-      <SEO 
-        title={`${t('navigation.customers')} - ${t('navigation.pageTitle')}`}
-        description={t('customers.title')}
-        keywords="customer, client, management, beauty salon, customer database, customer information"
-      />
-      
       {!isMobile && (
         <div className="page-header">
           <h1>{t('customers.title')}</h1>

@@ -33,6 +33,16 @@
     "settings": "Settings",
     "beauti-touch": "Beauti-Touch",
     "adminSystem": "Beauty at Your Fingertips",
+    "seoDescription": "Reservation, customer, and product management service for solo beauty shops. Get 1 month free trial when you sign up now!",
+    "seoKeywords": {
+      "default": "beauty salon, salon, management, reservation, customer, product, service, beauti-touch, beauty salon reservation system, customer management app, solo beauty salon, beauty salon operation, beauty salon CRM, beauty salon management app recommendation, beauty salon software, beauty salon operation automation, free customer management app, essential app for solo beauty salon, beauty salon operation tips, low-cost beauty business startup, solo shop startup, beauty salon operation tips, customer acquisition methods, how to run beauty salon well, beauty salon CRM system, beauty salon program comparison, beauty salon customer management solution, beauty salon calendar app, reservation and chart integrated app, free reservation management program, reservation link generation tool",
+      "reservations": "reservation, booking, appointment, beauty salon, schedule, calendar, shop reservation management app, beauty salon reservation system, reservation program recommendation, reservation app recommendation, manual reservation management, beauty salon reservation automation tool, free reservation management program, reservation link generation tool, beauty salon calendar app, reservation and chart integrated app",
+      "customers": "customer, client, management, beauty salon, customer database, customer information, customer management app, beauty customer management program, eyelash customer management, waxing customer management, nail customer management, customer information organization program, consultation record app, simple customer management app, customer chart app recommendation, customer chart program comparison, waxing customer management app, beauty customer chart system, customer memo management app, customer-specific treatment record storage, beauty salon CRM, beauty salon CRM recommendation, beauty salon CRM system",
+      "products": "product, service, beauty, salon, price, duration, management, pre/post treatment management, beauty salon operation automation, beauty salon software",
+      "settings": "settings, configuration, language, currency, business type, account, beauty salon operation, beauty salon operation tips, how to run beauty salon well, beauty salon program comparison, beauty salon management app recommendation",
+      "auth": "login, signup, authentication, beauty salon management, beauti-touch, solo beauty salon, essential app for solo beauty salon, low-cost beauty business startup, solo shop startup, beauty salon operation tips, customer acquisition methods, beauty salon customer management solution",
+      "chart": "chart, customer chart, beauty treatment, record, drawing tool, customer chart management, customer chart app recommendation, customer chart program comparison, beauty customer chart system, paper chart replacement, pre/post treatment management, customer-specific treatment record storage, reservation and chart integrated app"
+    },
     "other": "Other",
     "pageTitle": "Beauti-Touch: Beauty at Your Fingertips"
   },
@@ -156,6 +166,76 @@
     "statusChangeError": "Failed to change product status.",
     "saveError": "Failed to save product information."
   },
+  "features": {
+    "pageTitle": "Beauti-Touch - Perfect Management Solution for Solo Beauty Shops",
+    "pageDescription": "Reservation, customer, and product management service for solo beauty shops. Get 1 month free trial when you sign up now!",
+    "hero": {
+      "title": "Beauty at Your Fingertips",
+      "subtitle": "Perfect reservation, customer, and product management solution for solo beauty shops",
+      "startFree": "Start Free",
+      "login": "Login",
+      "freeTrial": "1 Month Free Trial"
+    },
+    "sectionTitle": "Everything for Beauty Shop Management",
+    "sectionDescription": "From reservations to customer management, we provide all the features you need to run your beauty shop",
+    "reservation": {
+      "title": "Smart Reservation Management",
+      "description": "Efficiently manage customer reservations with an intuitive calendar-based booking system",
+      "benefit1": "Calendar-based intuitive booking",
+      "benefit2": "Customer-specific reservation history",
+      "benefit3": "Reservation link sharing feature"
+    },
+    "customer": {
+      "title": "Customer Information Management",
+      "description": "Systematically manage detailed customer information and visit records to provide personalized services",
+      "benefit1": "Store detailed customer information",
+      "benefit2": "Visit history and memo management",
+      "benefit3": "Automatic masking for privacy protection"
+    },
+    "chart": {
+      "title": "Customer Chart Management",
+      "description": "Manage customer treatment records and charts digitally to provide accurate customer care",
+      "benefit1": "Digital chart creation tools",
+      "benefit2": "Before/after treatment photo storage",
+      "benefit3": "Customer-specific care records"
+    },
+    "product": {
+      "title": "Product/Service Management",
+      "description": "Systematically manage various products and services to provide accurate pricing and duration",
+      "benefit1": "Category-based product management",
+      "benefit2": "Price and duration settings",
+      "benefit3": "Active/inactive status management"
+    },
+    "advantages": {
+      "title": "Why Choose Beauti-Touch?",
+      "description": "Experience efficient operation with features optimized for solo beauty shops",
+      "mobile": {
+        "title": "Mobile Optimized",
+        "description": "Responsive design that works perfectly on smartphones and tablets"
+      },
+      "multilingual": {
+        "title": "Multi-language Support",
+        "description": "Communicate with customers worldwide in 7 languages including Korean, English, Vietnamese, and Spanish"
+      },
+      "security": {
+        "title": "Enhanced Security",
+        "description": "Automatic masking and encryption system for customer information protection"
+      },
+      "automation": {
+        "title": "Automation Features",
+        "description": "Maximize work efficiency by automating repetitive tasks"
+      }
+    },
+    "cta": {
+      "title": "Start Now",
+      "description": "Experience a new way of beauty shop management with 1 month free trial",
+      "startNow": "Start Free",
+      "login": "Login with Existing Account"
+    },
+    "footer": {
+      "rights": "All rights reserved"
+    }
+  },
   "settings": {
     "title": "Settings",
     "language": "Language",
@@ -199,6 +279,16 @@
       "skin": "Skin Care",
       "massage": "Massage"
     },
+    "billing": "Billing",
+    "billingDescription": "Manage subscription and billing information.",
+    "currentPlan": "Current Plan",
+    "betaPeriod": "Beta Period",
+    "freeForOneMonth": "Free for 1 Month",
+    "betaDescription": "Currently in beta period. You can use it for free for 1 month.",
+    "subscriptionStatus": "Subscription Status",
+    "active": "Active",
+    "expiresOn": "Expires On",
+    "manageSubscription": "Manage Subscription",
     "testData": {
       "customerMemo": "Test customer created automatically upon signup.",
       "productDescription": "Test product created automatically upon signup.",

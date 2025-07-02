@@ -32,6 +32,16 @@
     "settings": "Cài đặt",
     "beauti-touch": "Beauti-Touch",
     "adminSystem": "Bàn tay làm đẹp",
+    "seoDescription": "Dịch vụ quản lý đặt lịch, khách hàng và sản phẩm cho tiệm làm đẹp cá nhân. Nhận 1 tháng dùng thử miễn phí khi đăng ký ngay!",
+    "seoKeywords": {
+      "default": "tiệm làm đẹp, salon, quản lý, đặt lịch, khách hàng, sản phẩm, dịch vụ, beauti-touch, hệ thống đặt lịch tiệm làm đẹp, ứng dụng quản lý khách hàng, tiệm làm đẹp cá nhân, vận hành tiệm làm đẹp, CRM tiệm làm đẹp, gợi ý ứng dụng quản lý tiệm làm đẹp, phần mềm tiệm làm đẹp, tự động hóa vận hành tiệm làm đẹp, ứng dụng quản lý khách hàng miễn phí, ứng dụng cần thiết cho tiệm làm đẹp cá nhân, mẹo vận hành tiệm làm đẹp, khởi nghiệp làm đẹp vốn thấp, khởi nghiệp tiệm cá nhân, mẹo vận hành tiệm làm đẹp, phương pháp thu hút khách hàng, cách vận hành tiệm làm đẹp tốt, hệ thống CRM tiệm làm đẹp, so sánh chương trình tiệm làm đẹp, giải pháp quản lý khách hàng tiệm làm đẹp, ứng dụng lịch cho tiệm làm đẹp, ứng dụng tích hợp đặt lịch và biểu đồ, chương trình quản lý đặt lịch miễn phí, công cụ tạo liên kết đặt lịch",
+      "reservations": "đặt lịch, lịch hẹn, lịch trình, lịch, tiệm làm đẹp, salon, ứng dụng quản lý đặt lịch tiệm, hệ thống đặt lịch tiệm làm đẹp, gợi ý chương trình đặt lịch, gợi ý ứng dụng đặt lịch, quản lý đặt lịch thủ công, công cụ tự động hóa đặt lịch tiệm làm đẹp, chương trình quản lý đặt lịch miễn phí, công cụ tạo liên kết đặt lịch, ứng dụng lịch cho tiệm làm đẹp, ứng dụng tích hợp đặt lịch và biểu đồ",
+      "customers": "khách hàng, quản lý khách hàng, thông tin khách hàng, tiệm làm đẹp, salon, cơ sở dữ liệu khách hàng, ứng dụng quản lý khách hàng, chương trình quản lý khách hàng làm đẹp, quản lý khách hàng lông mi, quản lý khách hàng waxing, quản lý khách hàng nail, chương trình tổ chức thông tin khách hàng, ứng dụng ghi chép tư vấn, ứng dụng quản lý khách hàng đơn giản, gợi ý ứng dụng biểu đồ khách hàng, so sánh chương trình biểu đồ khách hàng, ứng dụng quản lý khách hàng waxing, hệ thống biểu đồ khách hàng làm đẹp, ứng dụng quản lý ghi chú khách hàng, lưu trữ ghi chép điều trị theo khách hàng, CRM tiệm làm đẹp, gợi ý CRM tiệm làm đẹp, hệ thống CRM tiệm làm đẹp",
+      "products": "sản phẩm, dịch vụ, làm đẹp, salon, giá, thời gian, quản lý, quản lý trước/sau điều trị, tự động hóa vận hành tiệm làm đẹp, phần mềm tiệm làm đẹp",
+      "settings": "cài đặt, ngôn ngữ, tiền tệ, loại kinh doanh, tài khoản, vận hành tiệm làm đẹp, mẹo vận hành tiệm làm đẹp, cách vận hành tiệm làm đẹp tốt, so sánh chương trình tiệm làm đẹp, gợi ý ứng dụng quản lý tiệm làm đẹp",
+      "auth": "đăng nhập, đăng ký, xác thực, quản lý tiệm làm đẹp, beauti-touch, tiệm làm đẹp cá nhân, ứng dụng cần thiết cho tiệm làm đẹp cá nhân, khởi nghiệp làm đẹp vốn thấp, khởi nghiệp tiệm cá nhân, mẹo vận hành tiệm làm đẹp, phương pháp thu hút khách hàng, giải pháp quản lý khách hàng tiệm làm đẹp",
+      "chart": "biểu đồ, biểu đồ khách hàng, điều trị làm đẹp, ghi chép, công cụ vẽ, quản lý biểu đồ khách hàng, gợi ý ứng dụng biểu đồ khách hàng, so sánh chương trình biểu đồ khách hàng, hệ thống biểu đồ khách hàng làm đẹp, thay thế biểu đồ giấy, quản lý trước/sau điều trị, lưu trữ ghi chép điều trị theo khách hàng, ứng dụng tích hợp đặt lịch và biểu đồ"
+    },
     "other": "Khác",
     "pageTitle": "Beauti-Touch: Bàn tay làm đẹp"
   },
@@ -154,6 +164,76 @@
     "statusChangeError": "Không thể thay đổi trạng thái sản phẩm.",
     "saveError": "Không thể lưu thông tin sản phẩm."
   },
+  "features": {
+    "pageTitle": "Beauti-Touch - Giải pháp Quản lý Hoàn hảo cho Tiệm làm đẹp Cá nhân",
+    "pageDescription": "Dịch vụ quản lý đặt lịch, khách hàng và sản phẩm cho tiệm làm đẹp cá nhân. Nhận 1 tháng dùng thử miễn phí khi đăng ký ngay!",
+    "hero": {
+      "title": "Vẻ đẹp trong tầm tay",
+      "subtitle": "Giải pháp quản lý đặt lịch, khách hàng và sản phẩm hoàn hảo cho tiệm làm đẹp cá nhân",
+      "startFree": "Bắt đầu miễn phí",
+      "login": "Đăng nhập",
+      "freeTrial": "Dùng thử miễn phí 1 tháng"
+    },
+    "sectionTitle": "Tất cả cho Quản lý Tiệm làm đẹp",
+    "sectionDescription": "Từ đặt lịch đến quản lý khách hàng, chúng tôi cung cấp tất cả tính năng bạn cần để vận hành tiệm làm đẹp",
+    "reservation": {
+      "title": "Quản lý Đặt lịch Thông minh",
+      "description": "Quản lý đặt lịch khách hàng hiệu quả với hệ thống đặt lịch trực quan dựa trên lịch",
+      "benefit1": "Đặt lịch trực quan dựa trên lịch",
+      "benefit2": "Lịch sử đặt lịch theo từng khách hàng",
+      "benefit3": "Tính năng chia sẻ liên kết đặt lịch"
+    },
+    "customer": {
+      "title": "Quản lý Thông tin Khách hàng",
+      "description": "Quản lý thông tin chi tiết khách hàng và lịch sử thăm khám một cách có hệ thống để cung cấp dịch vụ cá nhân hóa",
+      "benefit1": "Lưu trữ thông tin chi tiết khách hàng",
+      "benefit2": "Quản lý lịch sử thăm khám và ghi chú",
+      "benefit3": "Che giấu tự động để bảo vệ quyền riêng tư"
+    },
+    "chart": {
+      "title": "Quản lý Biểu đồ Khách hàng",
+      "description": "Quản lý hồ sơ điều trị và biểu đồ khách hàng kỹ thuật số để cung cấp chăm sóc khách hàng chính xác",
+      "benefit1": "Công cụ tạo biểu đồ kỹ thuật số",
+      "benefit2": "Lưu trữ ảnh trước/sau điều trị",
+      "benefit3": "Hồ sơ chăm sóc theo từng khách hàng"
+    },
+    "product": {
+      "title": "Quản lý Sản phẩm/Dịch vụ",
+      "description": "Quản lý các sản phẩm và dịch vụ khác nhau một cách có hệ thống để cung cấp giá cả và thời gian chính xác",
+      "benefit1": "Quản lý sản phẩm theo danh mục",
+      "benefit2": "Thiết lập giá cả và thời gian",
+      "benefit3": "Quản lý trạng thái hoạt động/không hoạt động"
+    },
+    "advantages": {
+      "title": "Tại sao chọn Beauti-Touch?",
+      "description": "Trải nghiệm vận hành hiệu quả với các tính năng được tối ưu hóa cho tiệm làm đẹp cá nhân",
+      "mobile": {
+        "title": "Tối ưu hóa cho Di động",
+        "description": "Thiết kế đáp ứng hoạt động hoàn hảo trên điện thoại thông minh và máy tính bảng"
+      },
+      "multilingual": {
+        "title": "Hỗ trợ Đa ngôn ngữ",
+        "description": "Giao tiếp với khách hàng từ khắp nơi trên thế giới bằng 7 ngôn ngữ bao gồm tiếng Hàn, Anh, Việt và Tây Ban Nha"
+      },
+      "security": {
+        "title": "Bảo mật Nâng cao",
+        "description": "Hệ thống che giấu và mã hóa tự động để bảo vệ thông tin khách hàng"
+      },
+      "automation": {
+        "title": "Tính năng Tự động hóa",
+        "description": "Tối đa hóa hiệu quả công việc bằng cách tự động hóa các tác vụ lặp lại"
+      }
+    },
+    "cta": {
+      "title": "Bắt đầu ngay",
+      "description": "Trải nghiệm cách quản lý tiệm làm đẹp mới với 1 tháng dùng thử miễn phí",
+      "startNow": "Bắt đầu miễn phí",
+      "login": "Đăng nhập với tài khoản hiện có"
+    },
+    "footer": {
+      "rights": "Bảo lưu mọi quyền"
+    }
+  },
   "settings": {
     "title": "Cài đặt",
     "language": "Ngôn ngữ",
@@ -197,6 +277,16 @@
       "skin": "Chăm sóc da",
       "massage": "Massage"
     },
+    "billing": "Thanh toán",
+    "billingDescription": "Quản lý thông tin đăng ký và thanh toán.",
+    "currentPlan": "Gói hiện tại",
+    "betaPeriod": "Giai đoạn Beta",
+    "freeForOneMonth": "Miễn phí 1 tháng",
+    "betaDescription": "Hiện tại đang trong giai đoạn beta. Bạn có thể sử dụng miễn phí trong 1 tháng.",
+    "subscriptionStatus": "Trạng thái đăng ký",
+    "active": "Hoạt động",
+    "expiresOn": "Hết hạn vào",
+    "manageSubscription": "Quản lý đăng ký",
     "testData": {
       "customerMemo": "Khách hàng test được tạo tự động khi đăng ký.",
       "productDescription": "Sản phẩm test được tạo tự động khi đăng ký.",

@@ -233,7 +233,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
 
   const handleChartClick = () => {
     if (reservation) {
-      navigate(`/chart/${reservation.id}`);
+              navigate(`/dashboard/chart/${reservation.id}`);
       onClose();
     }
   };

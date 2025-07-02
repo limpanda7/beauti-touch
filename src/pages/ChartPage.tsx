@@ -10,7 +10,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import Button from '../components/Button';
 import CustomerInfo from '../components/CustomerInfo';
 import AutoCompleteInput from '../components/AutoCompleteInput';
-import SEO from '../components/SEO';
+
 import { useSettingsStore } from '../stores/settingsStore';
 import ChartDrawingTool from '../components/ChartDrawingTool';
 import { formatDuration } from '../utils/timeUtils';
@@ -159,11 +159,11 @@ const ChartPage: React.FC = () => {
         // 데이터 로드 완료 후 unsaved changes 플래그 리셋
         setHasUnsavedChanges(false);
       } else {
-        navigate('/reservations');
+        navigate('/dashboard/reservations');
       }
     } catch (error) {
       console.error(t('chart.loadError'), error);
-      navigate('/reservations');
+      navigate('/dashboard/reservations');
     } finally {
       setLoading(false);
     }
@@ -271,11 +271,13 @@ const ChartPage: React.FC = () => {
   return (
     <div className="chart-page">
       {/* SEO 메타 태그 */}
+      {/*
       <SEO 
         title={`${t('chart.title')} - ${t('navigation.pageTitle')}`}
         description={t('chart.createChart')}
-        keywords="chart, customer chart, beauty treatment, record, drawing tool"
+        keywords={t('navigation.seoKeywords.chart')}
       />
+      */}
       
       <div className="chart-page-header">
         <div className="chart-page-header-left">

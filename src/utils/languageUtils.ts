@@ -1,4 +1,4 @@
-// 지원하는 언어 목록
+// 지원하는 언어 목록 (동남아시아 타겟 우선순위)
 export const SUPPORTED_LANGUAGES = {
   ko: 'ko',
   en: 'en',
@@ -27,7 +27,7 @@ export const getBrowserLanguage = (): SupportedLanguage => {
   return 'en';
 };
 
-// 언어 표시명 매핑
+// 언어 표시명 매핑 (동남아시아 타겟 우선순위)
 export const LANGUAGE_NAMES: Record<SupportedLanguage, string> = {
   ko: '한국어',
   en: 'English',

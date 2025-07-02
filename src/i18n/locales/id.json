@@ -33,6 +33,16 @@
     "settings": "Pengaturan",
     "beauti-touch": "Beauti-Touch",
     "adminSystem": "Kecantikan di Ujung Jari Anda",
+    "seoDescription": "Layanan manajemen reservasi, pelanggan, dan produk untuk salon kecantikan solo. Dapatkan uji coba gratis 1 bulan saat mendaftar sekarang!",
+    "seoKeywords": {
+      "default": "salon kecantikan, salon, manajemen, reservasi, pelanggan, produk, layanan, beauti-touch, sistem reservasi salon kecantikan, aplikasi manajemen pelanggan, salon kecantikan solo, operasi salon kecantikan, CRM salon kecantikan, rekomendasi aplikasi manajemen salon kecantikan, perangkat lunak salon kecantikan, otomatisasi operasi salon kecantikan, aplikasi manajemen pelanggan gratis, aplikasi esensial untuk salon kecantikan solo, tips operasi salon kecantikan, startup bisnis kecantikan modal rendah, startup toko solo, tips operasi salon kecantikan, metode akuisisi pelanggan, cara menjalankan salon kecantikan dengan baik, sistem CRM salon kecantikan, perbandingan program salon kecantikan, solusi manajemen pelanggan salon kecantikan, aplikasi kalender untuk salon kecantikan, aplikasi terintegrasi reservasi dan bagan, program manajemen reservasi gratis, alat pembuatan link reservasi",
+      "reservations": "reservasi, pemesanan, janji temu, salon kecantikan, jadwal, kalender, aplikasi manajemen reservasi toko, sistem reservasi salon kecantikan, rekomendasi program reservasi, rekomendasi aplikasi reservasi, manajemen reservasi manual, alat otomatisasi reservasi salon kecantikan, program manajemen reservasi gratis, alat pembuatan link reservasi, aplikasi kalender untuk salon kecantikan, aplikasi terintegrasi reservasi dan bagan",
+      "customers": "pelanggan, manajemen pelanggan, informasi pelanggan, salon kecantikan, database pelanggan, aplikasi manajemen pelanggan, program manajemen pelanggan kecantikan, manajemen pelanggan bulu mata, manajemen pelanggan waxing, manajemen pelanggan kuku, program organisasi informasi pelanggan, aplikasi catatan konsultasi, aplikasi manajemen pelanggan sederhana, rekomendasi aplikasi bagan pelanggan, perbandingan program bagan pelanggan, aplikasi manajemen pelanggan waxing, sistem bagan pelanggan kecantikan, aplikasi manajemen memo pelanggan, penyimpanan catatan perawatan khusus pelanggan, CRM salon kecantikan, rekomendasi CRM salon kecantikan, sistem CRM salon kecantikan",
+      "products": "produk, layanan, kecantikan, salon, harga, durasi, manajemen, manajemen pra/pasca perawatan, otomatisasi operasi salon kecantikan, perangkat lunak salon kecantikan",
+      "settings": "pengaturan, bahasa, mata uang, jenis bisnis, akun, operasi salon kecantikan, tips operasi salon kecantikan, cara menjalankan salon kecantikan dengan baik, perbandingan program salon kecantikan, rekomendasi aplikasi manajemen salon kecantikan",
+      "auth": "login, pendaftaran, autentikasi, manajemen salon kecantikan, beauti-touch, salon kecantikan solo, aplikasi esensial untuk salon kecantikan solo, startup bisnis kecantikan modal rendah, startup toko solo, tips operasi salon kecantikan, metode akuisisi pelanggan, solusi manajemen pelanggan salon kecantikan",
+      "chart": "bagan, bagan pelanggan, perawatan kecantikan, catatan, alat menggambar, manajemen bagan pelanggan, rekomendasi aplikasi bagan pelanggan, perbandingan program bagan pelanggan, sistem bagan pelanggan kecantikan, pengganti bagan kertas, manajemen pra/pasca perawatan, penyimpanan catatan perawatan khusus pelanggan, aplikasi terintegrasi reservasi dan bagan"
+    },
     "other": "Lainnya",
     "pageTitle": "Beauti-Touch: Kecantikan di Ujung Jari Anda"
   },
@@ -129,6 +139,76 @@
     "createError": "Pembuatan reservasi gagal",
     "dataLoadError": "Pemuatan data gagal"
   },
+  "features": {
+    "pageTitle": "Beauti-Touch - Solusi Manajemen Sempurna untuk Salon Kecantikan Individu",
+    "pageDescription": "Layanan manajemen reservasi, pelanggan, dan produk untuk salon kecantikan individu. Dapatkan uji coba gratis 1 bulan saat mendaftar sekarang!",
+    "hero": {
+      "title": "Kecantikan di Ujung Jari",
+      "subtitle": "Solusi manajemen reservasi, pelanggan, dan produk sempurna untuk salon kecantikan individu",
+      "startFree": "Mulai Gratis",
+      "login": "Masuk",
+      "freeTrial": "Uji Coba Gratis 1 Bulan"
+    },
+    "sectionTitle": "Semua untuk Manajemen Salon Kecantikan",
+    "sectionDescription": "Dari reservasi hingga manajemen pelanggan, kami menyediakan semua fitur yang Anda butuhkan untuk menjalankan salon kecantikan",
+    "reservation": {
+      "title": "Manajemen Reservasi Cerdas",
+      "description": "Kelola reservasi pelanggan secara efisien dengan sistem pemesanan intuitif berbasis kalender",
+      "benefit1": "Pemesanan intuitif berbasis kalender",
+      "benefit2": "Riwayat reservasi khusus pelanggan",
+      "benefit3": "Fitur berbagi tautan reservasi"
+    },
+    "customer": {
+      "title": "Manajemen Informasi Pelanggan",
+      "description": "Kelola informasi detail pelanggan dan catatan kunjungan secara sistematis untuk memberikan layanan yang dipersonalisasi",
+      "benefit1": "Menyimpan informasi detail pelanggan",
+      "benefit2": "Manajemen riwayat kunjungan dan memo",
+      "benefit3": "Penyamaran otomatis untuk perlindungan privasi"
+    },
+    "chart": {
+      "title": "Manajemen Grafik Pelanggan",
+      "description": "Kelola catatan perawatan dan grafik pelanggan secara digital untuk memberikan perawatan pelanggan yang akurat",
+      "benefit1": "Alat pembuatan grafik digital",
+      "benefit2": "Penyimpanan foto sebelum/sesudah perawatan",
+      "benefit3": "Catatan perawatan khusus pelanggan"
+    },
+    "product": {
+      "title": "Manajemen Produk/Layanan",
+      "description": "Kelola berbagai produk dan layanan secara sistematis untuk memberikan harga dan durasi yang akurat",
+      "benefit1": "Manajemen produk berbasis kategori",
+      "benefit2": "Pengaturan harga dan durasi",
+      "benefit3": "Manajemen status aktif/nonaktif"
+    },
+    "advantages": {
+      "title": "Mengapa Memilih Beauti-Touch?",
+      "description": "Rasakan operasi yang efisien dengan fitur yang dioptimalkan untuk salon kecantikan individu",
+      "mobile": {
+        "title": "Dioptimalkan untuk Mobile",
+        "description": "Desain responsif yang bekerja sempurna di smartphone dan tablet"
+      },
+      "multilingual": {
+        "title": "Dukungan Multi-bahasa",
+        "description": "Berkomunikasi dengan pelanggan dari seluruh dunia dalam 7 bahasa termasuk Korea, Inggris, Vietnam, dan Spanyol"
+      },
+      "security": {
+        "title": "Keamanan yang Ditingkatkan",
+        "description": "Sistem penyamaran dan enkripsi otomatis untuk perlindungan informasi pelanggan"
+      },
+      "automation": {
+        "title": "Fitur Otomatisasi",
+        "description": "Maksimalkan efisiensi kerja dengan mengotomatisasi tugas berulang"
+      }
+    },
+    "cta": {
+      "title": "Mulai Sekarang",
+      "description": "Rasakan cara baru manajemen salon kecantikan dengan uji coba gratis 1 bulan",
+      "startNow": "Mulai Gratis",
+      "login": "Masuk dengan Akun yang Ada"
+    },
+    "footer": {
+      "rights": "Hak cipta dilindungi"
+    }
+  },
   "settings": {
     "title": "Pengaturan",
     "language": "Bahasa",
@@ -163,6 +243,16 @@
       "skin": "Perawatan Kulit",
       "massage": "Pijat"
     },
+    "billing": "Penagihan",
+    "billingDescription": "Kelola informasi langganan dan penagihan.",
+    "currentPlan": "Paket Saat Ini",
+    "betaPeriod": "Periode Beta",
+    "freeForOneMonth": "Gratis 1 Bulan",
+    "betaDescription": "Saat ini dalam periode beta. Anda dapat menggunakannya gratis selama 1 bulan.",
+    "subscriptionStatus": "Status Langganan",
+    "active": "Aktif",
+    "expiresOn": "Berakhir Pada",
+    "manageSubscription": "Kelola Langganan",
     "autoComplete": "Auto Complete",
     "autoCompleteDescription": "Kelola data auto complete untuk chart.",
     "selectChartType": "Pilih Jenis Chart",

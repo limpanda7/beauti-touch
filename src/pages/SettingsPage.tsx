@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Settings as SettingsIcon, Globe, DollarSign, Briefcase, LogOut, User, Trash2, Search, Calendar } from 'lucide-react';
+import { Settings as SettingsIcon, Globe, DollarSign, Briefcase, LogOut, User, Trash2, Search, Calendar, CreditCard } from 'lucide-react';
 import { useSettingsStore } from '../stores/settingsStore';
 import { useAuthStore, useUser } from '../stores/authStore';
 import { autoCompleteService } from '../services/firestore';
 import type { ChartType, AutoCompleteSuggestion } from '../types';
 import Button from '../components/Button';
-import SEO from '../components/SEO';
+
 import { formatDate } from '../utils/dateUtils';
 import { getDefaultCurrencyForLanguage } from '../utils/currency';
 import { getBrowserLanguage, saveLanguageToStorage, SUPPORTED_LANGUAGES, type SupportedLanguage } from '../utils/languageUtils';
@@ -173,13 +173,6 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div className="settings-page">
-      {/* SEO 메타 태그 */}
-      <SEO 
-        title={`${t('navigation.settings')} - ${t('navigation.pageTitle')}`}
-        description={t('settings.title')}
-        keywords="settings, configuration, language, currency, business type, account"
-      />
-      
       <div className="page-header">
         <h1>{t('settings.title')}</h1>
       </div>
@@ -313,6 +306,44 @@ const SettingsPage: React.FC = () => {
                 )}
               </div>
             )}
+          </div>
+        </div>
+
+        {/* 결제 섹션 */}
+        <div className="settings-item">
+          <div className="settings-item-header">
+            <CreditCard className="settings-item-icon" />
+            <h2 className="settings-item-title">{t('settings.billing')}</h2>
+          </div>
+          <p className="settings-item-description">{t('settings.billingDescription')}</p>
+          
+          <div className="billing-info">
+            <div className="billing-plan">
+              <div className="plan-header">
+                <h3>{t('settings.currentPlan')}</h3>
+                <span className="beta-badge">{t('settings.betaPeriod')}</span>
+              </div>
+              <div className="plan-details">
+                <div className="plan-name">{t('settings.freeForOneMonth')}</div>
+                <div className="plan-description">{t('settings.betaDescription')}</div>
+              </div>
+            </div>
+            
+            <div className="subscription-status">
+              <div className="status-item">
+                <span className="status-label">{t('settings.subscriptionStatus')}:</span>
+                <span className="status-value active">{t('settings.active')}</span>
+              </div>
+            </div>
+            
+            <button
+              type="button"
+              className="manage-subscription-btn"
+              disabled
+            >
+              <CreditCard size={16} />
+              <span>{t('settings.manageSubscription')}</span>
+            </button>
           </div>
         </div>
 

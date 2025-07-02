@@ -7,6 +7,7 @@ import { getBrowserLanguage, getLanguageFromStorage, saveLanguageToStorage } fro
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import AuthPage from './pages/AuthPage';
+import FeaturesPage from './pages/FeaturesPage';
 import ReservationsPage from './pages/ReservationsPage';
 import CustomersPage from './pages/CustomersPage';
 import CustomerDetailPage from './pages/CustomerDetailPage';
@@ -62,16 +63,19 @@ function App() {
         <div className="app-container">
           <Router>
             <Routes>
+              {/* Features 페이지 (랜딩 페이지) */}
+              <Route path="/" element={<FeaturesPage />} />
+              
               {/* 인증 페이지 */}
               <Route path="/auth" element={<AuthPage />} />
               
               {/* 보호된 라우트들 */}
-              <Route path="/" element={
+              <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Layout />
                 </ProtectedRoute>
               }>
-                <Route index element={<Navigate to="/reservations" replace />} />
+                <Route index element={<Navigate to="/dashboard/reservations" replace />} />
                 <Route path="reservations" element={<ReservationsPage />} />
                 <Route path="customers" element={<CustomersPage />} />
                 <Route path="customers/:id" element={<CustomerDetailPage />} />
@@ -81,7 +85,7 @@ function App() {
               </Route>
               
               {/* 기본 리다이렉트 */}
-              <Route path="*" element={<Navigate to="/auth" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Router>
         </div>

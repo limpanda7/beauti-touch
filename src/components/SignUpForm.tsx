@@ -44,7 +44,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSwitchToLogin }) => {
   useEffect(() => {
     if (isAuthenticated) {
       console.log('SignUpForm - 인증됨, 메인 페이지로 이동');
-      window.location.href = '/';
+      window.location.href = '/dashboard/reservations';
     }
   }, [isAuthenticated]);
 

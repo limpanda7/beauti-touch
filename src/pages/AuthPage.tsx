@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import LoginForm from '../components/LoginForm';
 import SignUpForm from '../components/SignUpForm';
 import LanguageSelector from '../components/LanguageSelector';
@@ -22,7 +23,7 @@ const AuthPage: React.FC = () => {
         const user = await handleGoogleRedirectResult();
         if (user) {
           setUser(user);
-          navigate('/reservations');
+          navigate('/dashboard/reservations');
         }
       } catch (error) {
         console.error('Google 리다이렉트 결과 처리 실패:', error);
@@ -40,13 +41,26 @@ const AuthPage: React.FC = () => {
     setIsLogin(true);
   };
 
+  const handleGoBack = () => {
+    navigate('/');
+  };
+
   return (
     <div className="auth-page">
       <SEO 
         title={`${isLogin ? t('auth.login') : t('auth.signUp')} - ${t('navigation.pageTitle')}`}
         description={isLogin ? t('auth.loginDescription') : t('auth.signUpDescription')}
-        keywords="login, signup, authentication, beauty salon management, beauti-touch"
+        keywords={t('navigation.seoKeywords.auth')}
       />
+      
+      <button 
+        className="auth-back-button" 
+        onClick={handleGoBack}
+        type="button"
+        aria-label={t('common.back')}
+      >
+        <ArrowLeft size={20} />
+      </button>
       
       <LanguageSelector />
       

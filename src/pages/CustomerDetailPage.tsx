@@ -9,7 +9,6 @@ import ReservationModal from '../components/ReservationModal';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Button from '../components/Button';
 import CustomerInfo from '../components/CustomerInfo';
-import SEO from '../components/SEO';
 import { useCurrencyFormat } from '../utils/currency';
 import { useSettingsStore } from '../stores/settingsStore';
 import { maskCustomerData } from '../utils/customerUtils';
@@ -66,7 +65,7 @@ const CustomerDetailPage: React.FC = () => {
         const productData = await productService.getAll();
         setProducts(productData);
       } else {
-        navigate('/customers', { replace: true });
+        navigate('/dashboard/customers', { replace: true });
       }
     } catch (error) {
       console.error(t('customers.detailLoadError'), error);
@@ -167,7 +166,7 @@ const CustomerDetailPage: React.FC = () => {
       try {
         setIsDeleting(true);
         await customerService.delete(customer.id);
-        navigate('/customers');
+        navigate('/dashboard/customers');
       } catch (error) {
         console.error(t('customers.deleteError'), error);
         alert(t('customers.deleteError'));
@@ -178,7 +177,7 @@ const CustomerDetailPage: React.FC = () => {
   };
 
   const handleChartClick = (reservationId: string) => {
-    navigate(`/chart/${reservationId}`);
+    navigate(`/dashboard/chart/${reservationId}`);
   };
 
   // 예약 상태 라벨 다국어 처리 및 상태값 제한
@@ -231,7 +230,7 @@ const CustomerDetailPage: React.FC = () => {
         <div className="reservations-day-item-details">
           {reservation.memo && <p className="reservations-day-item-memo">{reservation.memo}</p>}
           <Button
-            onClick={() => navigate(`/chart/${reservation.id}`)}
+                            onClick={() => navigate(`/dashboard/chart/${reservation.id}`)}
             variant="chart"
             size="sm"
           >
@@ -262,16 +261,18 @@ const CustomerDetailPage: React.FC = () => {
   return (
     <div className="customer-detail-page">
       {/* SEO 메타 태그 */}
+      {/*
       <SEO 
-        title={`${customer?.name || t('customers.editCustomer')} - ${t('navigation.pageTitle')}`}
+        title={`${t('customers.editCustomer')} - ${t('navigation.pageTitle')}`}
         description={t('customers.customerInfo')}
-        keywords="customer detail, client information, beauty salon, customer management"
+        keywords={t('navigation.seoKeywords.customers')}
       />
+      */}
       
       <div className="customer-detail-header">
         <div className="customer-detail-header-left">
           <Button
-            onClick={() => navigate('/customers')}
+            onClick={() => navigate('/dashboard/customers')}
             variant="icon"
             className="back-icon-btn"
           >

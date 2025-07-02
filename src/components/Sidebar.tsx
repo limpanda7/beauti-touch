@@ -13,10 +13,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose, isMobile = false, className 
   const { t } = useTranslation();
   
   const menuItems = [
-    { id: 'reservations', label: t('navigation.reservations'), icon: Calendar, path: '/reservations' },
-    { id: 'customers', label: t('navigation.customers'), icon: Users, path: '/customers' },
-    { id: 'products', label: t('navigation.products'), icon: ClipboardList, path: '/products' },
-    { id: 'settings', label: t('navigation.settings'), icon: Settings, path: '/settings' },
+    { id: 'reservations', label: t('navigation.reservations'), icon: Calendar, path: '/dashboard/reservations' },
+    { id: 'customers', label: t('navigation.customers'), icon: Users, path: '/dashboard/customers' },
+    { id: 'products', label: t('navigation.products'), icon: ClipboardList, path: '/dashboard/products' },
+    { id: 'settings', label: t('navigation.settings'), icon: Settings, path: '/dashboard/settings' },
   ];
 
   const handleNavClick = () => {

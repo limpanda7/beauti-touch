@@ -107,6 +107,37 @@
       }
     }
   }
+
+  // 뒤로 가기 버튼
+  .auth-back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    font-size: 14px;
+    color: #5C4630;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(92, 70, 48, 0.15);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.95);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(92, 70, 48, 0.2);
+    }
+    
+    span {
+      font-weight: 500;
+    }
+  }
 }
 
 .auth-container {
