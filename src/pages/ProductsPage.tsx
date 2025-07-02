@@ -6,6 +6,7 @@ import type { Product } from '../types';
 import { productService } from '../services/firestore';
 import ProductModal from '../components/ProductModal';
 import LoadingSpinner from '../components/LoadingSpinner';
+import SEO from '../components/SEO';
 import { useCurrencyFormat } from '../utils/currency';
 import { formatDuration } from '../utils/timeUtils';
 
@@ -230,6 +231,13 @@ const ProductsPage: React.FC = () => {
 
   return (
     <div className="content-wrapper products-page">
+      {/* SEO 메타 태그 */}
+      <SEO 
+        title={`${t('navigation.products')} - ${t('navigation.pageTitle')}`}
+        description={t('products.title')}
+        keywords="product, service, beauty, salon, price, duration, management"
+      />
+      
       {!isMobile && (
         <div className="page-header">
           <h1>{t('products.title')}</h1>

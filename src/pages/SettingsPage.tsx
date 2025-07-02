@@ -6,9 +6,10 @@ import { useAuthStore, useUser } from '../stores/authStore';
 import { autoCompleteService } from '../services/firestore';
 import type { ChartType, AutoCompleteSuggestion } from '../types';
 import Button from '../components/Button';
+import SEO from '../components/SEO';
 import { formatDate } from '../utils/dateUtils';
 import { getDefaultCurrencyForLanguage } from '../utils/currency';
-import { getBrowserLanguage, saveLanguageToStorage } from '../utils/languageUtils';
+import { getBrowserLanguage, saveLanguageToStorage, SUPPORTED_LANGUAGES, type SupportedLanguage } from '../utils/languageUtils';
 
 const SettingsPage: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -113,8 +114,19 @@ const SettingsPage: React.FC = () => {
       }
       
       if (key === 'language') {
-        i18n.changeLanguage(value);
-        saveLanguageToStorage(value as any);
+        // 지원하는 언어인지 확인
+        if (value in SUPPORTED_LANGUAGES) {
+          // i18n 언어 변경
+          try {
+            await i18n.changeLanguage(value);
+          } catch (error) {
+            console.error('i18n 언어 변경 실패:', error);
+          }
+          // localStorage에 언어 저장
+          saveLanguageToStorage(value as SupportedLanguage);
+        } else {
+          console.warn(`지원하지 않는 언어: ${value}`);
+        }
       }
     } catch (error) {
       console.error('설정 변경 실패:', error);
@@ -161,6 +173,13 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div className="settings-page">
+      {/* SEO 메타 태그 */}
+      <SEO 
+        title={`${t('navigation.settings')} - ${t('navigation.pageTitle')}`}
+        description={t('settings.title')}
+        keywords="settings, configuration, language, currency, business type, account"
+      />
+      
       <div className="page-header">
         <h1>{t('settings.title')}</h1>
       </div>

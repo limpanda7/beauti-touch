@@ -19,6 +19,7 @@ import type { Reservation, Product } from '../types';
 import { reservationService, productService } from '../services/firestore';
 import ReservationModal from '../components/ReservationModal';
 import LoadingSpinner from '../components/LoadingSpinner';
+import SEO from '../components/SEO';
 import { useCurrencyFormat } from '../utils/currency';
 import { getTimeRange, formatDuration } from '../utils/timeUtils';
 import { useUIStore } from '../stores/uiStore';
@@ -502,6 +503,13 @@ const ReservationsPage: React.FC = () => {
 
   return (
     <div className="content-wrapper">
+      {/* SEO 메타 태그 */}
+      <SEO 
+        title={`${t('navigation.reservations')} - ${t('navigation.pageTitle')}`}
+        description={t('reservations.title')}
+        keywords="reservation, booking, appointment, beauty salon, schedule, calendar"
+      />
+      
       {/* 모바일에서는 헤더 숨김 */}
       {!isMobile && (
         <div className="page-header">

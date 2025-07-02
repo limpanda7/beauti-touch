@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
-import { getAuth, connectAuthEmulator, setPersistence, browserLocalPersistence } from "firebase/auth";
+import { getAuth, connectAuthEmulator, setPersistence, browserLocalPersistence, browserSessionPersistence } from "firebase/auth";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -28,14 +28,25 @@ try {
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 
-// 로그인 지속성 설정 (한 달간 유지)
-setPersistence(auth, browserLocalPersistence)
-  .then(() => {
-    console.log('Firebase Auth 지속성이 LOCAL로 설정되었습니다.');
-  })
-  .catch((error) => {
+// 브라우저 감지 및 로그인 지속성 설정
+const detectBrowserAndSetPersistence = async () => {
+  const userAgent = navigator.userAgent.toLowerCase();
+  const isNaverBrowser = userAgent.includes('naver') || userAgent.includes('whale');
+  const isInAppBrowser = userAgent.includes('wv') || userAgent.includes('line') || userAgent.includes('kakao');
+  
+  // 네이버 브라우저나 인앱 브라우저인 경우 세션 지속성 사용
+  const persistence = (isNaverBrowser || isInAppBrowser) ? browserSessionPersistence : browserLocalPersistence;
+  
+  try {
+    await setPersistence(auth, persistence);
+    console.log(`Firebase Auth 지속성이 ${isNaverBrowser || isInAppBrowser ? 'SESSION' : 'LOCAL'}로 설정되었습니다.`);
+    console.log('브라우저 정보:', userAgent);
+  } catch (error) {
     console.error('Firebase Auth 지속성 설정 실패:', error);
-  });
+  }
+};
+
+detectBrowserAndSetPersistence();
 
 // 개발 환경에서 에뮬레이터 연결 (선택사항)
 if (

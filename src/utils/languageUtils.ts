@@ -80,9 +80,15 @@ export const getCurrentLanguage = (): SupportedLanguage => {
 };
 
 // 언어 설정 (i18n 변경 + localStorage 저장)
-export const setLanguage = (language: SupportedLanguage): void => {
+export const setLanguage = async (language: SupportedLanguage): Promise<void> => {
   if (typeof window !== 'undefined' && (window as any).i18n) {
-    (window as any).i18n.changeLanguage(language);
-    saveLanguageToStorage(language);
+    try {
+      await (window as any).i18n.changeLanguage(language);
+      saveLanguageToStorage(language);
+    } catch (error) {
+      console.error('언어 변경 실패:', error);
+      // localStorage에는 저장
+      saveLanguageToStorage(language);
+    }
   }
 };

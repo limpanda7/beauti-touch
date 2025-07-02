@@ -6,6 +6,8 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
 } from 'firebase/auth';
 import type { User as FirebaseUser, AuthError as FirebaseAuthError } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
@@ -313,6 +315,16 @@ export const updateUserProfile = async (updates: Partial<User>): Promise<void> =
   }
 };
 
+// 브라우저 감지 함수
+const detectProblematicBrowser = (): boolean => {
+  const userAgent = navigator.userAgent.toLowerCase();
+  return userAgent.includes('naver') || 
+         userAgent.includes('whale') || 
+         userAgent.includes('wv') || 
+         userAgent.includes('line') || 
+         userAgent.includes('kakao');
+};
+
 // Google 로그인
 export const signInWithGoogle = async (): Promise<User> => {
   try {
@@ -320,7 +332,22 @@ export const signInWithGoogle = async (): Promise<User> => {
     provider.addScope('email');
     provider.addScope('profile');
     
-    const userCredential = await signInWithPopup(auth, provider);
+    // 문제가 있는 브라우저인지 확인
+    const isProblematicBrowser = detectProblematicBrowser();
+    
+    let userCredential;
+    
+    if (isProblematicBrowser) {
+      console.log('문제가 있는 브라우저 감지, 리다이렉트 방식 사용');
+      // 리다이렉트 방식 사용
+      await signInWithRedirect(auth, provider);
+      // 리다이렉트 후 결과를 가져오는 것은 별도 함수에서 처리
+      throw new Error('REDIRECT_INITIATED');
+    } else {
+      // 팝업 방식 사용
+      userCredential = await signInWithPopup(auth, provider);
+    }
+    
     const firebaseUser = userCredential.user;
     
     console.log('Google 로그인 성공:', firebaseUser);
@@ -385,7 +412,87 @@ export const signInWithGoogle = async (): Promise<User> => {
 
     return user;
   } catch (error) {
+    if (error instanceof Error && error.message === 'REDIRECT_INITIATED') {
+      throw error; // 리다이렉트가 시작된 경우는 특별 처리
+    }
     console.error('Google 로그인 실패:', error);
+    const firebaseError = error as FirebaseAuthError;
+    throw new Error(getErrorTranslationKey(firebaseError.code));
+  }
+};
+
+// 리다이렉트 결과 처리
+export const handleGoogleRedirectResult = async (): Promise<User | null> => {
+  try {
+    const result = await getRedirectResult(auth);
+    if (!result) {
+      return null; // 리다이렉트 결과가 없음
+    }
+    
+    const firebaseUser = result.user;
+    console.log('Google 리다이렉트 로그인 성공:', firebaseUser);
+    
+    const user = convertFirebaseUser(firebaseUser);
+    console.log('변환된 사용자 정보:', user);
+
+    // Firestore에서 기존 사용자 정보 확인
+    const userRef = doc(db, 'users', user.uid);
+    const userDoc = await getDoc(userRef);
+    const isNewUser = !userDoc.exists();
+    
+    // 계정 생성 시간과 현재 시간을 비교하여 신규 사용자 판단
+    const creationTime = new Date(firebaseUser.metadata.creationTime || Date.now());
+    const currentTime = new Date();
+    const timeDiff = currentTime.getTime() - creationTime.getTime();
+    const isRecentlyCreated = timeDiff < 60000; // 1분 이내에 생성된 계정
+    
+    console.log('사용자 신규 여부 확인:', { 
+      uid: user.uid, 
+      isNewUser, 
+      docExists: userDoc.exists(),
+      creationTime: creationTime.toISOString(),
+      timeDiff: timeDiff / 1000 + '초',
+      isRecentlyCreated
+    });
+
+    // Firestore에 사용자 정보 저장
+    await saveUserToFirestore(user);
+
+    // 새 사용자인 경우 언어 설정 저장 (동기적으로 처리)
+    if (isNewUser && isRecentlyCreated) {
+      const currentLanguage = getCurrentLanguage();
+      const settingsRef = doc(db, 'users', user.uid, 'settings', 'userSettings');
+      await setDoc(settingsRef, {
+        language: currentLanguage,
+        currency: getDefaultCurrencyForLanguage(currentLanguage),
+        businessType: ''
+      });
+      console.log('Google 리다이렉트 로그인 시 언어 설정 저장 완료:', currentLanguage);
+    }
+
+    // 새 사용자인 경우에만 테스트 데이터 생성
+    if (isNewUser && isRecentlyCreated) {
+      console.log('=== Google 리다이렉트 로그인 - 신규 사용자 감지, 테스트 데이터 생성 시작 ===');
+      console.log('사용자 UID:', user.uid);
+      console.log('현재 언어 설정:', getCurrentLanguage());
+      
+      try {
+        const result = await createAllTestData();
+        console.log('=== Google 리다이렉트 로그인 - 테스트 데이터 생성 완료 (신규 사용자) ===');
+        console.log('생성 결과:', result);
+      } catch (testDataError) {
+        console.error('=== Google 리다이렉트 로그인 - 테스트 데이터 생성 실패 (상세) ===');
+        console.error('에러 상세:', testDataError);
+        console.error('에러 스택:', testDataError instanceof Error ? testDataError.stack : '스택 정보 없음');
+        console.warn('Google 리다이렉트 로그인 - 테스트 데이터 생성 실패 (무시됨):', testDataError);
+      }
+    } else {
+      console.log('기존 사용자 또는 오래된 계정 - 테스트 데이터 생성 건너뜀');
+    }
+
+    return user;
+  } catch (error) {
+    console.error('Google 리다이렉트 결과 처리 실패:', error);
     const firebaseError = error as FirebaseAuthError;
     throw new Error(getErrorTranslationKey(firebaseError.code));
   }

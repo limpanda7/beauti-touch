@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, AlertTriangle } from 'lucide-react';
 import { useAuthStore, useIsAuthenticated } from '../stores/authStore';
+import { getBrowserInfo } from '../utils/browserUtils';
 import type { LoginCredentials } from '../types';
 
 interface LoginFormProps {
@@ -29,6 +30,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp }) => {
   const { t } = useTranslation();
   const { signIn, signInWithGoogle, isLoading, error, errorCode, clearError } = useAuthStore();
   const isAuthenticated = useIsAuthenticated();
+  const browserInfo = getBrowserInfo();
+  
+  // 브라우저별 경고 메시지
+  const getBrowserWarningMessage = () => {
+    if (browserInfo.isNaver) {
+      return t('auth.browserWarning.naver');
+    }
+    if (browserInfo.isInApp) {
+      return t('auth.browserWarning.inApp');
+    }
+    return '';
+  };
   
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: '',
@@ -81,6 +94,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp }) => {
     try {
       await signInWithGoogle();
     } catch (error) {
+      if (error instanceof Error && error.message === 'REDIRECT_INITIATED') {
+        // 리다이렉트가 시작된 경우는 에러로 처리하지 않음
+        console.log('Google 로그인 리다이렉트 시작됨');
+        return;
+      }
       console.error('Google 로그인 실패:', error);
     }
   };
@@ -174,6 +192,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp }) => {
       <div className="auth-divider">
         <span className="auth-divider-text">{t('auth.or')}</span>
       </div>
+
+      {getBrowserWarningMessage() && (
+        <div className="browser-warning">
+          <AlertTriangle size={16} />
+          <span>{getBrowserWarningMessage()}</span>
+        </div>
+      )}
 
       <div className="social-login-buttons">
         <button

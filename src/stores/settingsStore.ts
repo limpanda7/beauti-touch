@@ -2,10 +2,10 @@ import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import type { Unsubscribe } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 import type { ChartType } from '../types';
 import { getDefaultCurrencyForLanguage } from '../utils/currency';
-import { getBrowserLanguage } from '../utils/languageUtils';
+import { getBrowserLanguage, SUPPORTED_LANGUAGES, type SupportedLanguage } from '../utils/languageUtils';
 
 export interface Settings {
   language: string;
@@ -93,17 +93,17 @@ export const useSettingsStore = create<SettingsStore>()(
     },
     
     updateSettings: async (newSettings: Partial<Settings>) => {
-      const { user } = await import('../stores/authStore').then(m => m.useAuthStore.getState());
+      const currentUser = auth.currentUser;
       
-      if (!user?.uid) {
+      if (!currentUser?.uid) {
         console.error('사용자가 로그인되지 않았습니다.');
-        return;
+        throw new Error('사용자가 로그인되지 않았습니다.');
       }
       
       set({ isLoading: true });
       
       try {
-        const settingsRef = doc(db, 'users', user.uid, 'settings', 'userSettings');
+        const settingsRef = doc(db, 'users', currentUser.uid, 'settings', 'userSettings');
         const currentSettings = get();
         
         // 언어가 변경되는 경우 해당 언어의 기본 통화로 자동 설정
@@ -113,9 +113,14 @@ export const useSettingsStore = create<SettingsStore>()(
         };
         
         if (newSettings.language && newSettings.language !== currentSettings.language) {
-          const defaultCurrency = getDefaultCurrencyForLanguage(newSettings.language);
-          updatedSettings.currency = defaultCurrency;
-          console.log(`언어 변경: ${newSettings.language}, 기본 통화 설정: ${defaultCurrency}`);
+          // 지원하는 언어인지 확인
+          if (newSettings.language in SUPPORTED_LANGUAGES) {
+            const defaultCurrency = getDefaultCurrencyForLanguage(newSettings.language as SupportedLanguage);
+            updatedSettings.currency = defaultCurrency;
+            console.log(`언어 변경: ${newSettings.language}, 기본 통화 설정: ${defaultCurrency}`);
+          } else {
+            console.warn(`지원하지 않는 언어: ${newSettings.language}`);
+          }
         }
         
         // Settings 필드만 저장

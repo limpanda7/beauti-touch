@@ -110,7 +110,7 @@
 }
 
 .auth-container {
-  background: rgba(255, 251, 249, 0.95);
+  background: #FFFCFA;
   backdrop-filter: blur(10px);
   border-radius: 20px;
   box-shadow: 
@@ -381,6 +381,26 @@
     font-size: 13px;
     font-weight: 500;
     border-radius: 4px;
+  }
+}
+
+// 브라우저 경고 메시지
+.browser-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  color: #856404;
+  font-size: 13px;
+  line-height: 1.4;
+
+  svg {
+    flex-shrink: 0;
+    color: #f39c12;
   }
 }
 

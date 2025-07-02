@@ -54,4 +54,9 @@ i18n
     },
   });
 
+// 전역 객체에 i18n 인스턴스 저장 (타입 안전성을 위해)
+if (typeof window !== 'undefined') {
+  (window as any).i18n = i18n;
+}
+
 export default i18n; 

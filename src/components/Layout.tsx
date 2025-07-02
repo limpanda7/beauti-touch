@@ -3,6 +3,7 @@ import { Outlet, useLocation, Link, useNavigate } from 'react-router-dom';
 import { Menu, X, Calendar, Users, ClipboardList, Settings, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
+import SEO from './SEO';
 import { useUIStore } from '../stores/uiStore';
 import { useAuthStore } from '../stores/authStore';
 import { useSettingsStore } from '../stores/settingsStore';
@@ -40,10 +41,59 @@ const Layout: React.FC = () => {
     }
   }, [user?.uid, initializeSettings]);
 
-  // 페이지 타이틀 다국어 처리
-  useEffect(() => {
-    document.title = t('navigation.pageTitle');
-  }, [t]);
+  // 페이지별 SEO 설정
+  const getPageSEO = () => {
+    const path = location.pathname;
+    
+    switch (path) {
+      case '/reservations':
+        return {
+          title: `${t('navigation.reservations')} - ${t('navigation.pageTitle')}`,
+          description: t('reservations.title'),
+          keywords: 'reservation, booking, appointment, beauty salon, schedule'
+        };
+      case '/customers':
+        return {
+          title: `${t('navigation.customers')} - ${t('navigation.pageTitle')}`,
+          description: t('customers.title'),
+          keywords: 'customer, client, management, beauty salon, customer database'
+        };
+      case '/products':
+        return {
+          title: `${t('navigation.products')} - ${t('navigation.pageTitle')}`,
+          description: t('products.title'),
+          keywords: 'product, service, beauty, salon, price, duration'
+        };
+      case '/settings':
+        return {
+          title: `${t('navigation.settings')} - ${t('navigation.pageTitle')}`,
+          description: t('settings.title'),
+          keywords: 'settings, configuration, language, currency, business type'
+        };
+      default:
+        if (path.startsWith('/customers/')) {
+          return {
+            title: `${t('customers.editCustomer')} - ${t('navigation.pageTitle')}`,
+            description: t('customers.customerInfo'),
+            keywords: 'customer detail, client information, beauty salon'
+          };
+        }
+        if (path.startsWith('/chart/')) {
+          return {
+            title: `${t('chart.title')} - ${t('navigation.pageTitle')}`,
+            description: t('chart.createChart'),
+            keywords: 'chart, customer chart, beauty treatment, record'
+          };
+        }
+        return {
+          title: t('navigation.pageTitle'),
+          description: t('navigation.adminSystem'),
+          keywords: 'beauty, salon, management, reservation, customer, product, beauti-touch'
+        };
+    }
+  };
+
+  const pageSEO = getPageSEO();
 
   useEffect(() => {
     checkScreenSize();
@@ -113,6 +163,13 @@ const Layout: React.FC = () => {
 
   return (
     <div className="layout">
+      {/* SEO 메타 태그 */}
+      <SEO 
+        title={pageSEO.title}
+        description={pageSEO.description}
+        keywords={pageSEO.keywords}
+      />
+      
       {/* 사이드바 - 데스크톱에서는 항상 표시, 모바일에서는 조건부 표시 */}
       {(!isMobile || isSidebarOpen || isClosing) && (
         <Sidebar 

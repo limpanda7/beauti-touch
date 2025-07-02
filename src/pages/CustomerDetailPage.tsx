@@ -9,6 +9,7 @@ import ReservationModal from '../components/ReservationModal';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Button from '../components/Button';
 import CustomerInfo from '../components/CustomerInfo';
+import SEO from '../components/SEO';
 import { useCurrencyFormat } from '../utils/currency';
 import { useSettingsStore } from '../stores/settingsStore';
 import { maskCustomerData } from '../utils/customerUtils';
@@ -260,6 +261,13 @@ const CustomerDetailPage: React.FC = () => {
 
   return (
     <div className="customer-detail-page">
+      {/* SEO 메타 태그 */}
+      <SEO 
+        title={`${customer?.name || t('customers.editCustomer')} - ${t('navigation.pageTitle')}`}
+        description={t('customers.customerInfo')}
+        keywords="customer detail, client information, beauty salon, customer management"
+      />
+      
       <div className="customer-detail-header">
         <div className="customer-detail-header-left">
           <Button

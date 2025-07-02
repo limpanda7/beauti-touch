@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
+import { HelmetProvider } from 'react-helmet-async';
 import i18n from './i18n';
 import { getBrowserLanguage, getLanguageFromStorage, saveLanguageToStorage } from './utils/languageUtils';
 import Layout from './components/Layout';
@@ -56,34 +57,36 @@ function App() {
   }, [user, language, settingsLoading]);
 
   return (
-    <I18nextProvider i18n={i18n}>
-      <div className="app-container">
-        <Router>
-          <Routes>
-            {/* 인증 페이지 */}
-            <Route path="/auth" element={<AuthPage />} />
-            
-            {/* 보호된 라우트들 */}
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }>
-              <Route index element={<Navigate to="/reservations" replace />} />
-              <Route path="reservations" element={<ReservationsPage />} />
-              <Route path="customers" element={<CustomersPage />} />
-              <Route path="customers/:id" element={<CustomerDetailPage />} />
-              <Route path="products" element={<ProductsPage />} />
-              <Route path="settings" element={<SettingsPage />} />
-              <Route path="chart/:reservationId" element={<ChartPage />} />
-            </Route>
-            
-            {/* 기본 리다이렉트 */}
-            <Route path="*" element={<Navigate to="/auth" replace />} />
-          </Routes>
-        </Router>
-      </div>
-    </I18nextProvider>
+    <HelmetProvider>
+      <I18nextProvider i18n={i18n}>
+        <div className="app-container">
+          <Router>
+            <Routes>
+              {/* 인증 페이지 */}
+              <Route path="/auth" element={<AuthPage />} />
+              
+              {/* 보호된 라우트들 */}
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }>
+                <Route index element={<Navigate to="/reservations" replace />} />
+                <Route path="reservations" element={<ReservationsPage />} />
+                <Route path="customers" element={<CustomersPage />} />
+                <Route path="customers/:id" element={<CustomerDetailPage />} />
+                <Route path="products" element={<ProductsPage />} />
+                <Route path="settings" element={<SettingsPage />} />
+                <Route path="chart/:reservationId" element={<ChartPage />} />
+              </Route>
+              
+              {/* 기본 리다이렉트 */}
+              <Route path="*" element={<Navigate to="/auth" replace />} />
+            </Routes>
+          </Router>
+        </div>
+      </I18nextProvider>
+    </HelmetProvider>
   );
 }
 
