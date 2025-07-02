@@ -70,10 +70,12 @@ export const useSettingsStore = create<SettingsStore>()(
               businessType: data.businessType || defaultSettings.businessType,
               isLoading: false
             });
+            console.log('사용자 설정 로드 완료:', data);
           } else {
             // 설정이 없으면 브라우저 언어에 따른 기본값으로 초기화
             const dynamicDefaults = getDefaultSettings();
             set({ ...dynamicDefaults, isLoading: false });
+            console.log('사용자 설정 없음, 기본값으로 초기화:', dynamicDefaults);
           }
         }, (error) => {
           console.error('설정 로드 실패:', error);

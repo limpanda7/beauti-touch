@@ -382,7 +382,8 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            opacity: 0.8;
+            font-weight: 500;
+            font-size: 0.65rem;
           }
         }
         
@@ -626,5 +627,36 @@
         margin-top: 0.125rem;
       }
     }
+  }
+}
+
+// 모바일 일간 뷰 스타일 (상단 날짜탭 + 하단 당일내용)
+.calendar-week-mobile.day-view {
+  .calendar-week-mobile-header {
+    // 7개 컬럼 유지 (날짜탭 navigation용)
+    grid-template-columns: repeat(7, 1fr);
+    
+    .calendar-week-mobile-day-header {
+      // 기존 스타일 유지
+      border-right: 1px solid $gray-200;
+      padding: 0.5rem 0.25rem;
+      
+      &:last-child {
+        border-right: none;
+      }
+      
+      &.selected {
+        background-color: $primary-color !important;
+
+        .calendar-week-mobile-day-name,
+        .calendar-week-mobile-day-number {
+          color: $white !important;
+        }
+      }
+    }
+  }
+  
+  .calendar-week-mobile-grid {
+    display: none; // 일간 뷰에서는 그리드 숨김
   }
 } 

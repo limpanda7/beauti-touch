@@ -222,7 +222,25 @@
     "or": "ou",
     "continueWithGoogle": "Continuar com Google",
     "continueWithApple": "Continuar com Apple",
-    "socialLoginError": "Ocorreu um erro durante o login social"
+    "socialLoginError": "Ocorreu um erro durante o login social",
+    "errors": {
+      "userNotFound": "E-mail não encontrado.",
+      "wrongPassword": "Senha incorreta.",
+      "emailAlreadyInUse": "E-mail já está em uso.",
+      "weakPassword": "A senha deve ter pelo menos 6 caracteres.",
+      "invalidEmail": "Formato de e-mail inválido.",
+      "tooManyRequests": "Muitas tentativas de login. Por favor, tente novamente mais tarde.",
+      "networkRequestFailed": "Por favor, verifique sua conexão de rede.",
+      "userDisabled": "Conta está desabilitada.",
+      "operationNotAllowed": "Esta operação não é permitida.",
+      "invalidCredential": "Credenciais inválidas.",
+      "popupClosedByUser": "Janela de login foi fechada.",
+      "popupBlocked": "Popup foi bloqueado. Por favor, permita popups.",
+      "cancelledPopupRequest": "Login foi cancelado.",
+      "accountExistsWithDifferentCredential": "Conta existe com credenciais diferentes.",
+      "requiresRecentLogin": "Por favor, faça login novamente por segurança.",
+      "unknownError": "Ocorreu um erro desconhecido."
+    }
   },
   "calendar": {
     "days": {
@@ -249,33 +267,37 @@
       "waxingAftercare": "Cuidados Pós-tratamento"
     },
     "fields": {
-      "eyelashType": "Tipo de Cílios",
-      "eyelashMaterial": "Material dos Cílios",
-      "eyelashMix": "Mistura",
+      "eyelashType": "Tipo de Tratamento",
       "eyelashDesign": "Design",
       "eyelashGlue": "Cola",
-      "eyelashFeedback": "Feedback",
+      "eyelashMaterial": "Material dos Cílios",
+      "eyelashMix": "Mistura",
+      "eyelashCurl": "Tipo de Curvatura",
       "waxingArea": "Área de Depilação",
-      "waxingCycle": "Ciclo de Depilação",
       "waxingSkin": "Condição da Pele",
       "waxingProduct": "Produto de Depilação",
+      "waxingCycle": "Ciclo de Depilação",
+      "waxingHairCondition": "Condição do Cabelo",
       "waxingPain": "Nível de Dor",
       "waxingAftercare": "Cuidados Pós-tratamento",
       "nailType": "Tipo de Unha",
       "nailColor": "Cor da Unha",
       "nailBaseTop": "Base/Top",
       "nailCondition": "Condição da Unha",
+      "nailLength": "Comprimento da Unha",
+      "nailArt": "Arte",
       "nailFeedback": "Feedback",
       "skinType": "Tipo de Pele",
       "skinTypeDetail": "Tipo de Pele Detalhado",
-      "skinPurpose": "Propósito do Cuidado",
       "skinTrouble": "Problemas de Pele",
       "skinSensitivity": "Sensibilidade",
-      "skinFeedback": "Feedback",
+      "skinPurpose": "Propósito do Cuidado",
+      "skinProduct": "Produto Usado",
       "massageArea": "Área de Massagem",
       "massageStrength": "Força",
-      "massagePreference": "Preferência",
+      "massagePurpose": "Propósito do Cuidado",
       "massageMuscle": "Condição Muscular",
+      "massageOil": "Óleo Usado",
       "visitCycle": "Ciclo de Visita",
       "usedDevice": "Dispositivo Usado",
       "usedProduct": "Produto Usado",
@@ -288,14 +310,38 @@
         "remove": "Remover"
       },
       "eyelashDesign": {
+        "natural": "Natural",
         "cat": "Olho de Gato",
         "doll": "Olho de Boneca",
-        "natural": "Natural"
+        "skinny": "Magro",
+        "under": "Inferior",
+        "honeycomb": "Favo de Mel",
+        "smoky": "Esfumado",
+        "sweet": "Doce"
+      },
+      "eyelashCurl": {
+        "J": "J",
+        "B": "B",
+        "C": "C",
+        "CC": "CC",
+        "D": "D",
+        "DD": "DD",
+        "L": "L",
+        "LD": "LD"
       },
       "waxingSkin": {
         "sensitive": "Sensível",
         "dry": "Seco",
-        "trouble": "Problema"
+        "oily": "Oleoso",
+        "trouble": "Problema",
+        "normal": "Normal"
+      },
+      "waxingHairCondition": {
+        "uniform": "Uniforme",
+        "thick": "Grosso",
+        "thin": "Fino",
+        "sparse": "Escasso",
+        "clumped": "Agrupado"
       },
       "waxingPain": {
         "sensitive": "Sensível",
@@ -303,9 +349,12 @@
         "none": "Nenhum"
       },
       "waxingAftercare": {
-        "sensitive": "Sensível",
-        "dry": "Seco",
-        "trouble": "Problema"
+        "soothing_gel": "Gel Calmante",
+        "cream": "Creme",
+        "cold_compress": "Compressa Fria",
+        "skin": "Pele",
+        "lotion": "Loção",
+        "none": "Nenhum"
       },
       "nailType": {
         "care": "Cuidado",
@@ -313,10 +362,27 @@
         "art": "Arte",
         "remove": "Remover"
       },
+      "nailBaseTop": {
+        "both": "Ambos",
+        "base_only": "Só Base",
+        "top_only": "Só Top",
+        "neither": "Nenhum"
+      },
       "nailCondition": {
         "thin": "Fino",
         "split": "Rachado",
-        "healthy": "Saudável"
+        "healthy": "Saudável",
+        "lifting": "Descolado",
+        "discolored": "Descolorido"
+      },
+      "nailLength": {
+        "short": "Curto",
+        "medium": "Médio",
+        "long": "Longo"
+      },
+      "nailArt": {
+        "yes": "Sim",
+        "no": "Não"
       },
       "skinType": {
         "normal": "Normal",
@@ -325,20 +391,38 @@
         "combination": "Misto",
         "sensitive": "Sensível"
       },
-      "skinTypeDetail": {
-        "oily": "Oleoso",
-        "dry": "Seco",
-        "combination": "Misto",
-        "sensitive": "Sensível"
-      },
       "skinSensitivity": {
         "tingle": "Formigamento",
+        "hot": "Quente",
+        "redness": "Vermelhidão",
         "none": "Nenhum"
+      },
+      "skinPurpose": {
+        "soothing": "Calmante",
+        "moisturizing": "Hidratante",
+        "whitening": "Clareador",
+        "trouble": "Problema",
+        "elasticity": "Elasticidade",
+        "regeneration": "Regeneração",
+        "exfoliation": "Esfoliação"
       },
       "massageStrength": {
         "weak": "Fraco",
         "medium": "Médio",
         "strong": "Forte"
+      },
+      "massagePurpose": {
+        "pain_relief": "Alívio da Dor",
+        "circulation": "Circulação",
+        "fatigue_recovery": "Recuperação da Fadiga",
+        "swelling_reduction": "Redução do Inchaço",
+        "body_shape": "Forma Corporal"
+      },
+      "massageMuscle": {
+        "normal": "Normal",
+        "knots": "Nós",
+        "tension": "Tensão",
+        "lack_elasticity": "Falta de Elasticidade"
       }
     },
     "saveError": "Erro ao salvar informações do gráfico.",

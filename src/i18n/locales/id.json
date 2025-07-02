@@ -207,7 +207,25 @@
     "or": "atau",
     "continueWithGoogle": "Lanjutkan dengan Google",
     "continueWithApple": "Lanjutkan dengan Apple",
-    "socialLoginError": "Terjadi kesalahan saat login sosial"
+    "socialLoginError": "Terjadi kesalahan saat login sosial",
+    "errors": {
+      "userNotFound": "Email tidak ditemukan.",
+      "wrongPassword": "Kata sandi salah.",
+      "emailAlreadyInUse": "Email sudah digunakan.",
+      "weakPassword": "Kata sandi minimal 6 karakter.",
+      "invalidEmail": "Format email tidak valid.",
+      "tooManyRequests": "Terlalu banyak percobaan login. Silakan coba lagi nanti.",
+      "networkRequestFailed": "Silakan periksa koneksi jaringan Anda.",
+      "userDisabled": "Akun dinonaktifkan.",
+      "operationNotAllowed": "Operasi ini tidak diizinkan.",
+      "invalidCredential": "Kredensial tidak valid.",
+      "popupClosedByUser": "Jendela login ditutup.",
+      "popupBlocked": "Popup diblokir. Silakan izinkan popup.",
+      "cancelledPopupRequest": "Login dibatalkan.",
+      "accountExistsWithDifferentCredential": "Akun ada dengan kredensial berbeda.",
+      "requiresRecentLogin": "Silakan login lagi untuk keamanan.",
+      "unknownError": "Terjadi kesalahan yang tidak diketahui."
+    }
   },
   "calendar": {
     "days": {
@@ -232,37 +250,163 @@
       "massage": "Pijat"
     },
     "fields": {
-      "eyelashType": "Jenis Eyelash",
-      "eyelashMaterial": "Material Eyelash",
-      "eyelashMix": "Mix",
+      "eyelashType": "Jenis Perawatan",
       "eyelashDesign": "Desain",
       "eyelashGlue": "Lem",
-      "eyelashFeedback": "Feedback",
+      "eyelashMaterial": "Material Eyelash",
+      "eyelashMix": "Mix",
+      "eyelashCurl": "Jenis Keriting",
       "waxingArea": "Area Waxing",
-      "waxingCycle": "Siklus Waxing",
       "waxingSkin": "Kondisi Kulit",
       "waxingProduct": "Produk Waxing",
+      "waxingCycle": "Siklus Waxing",
+      "waxingHairCondition": "Kondisi Rambut",
       "waxingPain": "Tingkat Nyeri",
       "waxingAftercare": "Perawatan Setelah",
       "nailType": "Jenis Nail",
       "nailColor": "Warna Nail",
       "nailBaseTop": "Base/Top",
       "nailCondition": "Kondisi Kuku",
+      "nailLength": "Panjang Kuku",
+      "nailArt": "Seni",
       "nailFeedback": "Feedback",
       "skinType": "Jenis Kulit",
       "skinTypeDetail": "Detail Jenis Kulit",
-      "skinPurpose": "Tujuan Perawatan",
       "skinTrouble": "Masalah Kulit",
       "skinSensitivity": "Sensitivitas",
-      "skinFeedback": "Feedback",
+      "skinPurpose": "Tujuan Perawatan",
+      "skinProduct": "Produk yang Digunakan",
       "massageArea": "Area Pijat",
       "massageStrength": "Kekuatan",
-      "massagePreference": "Preferensi",
+      "massagePurpose": "Tujuan Perawatan",
       "massageMuscle": "Kondisi Otot",
+      "massageOil": "Minyak yang Digunakan",
       "visitCycle": "Siklus Kunjungan",
       "usedDevice": "Perangkat yang Digunakan",
       "usedProduct": "Produk yang Digunakan",
       "caution": "Perhatian"
+    },
+    "options": {
+      "eyelashType": {
+        "extension": "Ekstensi",
+        "perm": "Permanen",
+        "remove": "Hapus"
+      },
+      "eyelashDesign": {
+        "natural": "Alami",
+        "cat": "Mata Kucing",
+        "doll": "Mata Boneka",
+        "skinny": "Kurus",
+        "under": "Bawah",
+        "honeycomb": "Sarang Lebah",
+        "smoky": "Berasap",
+        "sweet": "Manis"
+      },
+      "eyelashCurl": {
+        "J": "J",
+        "B": "B",
+        "C": "C",
+        "CC": "CC",
+        "D": "D",
+        "DD": "DD",
+        "L": "L",
+        "LD": "LD"
+      },
+      "waxingSkin": {
+        "sensitive": "Sensitif",
+        "dry": "Kering",
+        "oily": "Berminyak",
+        "trouble": "Masalah",
+        "normal": "Normal"
+      },
+      "waxingHairCondition": {
+        "uniform": "Seragam",
+        "thick": "Tebal",
+        "thin": "Tipis",
+        "sparse": "Jarang",
+        "clumped": "Bergumpal"
+      },
+      "waxingPain": {
+        "sensitive": "Sensitif",
+        "normal": "Normal",
+        "none": "Tidak ada"
+      },
+      "waxingAftercare": {
+        "soothing_gel": "Gel Menenangkan",
+        "cream": "Krim",
+        "cold_compress": "Kompres Dingin",
+        "skin": "Kulit",
+        "lotion": "Losion",
+        "none": "Tidak ada"
+      },
+      "nailType": {
+        "care": "Perawatan",
+        "gel": "Gel",
+        "art": "Seni",
+        "remove": "Hapus"
+      },
+      "nailBaseTop": {
+        "both": "Keduanya",
+        "base_only": "Base saja",
+        "top_only": "Top saja",
+        "neither": "Tidak ada"
+      },
+      "nailCondition": {
+        "thin": "Tipis",
+        "split": "Retak",
+        "healthy": "Sehat",
+        "lifting": "Terangkat",
+        "discolored": "Berubah Warna"
+      },
+      "nailLength": {
+        "short": "Pendek",
+        "medium": "Sedang",
+        "long": "Panjang"
+      },
+      "nailArt": {
+        "yes": "Ya",
+        "no": "Tidak"
+      },
+      "skinType": {
+        "normal": "Normal",
+        "dry": "Kering",
+        "oily": "Berminyak",
+        "combination": "Kombinasi",
+        "sensitive": "Sensitif"
+      },
+      "skinSensitivity": {
+        "tingle": "Kesemutan",
+        "hot": "Panas",
+        "redness": "Kemerahan",
+        "none": "Tidak ada"
+      },
+      "skinPurpose": {
+        "soothing": "Menenangkan",
+        "moisturizing": "Melembabkan",
+        "whitening": "Memutihkan",
+        "trouble": "Masalah",
+        "elasticity": "Elastisitas",
+        "regeneration": "Regenerasi",
+        "exfoliation": "Eksfoliasi"
+      },
+      "massageStrength": {
+        "weak": "Lemah",
+        "medium": "Sedang",
+        "strong": "Kuat"
+      },
+      "massagePurpose": {
+        "pain_relief": "Pereda Nyeri",
+        "circulation": "Sirkulasi",
+        "fatigue_recovery": "Pemulihan Kelelahan",
+        "swelling_reduction": "Pengurangan Pembengkakan",
+        "body_shape": "Bentuk Tubuh"
+      },
+      "massageMuscle": {
+        "normal": "Normal",
+        "knots": "Simpul",
+        "tension": "Ketegangan",
+        "lack_elasticity": "Kurang Elastis"
+      }
     },
     "saveSuccess": "Chart berhasil disimpan.",
     "saveError": "Gagal menyimpan chart.",

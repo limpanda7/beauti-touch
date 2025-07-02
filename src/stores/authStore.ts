@@ -7,6 +7,7 @@ interface AuthState {
   user: User | null;
   isLoading: boolean;
   error: string | null;
+  errorCode: string | null;
   isInitialized: boolean;
 }
 
@@ -17,7 +18,7 @@ interface AuthActions {
   signOut: () => Promise<void>;
   setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
+  setError: (error: string | null, errorCode?: string | null) => void;
   clearError: () => void;
   initialize: () => Promise<void>;
 }
@@ -30,23 +31,24 @@ export const useAuthStore = create<AuthStore>()(
     user: null,
     isLoading: false,
     error: null,
+    errorCode: null,
     isInitialized: false,
 
     // Actions
     signUp: async (credentials: SignUpCredentials) => {
-      set({ isLoading: true, error: null });
+      set({ isLoading: true, error: null, errorCode: null });
       try {
         const user = await authService.signUp(credentials);
         set({ user, isLoading: false });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '회원가입 중 오류가 발생했습니다.';
-        set({ error: errorMessage, isLoading: false });
+        set({ error: errorMessage, errorCode: errorMessage, isLoading: false });
         throw error;
       }
     },
 
     signIn: async (credentials: LoginCredentials) => {
-      set({ isLoading: true, error: null });
+      set({ isLoading: true, error: null, errorCode: null });
       try {
         const user = await authService.signIn(credentials);
         console.log('AuthStore - 로그인 성공, 사용자 설정:', user);
@@ -54,13 +56,13 @@ export const useAuthStore = create<AuthStore>()(
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '로그인 중 오류가 발생했습니다.';
         console.error('AuthStore - 로그인 실패:', errorMessage);
-        set({ error: errorMessage, isLoading: false });
+        set({ error: errorMessage, errorCode: errorMessage, isLoading: false });
         throw error;
       }
     },
 
     signInWithGoogle: async () => {
-      set({ isLoading: true, error: null });
+      set({ isLoading: true, error: null, errorCode: null });
       try {
         const user = await authService.signInWithGoogle();
         console.log('AuthStore - Google 로그인 성공, 사용자 설정:', user);
@@ -68,19 +70,19 @@ export const useAuthStore = create<AuthStore>()(
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Google 로그인 중 오류가 발생했습니다.';
         console.error('AuthStore - Google 로그인 실패:', errorMessage);
-        set({ error: errorMessage, isLoading: false });
+        set({ error: errorMessage, errorCode: errorMessage, isLoading: false });
         throw error;
       }
     },
 
     signOut: async () => {
-      set({ isLoading: true, error: null });
+      set({ isLoading: true, error: null, errorCode: null });
       try {
         await authService.signOutUser();
         set({ user: null, isLoading: false });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '로그아웃 중 오류가 발생했습니다.';
-        set({ error: errorMessage, isLoading: false });
+        set({ error: errorMessage, errorCode: errorMessage, isLoading: false });
         throw error;
       }
     },
@@ -93,12 +95,12 @@ export const useAuthStore = create<AuthStore>()(
       set({ isLoading: loading });
     },
 
-    setError: (error: string | null) => {
-      set({ error });
+    setError: (error: string | null, errorCode?: string | null) => {
+      set({ error, errorCode: errorCode || null });
     },
 
     clearError: () => {
-      set({ error: null });
+      set({ error: null, errorCode: null });
     },
 
     initialize: async () => {

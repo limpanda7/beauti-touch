@@ -241,7 +241,25 @@
     "or": "or",
     "continueWithGoogle": "Continue with Google",
     "continueWithApple": "Continue with Apple",
-    "socialLoginError": "An error occurred during social sign in"
+    "socialLoginError": "An error occurred during social sign in",
+    "errors": {
+      "userNotFound": "Email not found.",
+      "wrongPassword": "Incorrect password.",
+      "emailAlreadyInUse": "Email is already in use.",
+      "weakPassword": "Password must be at least 6 characters.",
+      "invalidEmail": "Invalid email format.",
+      "tooManyRequests": "Too many login attempts. Please try again later.",
+      "networkRequestFailed": "Please check your network connection.",
+      "userDisabled": "Account is disabled.",
+      "operationNotAllowed": "This operation is not allowed.",
+      "invalidCredential": "Invalid credentials.",
+      "popupClosedByUser": "Login window was closed.",
+      "popupBlocked": "Popup was blocked. Please allow popups.",
+      "cancelledPopupRequest": "Login was cancelled.",
+      "accountExistsWithDifferentCredential": "Account exists with different credentials.",
+      "requiresRecentLogin": "Please sign in again for security.",
+      "unknownError": "An unknown error occurred."
+    }
   },
   "calendar": {
     "days": {
@@ -268,33 +286,37 @@
       "waxingAftercare": "Aftercare"
     },
     "fields": {
-      "eyelashType": "Eyelash Type",
-      "eyelashMaterial": "Eyelash Material",
-      "eyelashMix": "Mix",
+      "eyelashType": "Treatment Type",
       "eyelashDesign": "Design",
       "eyelashGlue": "Glue",
-      "eyelashFeedback": "Feedback",
+      "eyelashMaterial": "Eyelash Material",
+      "eyelashMix": "Mix",
+      "eyelashCurl": "Curl Type",
       "waxingArea": "Waxing Area",
-      "waxingCycle": "Waxing Cycle",
       "waxingSkin": "Skin Condition",
       "waxingProduct": "Waxing Product",
+      "waxingCycle": "Waxing Cycle",
+      "waxingHairCondition": "Hair Condition",
       "waxingPain": "Pain Level",
       "waxingAftercare": "Aftercare",
       "nailType": "Nail Type",
       "nailColor": "Nail Color",
       "nailBaseTop": "Base/Top",
       "nailCondition": "Nail Condition",
+      "nailLength": "Nail Length",
+      "nailArt": "Art",
       "nailFeedback": "Feedback",
       "skinType": "Skin Type",
       "skinTypeDetail": "Detailed Skin Type",
-      "skinPurpose": "Care Purpose",
       "skinTrouble": "Skin Trouble",
       "skinSensitivity": "Sensitivity",
-      "skinFeedback": "Feedback",
+      "skinPurpose": "Care Purpose",
+      "skinProduct": "Used Product",
       "massageArea": "Massage Area",
       "massageStrength": "Strength",
-      "massagePreference": "Preference",
+      "massagePurpose": "Care Purpose",
       "massageMuscle": "Muscle Condition",
+      "massageOil": "Used Oil",
       "visitCycle": "Visit Cycle",
       "usedDevice": "Used Device",
       "usedProduct": "Used Product",
@@ -307,14 +329,38 @@
         "remove": "Remove"
       },
       "eyelashDesign": {
+        "natural": "Natural",
         "cat": "Cat Eye",
         "doll": "Doll Eye",
-        "natural": "Natural"
+        "skinny": "Skinny",
+        "under": "Under",
+        "honeycomb": "Honeycomb",
+        "smoky": "Smoky",
+        "sweet": "Sweet"
+      },
+      "eyelashCurl": {
+        "J": "J",
+        "B": "B",
+        "C": "C",
+        "CC": "CC",
+        "D": "D",
+        "DD": "DD",
+        "L": "L",
+        "LD": "LD"
       },
       "waxingSkin": {
         "sensitive": "Sensitive",
         "dry": "Dry",
-        "trouble": "Trouble"
+        "oily": "Oily",
+        "trouble": "Trouble",
+        "normal": "Normal"
+      },
+      "waxingHairCondition": {
+        "uniform": "Uniform",
+        "thick": "Thick",
+        "thin": "Thin",
+        "sparse": "Sparse",
+        "clumped": "Clumped"
       },
       "waxingPain": {
         "sensitive": "Sensitive",
@@ -322,9 +368,12 @@
         "none": "None"
       },
       "waxingAftercare": {
-        "sensitive": "Sensitive",
-        "dry": "Dry",
-        "trouble": "Trouble"
+        "soothing_gel": "Soothing Gel",
+        "cream": "Cream",
+        "cold_compress": "Cold Compress",
+        "skin": "Skin",
+        "lotion": "Lotion",
+        "none": "None"
       },
       "nailType": {
         "care": "Care",
@@ -332,10 +381,27 @@
         "art": "Art",
         "remove": "Remove"
       },
+      "nailBaseTop": {
+        "both": "Both",
+        "base_only": "Base Only",
+        "top_only": "Top Only",
+        "neither": "Neither"
+      },
       "nailCondition": {
         "thin": "Thin",
         "split": "Split",
-        "healthy": "Healthy"
+        "healthy": "Healthy",
+        "lifting": "Lifting",
+        "discolored": "Discolored"
+      },
+      "nailLength": {
+        "short": "Short",
+        "medium": "Medium",
+        "long": "Long"
+      },
+      "nailArt": {
+        "yes": "Yes",
+        "no": "No"
       },
       "skinType": {
         "normal": "Normal",
@@ -344,20 +410,38 @@
         "combination": "Combination",
         "sensitive": "Sensitive"
       },
-      "skinTypeDetail": {
-        "oily": "Oily",
-        "dry": "Dry",
-        "combination": "Combination",
-        "sensitive": "Sensitive"
-      },
       "skinSensitivity": {
         "tingle": "Tingle",
+        "hot": "Hot",
+        "redness": "Redness",
         "none": "None"
+      },
+      "skinPurpose": {
+        "soothing": "Soothing",
+        "moisturizing": "Moisturizing",
+        "whitening": "Whitening",
+        "trouble": "Trouble",
+        "elasticity": "Elasticity",
+        "regeneration": "Regeneration",
+        "exfoliation": "Exfoliation"
       },
       "massageStrength": {
         "weak": "Weak",
         "medium": "Medium",
         "strong": "Strong"
+      },
+      "massagePurpose": {
+        "pain_relief": "Pain Relief",
+        "circulation": "Circulation",
+        "fatigue_recovery": "Fatigue Recovery",
+        "swelling_reduction": "Swelling Reduction",
+        "body_shape": "Body Shape"
+      },
+      "massageMuscle": {
+        "normal": "Normal",
+        "knots": "Knots",
+        "tension": "Tension",
+        "lack_elasticity": "Lack of Elasticity"
       }
     },
     "saveError": "Failed to save chart information.",

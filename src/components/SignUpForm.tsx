@@ -27,7 +27,7 @@ const renderBoldText = (text: string) => {
 
 const SignUpForm: React.FC<SignUpFormProps> = ({ onSwitchToLogin }) => {
   const { t } = useTranslation();
-  const { signUp, signInWithGoogle, isLoading, error, clearError } = useAuthStore();
+  const { signUp, signInWithGoogle, isLoading, error, errorCode, clearError } = useAuthStore();
   const isAuthenticated = useIsAuthenticated();
   
   const [credentials, setCredentials] = useState<SignUpCredentials>({
@@ -132,7 +132,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSwitchToLogin }) => {
       <form onSubmit={handleSubmit} className="auth-form">
         {error && (
           <div className="auth-error">
-            {error}
+            {errorCode && errorCode.startsWith('auth.errors.') ? t(errorCode) : error}
           </div>
         )}
 

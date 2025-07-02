@@ -225,7 +225,25 @@
     "or": "หรือ",
     "continueWithGoogle": "ดำเนินการต่อด้วย Google",
     "continueWithApple": "ดำเนินการต่อด้วย Apple",
-    "socialLoginError": "เกิดข้อผิดพลาดระหว่างการเข้าสู่ระบบด้วยโซเชียล"
+    "socialLoginError": "เกิดข้อผิดพลาดระหว่างการเข้าสู่ระบบด้วยโซเชียล",
+    "errors": {
+      "userNotFound": "ไม่พบอีเมล",
+      "wrongPassword": "รหัสผ่านไม่ถูกต้อง",
+      "emailAlreadyInUse": "อีเมลนี้ถูกใช้งานอยู่แล้ว",
+      "weakPassword": "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร",
+      "invalidEmail": "รูปแบบอีเมลไม่ถูกต้อง",
+      "tooManyRequests": "มีการพยายามเข้าสู่ระบบมากเกินไป กรุณาลองใหม่อีกครั้ง",
+      "networkRequestFailed": "กรุณาตรวจสอบการเชื่อมต่อเครือข่าย",
+      "userDisabled": "บัญชีถูกปิดใช้งาน",
+      "operationNotAllowed": "การดำเนินการนี้ไม่อนุญาต",
+      "invalidCredential": "ข้อมูลประจำตัวไม่ถูกต้อง",
+      "popupClosedByUser": "หน้าต่างเข้าสู่ระบบถูกปิด",
+      "popupBlocked": "ป๊อปอัพถูกบล็อก กรุณาอนุญาตป๊อปอัพ",
+      "cancelledPopupRequest": "การเข้าสู่ระบบถูกยกเลิก",
+      "accountExistsWithDifferentCredential": "บัญชีมีอยู่ด้วยข้อมูลประจำตัวที่แตกต่างกัน",
+      "requiresRecentLogin": "กรุณาเข้าสู่ระบบอีกครั้งเพื่อความปลอดภัย",
+      "unknownError": "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ"
+    }
   },
   "calendar": {
     "days": {
@@ -252,33 +270,37 @@
       "waxingAftercare": "การดูแลหลัง"
     },
     "fields": {
-      "eyelashType": "ประเภทขนตา",
-      "eyelashMaterial": "วัสดุขนตา",
-      "eyelashMix": "ผสม",
+      "eyelashType": "ประเภทการรักษา",
       "eyelashDesign": "ดีไซน์",
       "eyelashGlue": "กาว",
-      "eyelashFeedback": "ข้อเสนอแนะ",
+      "eyelashMaterial": "วัสดุขนตา",
+      "eyelashMix": "ผสม",
+      "eyelashCurl": "ประเภทการดัด",
       "waxingArea": "พื้นที่แว็กซ์",
-      "waxingCycle": "รอบแว็กซ์",
       "waxingSkin": "สภาพผิว",
       "waxingProduct": "ผลิตภัณฑ์แว็กซ์",
+      "waxingCycle": "รอบแว็กซ์",
+      "waxingHairCondition": "สภาพขน",
       "waxingPain": "ระดับความเจ็บปวด",
       "waxingAftercare": "การดูแลหลัง",
       "nailType": "ประเภทเล็บ",
       "nailColor": "สีเล็บ",
       "nailBaseTop": "เบส/ท็อป",
       "nailCondition": "สภาพเล็บ",
+      "nailLength": "ความยาวเล็บ",
+      "nailArt": "ศิลปะ",
       "nailFeedback": "ข้อเสนอแนะ",
       "skinType": "ประเภทผิว",
       "skinTypeDetail": "ประเภทผิวรายละเอียด",
-      "skinPurpose": "วัตถุประสงค์การดูแล",
       "skinTrouble": "ปัญหาผิว",
       "skinSensitivity": "ความไว",
-      "skinFeedback": "ข้อเสนอแนะ",
+      "skinPurpose": "วัตถุประสงค์การดูแล",
+      "skinProduct": "ผลิตภัณฑ์ที่ใช้",
       "massageArea": "พื้นที่นวด",
       "massageStrength": "ความแรง",
-      "massagePreference": "ความชอบ",
+      "massagePurpose": "วัตถุประสงค์การดูแล",
       "massageMuscle": "สภาพกล้ามเนื้อ",
+      "massageOil": "น้ำมันที่ใช้",
       "visitCycle": "รอบการมาเยี่ยม",
       "usedDevice": "อุปกรณ์ที่ใช้",
       "usedProduct": "ผลิตภัณฑ์ที่ใช้",
@@ -291,14 +313,38 @@
         "remove": "ลบ"
       },
       "eyelashDesign": {
+        "natural": "ธรรมชาติ",
         "cat": "ตาแมว",
         "doll": "ตาตุ๊กตา",
-        "natural": "ธรรมชาติ"
+        "skinny": "ผอม",
+        "under": "ใต้",
+        "honeycomb": "รังผึ้ง",
+        "smoky": "ควัน",
+        "sweet": "หวาน"
+      },
+      "eyelashCurl": {
+        "J": "J",
+        "B": "B",
+        "C": "C",
+        "CC": "CC",
+        "D": "D",
+        "DD": "DD",
+        "L": "L",
+        "LD": "LD"
       },
       "waxingSkin": {
         "sensitive": "แพ้ง่าย",
         "dry": "แห้ง",
-        "trouble": "ปัญหา"
+        "oily": "มัน",
+        "trouble": "ปัญหา",
+        "normal": "ปกติ"
+      },
+      "waxingHairCondition": {
+        "uniform": "สม่ำเสมอ",
+        "thick": "หนา",
+        "thin": "บาง",
+        "sparse": "เบาบาง",
+        "clumped": "จับกลุ่ม"
       },
       "waxingPain": {
         "sensitive": "แพ้ง่าย",
@@ -306,9 +352,12 @@
         "none": "ไม่มี"
       },
       "waxingAftercare": {
-        "sensitive": "แพ้ง่าย",
-        "dry": "แห้ง",
-        "trouble": "ปัญหา"
+        "soothing_gel": "เจลบรรเทา",
+        "cream": "ครีม",
+        "cold_compress": "ประคบเย็น",
+        "skin": "ผิว",
+        "lotion": "โลชั่น",
+        "none": "ไม่มี"
       },
       "nailType": {
         "care": "ดูแล",
@@ -316,10 +365,27 @@
         "art": "อาร์ต",
         "remove": "ลบ"
       },
+      "nailBaseTop": {
+        "both": "ทั้งสอง",
+        "base_only": "เบสเท่านั้น",
+        "top_only": "ท็อปเท่านั้น",
+        "neither": "ไม่มี"
+      },
       "nailCondition": {
         "thin": "บาง",
         "split": "แตก",
-        "healthy": "แข็งแรง"
+        "healthy": "แข็งแรง",
+        "lifting": "ลอก",
+        "discolored": "เปลี่ยนสี"
+      },
+      "nailLength": {
+        "short": "สั้น",
+        "medium": "ปานกลาง",
+        "long": "ยาว"
+      },
+      "nailArt": {
+        "yes": "มี",
+        "no": "ไม่มี"
       },
       "skinType": {
         "normal": "ปกติ",
@@ -328,20 +394,38 @@
         "combination": "ผสม",
         "sensitive": "แพ้ง่าย"
       },
-      "skinTypeDetail": {
-        "oily": "มัน",
-        "dry": "แห้ง",
-        "combination": "ผสม",
-        "sensitive": "แพ้ง่าย"
-      },
       "skinSensitivity": {
         "tingle": "แสบ",
+        "hot": "ร้อน",
+        "redness": "แดง",
         "none": "ไม่มี"
+      },
+      "skinPurpose": {
+        "soothing": "บรรเทา",
+        "moisturizing": "ให้ความชุ่มชื้น",
+        "whitening": "ขาว",
+        "trouble": "ปัญหา",
+        "elasticity": "ความยืดหยุ่น",
+        "regeneration": "ฟื้นฟู",
+        "exfoliation": "ขัดผิว"
       },
       "massageStrength": {
         "weak": "อ่อน",
         "medium": "ปานกลาง",
         "strong": "แรง"
+      },
+      "massagePurpose": {
+        "pain_relief": "บรรเทาปวด",
+        "circulation": "การไหลเวียน",
+        "fatigue_recovery": "ฟื้นฟูความเหนื่อยล้า",
+        "swelling_reduction": "ลดบวม",
+        "body_shape": "รูปร่าง"
+      },
+      "massageMuscle": {
+        "normal": "ปกติ",
+        "knots": "ปม",
+        "tension": "ตึง",
+        "lack_elasticity": "ขาดความยืดหยุ่น"
       }
     },
     "saveError": "ไม่สามารถบันทึกข้อมูลชาร์ตได้",

@@ -1,14 +1,25 @@
 // 고객 정보 마스킹 유틸리티
 
 /**
- * 4자리 고유 ID 생성
+ * 시각적으로 안전한 5자리 고유 ID 생성
+ * 알파벳 대문자(ABCDEFGHJKLMNPQRSTUVWXYZ) + 숫자만 사용
+ * 시각적으로 혼동될 수 있는 문자 제외: I, O, 0, 1
  */
 export const generateCustomerId = (): string => {
-  return Math.floor(1000 + Math.random() * 9000).toString();
+  // 시각적으로 안전한 문자들
+  const safeChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let result = '';
+  
+  for (let i = 0; i < 5; i++) {
+    const randomIndex = Math.floor(Math.random() * safeChars.length);
+    result += safeChars[randomIndex];
+  }
+  
+  return result;
 };
 
 /**
- * 고유한 4자리 ID 생성 (중복 확인 포함)
+ * 고유한 5자리 ID 생성 (중복 확인 포함)
  */
 export const generateUniqueCustomerId = async (existingIds: string[]): Promise<string> => {
   let attempts = 0;
@@ -24,7 +35,18 @@ export const generateUniqueCustomerId = async (existingIds: string[]): Promise<s
   
   // 최대 시도 횟수를 초과한 경우 타임스탬프 기반 ID 생성
   const timestamp = Date.now();
-  return (timestamp % 9000 + 1000).toString();
+  const safeChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let result = '';
+  
+  // 타임스탬프의 마지막 5자리를 사용하여 ID 생성
+  const timestampStr = timestamp.toString();
+  for (let i = 0; i < 5; i++) {
+    const digit = parseInt(timestampStr[timestampStr.length - 5 + i] || '0');
+    const charIndex = digit % safeChars.length;
+    result += safeChars[charIndex];
+  }
+  
+  return result;
 };
 
 /**

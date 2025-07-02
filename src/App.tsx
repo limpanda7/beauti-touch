@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n';
-import { getBrowserLanguage } from './utils/languageUtils';
+import { getBrowserLanguage, getLanguageFromStorage, saveLanguageToStorage } from './utils/languageUtils';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import AuthPage from './pages/AuthPage';
@@ -17,28 +17,43 @@ import { useSettingsStore } from './stores/settingsStore';
 import './styles/main.scss';
 
 function App() {
-  const { user } = useAuthStore();
-  const { language } = useSettingsStore();
+  const { user, isInitialized } = useAuthStore();
+  const { language, isLoading: settingsLoading } = useSettingsStore();
 
-  // 사용자 설정에 따른 언어 변경
+  // 언어 설정 우선순위: 계정 언어 > localStorage > 브라우저 언어
   useEffect(() => {
-    if (language && language !== i18n.language) {
-      i18n.changeLanguage(language);
-    }
-  }, [language]);
-
-  // 앱 시작 시 브라우저 언어 감지 (사용자가 로그인하지 않은 경우)
-  useEffect(() => {
-    if (!user && !language) {
-      const browserLang = getBrowserLanguage();
-      const currentLang = i18n.language;
-      
-      // 현재 언어가 설정되지 않았거나 브라우저 언어와 다른 경우
-      if (!currentLang || currentLang !== browserLang) {
-        i18n.changeLanguage(browserLang);
+    // 1. 사용자가 로그인되어 있고 계정 언어 설정이 있는 경우
+    if (user && language && !settingsLoading) {
+      if (language !== i18n.language) {
+        console.log('계정 언어 설정 적용:', language);
+        i18n.changeLanguage(language);
+        saveLanguageToStorage(language as any);
       }
     }
-  }, [user, language]);
+    // 2. 사용자가 로그인되어 있지만 계정 언어 설정이 없는 경우
+    else if (user && !language && !settingsLoading) {
+      const storedLanguage = getLanguageFromStorage();
+      if (storedLanguage && storedLanguage !== i18n.language) {
+        console.log('localStorage 언어 설정 적용:', storedLanguage);
+        i18n.changeLanguage(storedLanguage);
+      }
+    }
+    // 3. 사용자가 로그인되지 않은 경우
+    else if (!user) {
+      const storedLanguage = getLanguageFromStorage();
+      if (storedLanguage && storedLanguage !== i18n.language) {
+        console.log('localStorage 언어 설정 적용:', storedLanguage);
+        i18n.changeLanguage(storedLanguage);
+      } else if (!storedLanguage) {
+        const browserLang = getBrowserLanguage();
+        if (browserLang !== i18n.language) {
+          console.log('브라우저 언어 설정 적용:', browserLang);
+          i18n.changeLanguage(browserLang);
+          saveLanguageToStorage(browserLang);
+        }
+      }
+    }
+  }, [user, language, settingsLoading]);
 
   return (
     <I18nextProvider i18n={i18n}>

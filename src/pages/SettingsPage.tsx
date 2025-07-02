@@ -7,6 +7,8 @@ import { autoCompleteService } from '../services/firestore';
 import type { ChartType, AutoCompleteSuggestion } from '../types';
 import Button from '../components/Button';
 import { formatDate } from '../utils/dateUtils';
+import { getDefaultCurrencyForLanguage } from '../utils/currency';
+import { getBrowserLanguage, saveLanguageToStorage } from '../utils/languageUtils';
 
 const SettingsPage: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -112,6 +114,7 @@ const SettingsPage: React.FC = () => {
       
       if (key === 'language') {
         i18n.changeLanguage(value);
+        saveLanguageToStorage(value as any);
       }
     } catch (error) {
       console.error('설정 변경 실패:', error);

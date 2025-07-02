@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { getBrowserLanguage } from '../utils/languageUtils';
+import { getBrowserLanguage, getLanguageFromStorage } from '../utils/languageUtils';
 
 // 한국어
 import ko from './locales/ko.json';
@@ -28,11 +28,21 @@ const resources = {
   id: { translation: id },
 };
 
+// 초기 언어 결정 (우선순위: localStorage > 브라우저 언어)
+const getInitialLanguage = (): string => {
+  const storedLanguage = getLanguageFromStorage();
+  if (storedLanguage) {
+    return storedLanguage;
+  }
+  return getBrowserLanguage();
+};
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
+    lng: getInitialLanguage(),
     fallbackLng: 'en',
     debug: false,
     interpolation: {

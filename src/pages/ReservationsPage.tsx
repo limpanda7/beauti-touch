@@ -68,15 +68,9 @@ const ReservationsPage: React.FC = () => {
     // 날짜는 항상 오늘로 설정
     setCurrentDate(new Date());
     
-    // 모바일 주 보기에서는 항상 오늘 날짜를 기본으로 설정
-    // (다른 페이지 갔다가 돌아오거나 새로고침 시 오늘 날짜가 기본)
+    // 모바일 일간 뷰에서는 항상 오늘 날짜를 기본으로 설정
     setSelectedDay(new Date());
   }, []);
-
-  // 현재 날짜가 변경되면 선택된 날짜도 업데이트
-  useEffect(() => {
-    setSelectedDay(currentDate);
-  }, [currentDate]);
 
   // 뷰가 변경될 때마다 localStorage에 저장 (날짜 제외)
   useEffect(() => {
@@ -177,9 +171,10 @@ const ReservationsPage: React.FC = () => {
         text = formatDateRange(start, end, i18n.language);
         break;
       case 'day':
-        start = currentDate;
-        end = currentDate;
-        text = formatDate(currentDate, 'day', i18n.language);
+        // 일간 뷰에서는 주간 범위를 표시 (6.1 - 6.7 형태)
+        start = startOfWeek(currentDate, { weekStartsOn: 0 });
+        end = endOfWeek(currentDate, { weekStartsOn: 0 });
+        text = formatDateRange(start, end, i18n.language);
         break;
       case 'month':
       default:
@@ -333,7 +328,6 @@ const ReservationsPage: React.FC = () => {
                             handleOpenModal(res);
                           }}
                         >
-                          <span className="event-time">{res.time}</span>
                           <span className="event-product">{res.productName}</span>
                         </div>
                       );
@@ -358,68 +352,7 @@ const ReservationsPage: React.FC = () => {
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 });
     const days = eachDayOfInterval({ start: weekStart, end: endOfWeek(weekStart, { weekStartsOn: 0 }) });
     
-    if (isMobile) {
-      const reservationsForSelectedDay = reservations.filter(r => isSameDay(r.date, selectedDay));
-      const isTodaySelected = isSameDay(selectedDay, new Date());
-
-      return (
-        <div className="calendar-week-mobile-container">
-          <div 
-            className="calendar-week-mobile"
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
-          >
-            <div className="calendar-week-mobile-header">
-              {days.map((day) => {
-                const isToday = isSameDay(day, new Date());
-                const isSelected = isSameDay(day, selectedDay);
-                return (
-                  <div 
-                    key={day.toString()} 
-                    className={`calendar-week-mobile-day-header ${isSelected ? 'selected' : ''} ${isToday ? 'today' : ''}`}
-                    onClick={() => setSelectedDay(day)}
-                  >
-                    <span className="calendar-week-mobile-day-name">
-                      {formatWeekday(day, i18n.language)}
-                    </span>
-                    <span className={`calendar-week-mobile-day-number ${isToday ? 'today' : ''}`}>
-                      {formatDayNumber(day, i18n.language)}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="reservations-day-view">
-              {reservationsForSelectedDay.length === 0 ? (
-                <div className="reservations-day-empty">{t('reservations.noReservations')}</div>
-              ) : (
-                reservationsForSelectedDay.map(reservation => {
-                  const { timeAndCustomer, productAndDuration } = formatReservationForCalendar(reservation);
-                  return (
-                    <div key={reservation.id} className={`reservations-day-item ${reservation.status}`}
-                      onClick={() => handleOpenModal(reservation)}
-                    >
-                      <div>
-                        <p className="reservations-day-item-time">{timeAndCustomer}</p>
-                        <p className="reservations-day-item-product">{productAndDuration}</p>
-                      </div>
-                      <div className="reservations-day-item-details">
-                        <span className={`reservation-status ${reservation.status}`}>{t(`reservations.status${reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}`)}</span>
-                        {reservation.memo && <p className="reservations-day-item-memo">{reservation.memo}</p>}
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // 데스크탑 뷰 (기존 renderMobileWeekView와 유사하게 유지)
+    // 모바일과 PC 모두 동일한 주간 뷰 구조 사용 (한 주를 한눈에 볼 수 있는 구조)
     return (
       <div className="calendar-week-mobile-container">
         <div 
@@ -480,32 +413,69 @@ const ReservationsPage: React.FC = () => {
     );
   };
   
-  const renderDayView = () => (
-    <div className="reservations-day-view">
-      {reservations.length === 0 ? (
-        <div className="reservations-day-empty">{t('reservations.noReservations')}</div>
-      ) : (
-        reservations.map(reservation => {
-          const { timeAndCustomer, productAndDuration } = formatReservationForCalendar(reservation);
-          return (
-            <div key={reservation.id} 
-                 className={`reservations-day-item ${reservation.status}`}
-                 onClick={() => handleOpenModal(reservation)}
-            >
-              <div>
-                <p className="reservations-day-item-time">{timeAndCustomer}</p>
-                <p className="reservations-day-item-product">{productAndDuration}</p>
-              </div>
-              <div className="reservations-day-item-details">
-                <span className={`reservation-status ${reservation.status}`}>{t(`reservations.status${reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}`)}</span>
-                {reservation.memo && <p className="reservations-day-item-memo">{reservation.memo}</p>}
-              </div>
-            </div>
-          );
-        })
-      )}
-    </div>
-  );
+  const renderDayView = () => {
+    // 모바일 일간 뷰는 기존 모바일 주간 뷰의 구조를 그대로 사용 (상단 날짜탭 + 하단 당일내용)
+    const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 });
+    const days = eachDayOfInterval({ start: weekStart, end: endOfWeek(weekStart, { weekStartsOn: 0 }) });
+    const reservationsForSelectedDay = reservations.filter(r => isSameDay(r.date, selectedDay));
+    const isTodaySelected = isSameDay(selectedDay, new Date());
+
+    return (
+      <div className="calendar-week-mobile-container">
+        <div 
+          className="calendar-week-mobile day-view"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          <div className="calendar-week-mobile-header">
+            {days.map((day) => {
+              const isToday = isSameDay(day, new Date());
+              const isSelected = isSameDay(day, selectedDay);
+              return (
+                <div 
+                  key={day.toString()} 
+                  className={`calendar-week-mobile-day-header ${isSelected ? 'selected' : ''} ${isToday ? 'today' : ''}`}
+                  onClick={() => setSelectedDay(day)}
+                >
+                  <span className="calendar-week-mobile-day-name">
+                    {formatWeekday(day, i18n.language)}
+                  </span>
+                  <span className={`calendar-week-mobile-day-number ${isToday ? 'today' : ''}`}>
+                    {formatDayNumber(day, i18n.language)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="reservations-day-view">
+            {reservationsForSelectedDay.length === 0 ? (
+              <div className="reservations-day-empty">{t('reservations.noReservations')}</div>
+            ) : (
+              reservationsForSelectedDay.map(reservation => {
+                const { timeAndCustomer, productAndDuration } = formatReservationForCalendar(reservation);
+                return (
+                  <div key={reservation.id} className={`reservations-day-item ${reservation.status}`}
+                    onClick={() => handleOpenModal(reservation)}
+                  >
+                    <div>
+                      <p className="reservations-day-item-time">{timeAndCustomer}</p>
+                      <p className="reservations-day-item-product">{productAndDuration}</p>
+                    </div>
+                    <div className="reservations-day-item-details">
+                      <span className={`reservation-status ${reservation.status}`}>{t(`reservations.status${reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}`)}</span>
+                      {reservation.memo && <p className="reservations-day-item-memo">{reservation.memo}</p>}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   // URL 파라미터 처리
   useEffect(() => {
@@ -516,6 +486,11 @@ const ReservationsPage: React.FC = () => {
       setSearchParams({}, { replace: true });
     }
   }, [searchParams]);
+
+  // 현재 날짜가 변경되면 선택된 날짜도 업데이트
+  useEffect(() => {
+    setSelectedDay(currentDate);
+  }, [currentDate]);
 
   if (view === null) {
     return (
@@ -563,14 +538,8 @@ const ReservationsPage: React.FC = () => {
                 </button>
                 <button
                   onClick={() => {
-                    if (view === 'month') {
-                      setCurrentDate(new Date());
-                    } else if (view === 'week') {
-                      setCurrentDate(new Date());
-                      setSelectedDay(new Date());
-                    } else if (view === 'day') {
-                      setCurrentDate(new Date());
-                    }
+                    setCurrentDate(new Date());
+                    setSelectedDay(new Date());
                   }}
                   className="btn btn-secondary"
                   disabled={loading}
@@ -653,20 +622,14 @@ const ReservationsPage: React.FC = () => {
       {/* 모바일에서 오늘이 아닌 날짜를 볼 때 Today 버튼 표시 */}
       {isMobile && (
         (view === 'month' && !isSameMonth(currentDate, new Date())) ||
-        (view === 'week' && !isSameDay(selectedDay, new Date())) ||
-        (view === 'day' && !isSameDay(currentDate, new Date()))
+        (view === 'week' && !isSameDay(currentDate, new Date()) && !isSameDay(startOfWeek(currentDate, { weekStartsOn: 0 }), startOfWeek(new Date(), { weekStartsOn: 0 }))) ||
+        (view === 'day' && !isSameDay(selectedDay, new Date()))
       ) && (
         <button 
           className="floating-today-button"
           onClick={() => {
-            if (view === 'month') {
-              setCurrentDate(new Date());
-            } else if (view === 'week') {
-              setCurrentDate(new Date());
-              setSelectedDay(new Date());
-            } else if (view === 'day') {
-              setCurrentDate(new Date());
-            }
+            setCurrentDate(new Date());
+            setSelectedDay(new Date());
           }}
           aria-label={t('reservations.today')}
         >

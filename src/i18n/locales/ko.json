@@ -241,7 +241,25 @@
     "or": "또는",
     "continueWithGoogle": "Google로 계속하기",
     "continueWithApple": "Apple로 계속하기",
-    "socialLoginError": "소셜 로그인 중 오류가 발생했습니다"
+    "socialLoginError": "소셜 로그인 중 오류가 발생했습니다",
+    "errors": {
+      "userNotFound": "등록되지 않은 이메일입니다.",
+      "wrongPassword": "비밀번호가 올바르지 않습니다.",
+      "emailAlreadyInUse": "이미 사용 중인 이메일입니다.",
+      "weakPassword": "비밀번호는 최소 6자 이상이어야 합니다.",
+      "invalidEmail": "유효하지 않은 이메일 형식입니다.",
+      "tooManyRequests": "너무 많은 로그인 시도가 있었습니다. 잠시 후 다시 시도해주세요.",
+      "networkRequestFailed": "네트워크 연결을 확인해주세요.",
+      "userDisabled": "비활성화된 계정입니다.",
+      "operationNotAllowed": "이 작업은 허용되지 않습니다.",
+      "invalidCredential": "유효하지 않은 인증 정보입니다.",
+      "popupClosedByUser": "로그인 창이 닫혔습니다.",
+      "popupBlocked": "팝업이 차단되었습니다. 팝업 차단을 해제해주세요.",
+      "cancelledPopupRequest": "로그인이 취소되었습니다.",
+      "accountExistsWithDifferentCredential": "다른 방법으로 가입된 계정입니다.",
+      "requiresRecentLogin": "보안을 위해 다시 로그인해주세요.",
+      "unknownError": "알 수 없는 오류가 발생했습니다."
+    }
   },
   "calendar": {
     "days": {
@@ -268,33 +286,37 @@
       "waxingAftercare": "애프터케어"
     },
     "fields": {
-      "eyelashType": "속눈썹 종류",
-      "eyelashMaterial": "속눈썹 재질",
-      "eyelashMix": "믹스",
+      "eyelashType": "시술 종류",
       "eyelashDesign": "디자인",
       "eyelashGlue": "글루",
-      "eyelashFeedback": "피드백",
+      "eyelashMaterial": "속눈썹 재질",
+      "eyelashMix": "믹스",
+      "eyelashCurl": "컬 종류",
       "waxingArea": "왁싱 부위",
-      "waxingCycle": "왁싱 주기",
       "waxingSkin": "피부 상태",
       "waxingProduct": "왁싱 제품",
+      "waxingCycle": "왁싱 주기",
+      "waxingHairCondition": "털 상태",
       "waxingPain": "통증 정도",
       "waxingAftercare": "애프터케어",
       "nailType": "네일 종류",
       "nailColor": "네일 컬러",
       "nailBaseTop": "베이스/탑",
       "nailCondition": "손톱 상태",
+      "nailLength": "네일 길이",
+      "nailArt": "아트 여부",
       "nailFeedback": "피드백",
       "skinType": "피부 타입",
       "skinTypeDetail": "세부 피부 타입",
-      "skinPurpose": "관리 목적",
       "skinTrouble": "피부 트러블",
       "skinSensitivity": "민감도",
-      "skinFeedback": "피드백",
+      "skinPurpose": "관리 목적",
+      "skinProduct": "사용 제품",
       "massageArea": "마사지 부위",
       "massageStrength": "강도",
-      "massagePreference": "선호도",
+      "massagePurpose": "관리 목적",
       "massageMuscle": "근육 상태",
+      "massageOil": "사용 오일",
       "visitCycle": "방문주기",
       "usedDevice": "사용 기기",
       "usedProduct": "사용 제품",
@@ -307,14 +329,38 @@
         "remove": "제거"
       },
       "eyelashDesign": {
+        "natural": "내추럴",
         "cat": "캣아이",
         "doll": "돌아이",
-        "natural": "내추럴"
+        "skinny": "스키니",
+        "under": "언더",
+        "honeycomb": "벌집",
+        "smoky": "스모키",
+        "sweet": "스위트"
+      },
+      "eyelashCurl": {
+        "J": "J",
+        "B": "B",
+        "C": "C",
+        "CC": "CC",
+        "D": "D",
+        "DD": "DD",
+        "L": "L",
+        "LD": "LD"
       },
       "waxingSkin": {
         "sensitive": "민감성",
         "dry": "건성",
-        "trouble": "트러블"
+        "oily": "지성",
+        "trouble": "트러블",
+        "normal": "정상"
+      },
+      "waxingHairCondition": {
+        "uniform": "균일함",
+        "thick": "굵음",
+        "thin": "얇음",
+        "sparse": "듬성듬성",
+        "clumped": "뭉침"
       },
       "waxingPain": {
         "sensitive": "민감함",
@@ -322,9 +368,12 @@
         "none": "없음"
       },
       "waxingAftercare": {
-        "sensitive": "민감성",
-        "dry": "건성",
-        "trouble": "트러블"
+        "soothing_gel": "진정젤",
+        "cream": "크림",
+        "cold_compress": "냉찜질",
+        "skin": "스킨",
+        "lotion": "로션",
+        "none": "없음"
       },
       "nailType": {
         "care": "케어",
@@ -332,10 +381,27 @@
         "art": "아트",
         "remove": "제거"
       },
+      "nailBaseTop": {
+        "both": "둘 다 사용",
+        "base_only": "베이스만",
+        "top_only": "탑만",
+        "neither": "둘 다 안 함"
+      },
       "nailCondition": {
         "thin": "얇음",
         "split": "갈라짐",
-        "healthy": "건강함"
+        "healthy": "건강함",
+        "lifting": "들뜸",
+        "discolored": "변색"
+      },
+      "nailLength": {
+        "short": "짧음",
+        "medium": "중간",
+        "long": "길음"
+      },
+      "nailArt": {
+        "yes": "있음",
+        "no": "없음"
       },
       "skinType": {
         "normal": "중성",
@@ -344,20 +410,38 @@
         "combination": "복합성",
         "sensitive": "민감성"
       },
-      "skinTypeDetail": {
-        "oily": "지성",
-        "dry": "건성",
-        "combination": "복합성",
-        "sensitive": "민감성"
-      },
       "skinSensitivity": {
         "tingle": "따가움",
+        "hot": "뜨거움",
+        "redness": "붉어짐",
         "none": "없음"
+      },
+      "skinPurpose": {
+        "soothing": "진정",
+        "moisturizing": "보습",
+        "whitening": "미백",
+        "trouble": "트러블",
+        "elasticity": "탄력",
+        "regeneration": "재생",
+        "exfoliation": "각질관리"
       },
       "massageStrength": {
         "weak": "약함",
         "medium": "보통",
         "strong": "강함"
+      },
+      "massagePurpose": {
+        "pain_relief": "통증완화",
+        "circulation": "순환촉진",
+        "fatigue_recovery": "피로회복",
+        "swelling_reduction": "부기제거",
+        "body_shape": "체형관리"
+      },
+      "massageMuscle": {
+        "normal": "정상",
+        "knots": "뭉침 있음",
+        "tension": "긴장됨",
+        "lack_elasticity": "탄력 부족"
       }
     },
     "saveError": "차트 정보 저장에 실패했습니다.",

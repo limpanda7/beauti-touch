@@ -12,28 +12,30 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import type { User, LoginCredentials, SignUpCredentials, AuthError } from '../types';
 import { createAllTestData } from '../utils/testData';
+import { getCurrentLanguage } from '../utils/languageUtils';
+import { getDefaultCurrencyForLanguage } from '../utils/currency';
 
-// 에러 코드를 한국어 메시지로 변환
-const getErrorMessage = (errorCode: string): string => {
-  const errorMessages: Record<string, string> = {
-    'auth/user-not-found': '등록되지 않은 이메일입니다.',
-    'auth/wrong-password': '비밀번호가 올바르지 않습니다.',
-    'auth/email-already-in-use': '이미 사용 중인 이메일입니다.',
-    'auth/weak-password': '비밀번호는 최소 6자 이상이어야 합니다.',
-    'auth/invalid-email': '유효하지 않은 이메일 형식입니다.',
-    'auth/too-many-requests': '너무 많은 로그인 시도가 있었습니다. 잠시 후 다시 시도해주세요.',
-    'auth/network-request-failed': '네트워크 연결을 확인해주세요.',
-    'auth/user-disabled': '비활성화된 계정입니다.',
-    'auth/operation-not-allowed': '이 작업은 허용되지 않습니다.',
-    'auth/invalid-credential': '유효하지 않은 인증 정보입니다.',
-    'auth/popup-closed-by-user': '로그인 창이 닫혔습니다.',
-    'auth/popup-blocked': '팝업이 차단되었습니다. 팝업 차단을 해제해주세요.',
-    'auth/cancelled-popup-request': '로그인이 취소되었습니다.',
-    'auth/account-exists-with-different-credential': '다른 방법으로 가입된 계정입니다.',
-    'auth/requires-recent-login': '보안을 위해 다시 로그인해주세요.',
+// Firebase 에러 코드를 다국어 키로 변환하는 함수
+const getErrorTranslationKey = (errorCode: string): string => {
+  const errorKeyMap: Record<string, string> = {
+    'auth/user-not-found': 'auth.errors.userNotFound',
+    'auth/wrong-password': 'auth.errors.wrongPassword',
+    'auth/email-already-in-use': 'auth.errors.emailAlreadyInUse',
+    'auth/weak-password': 'auth.errors.weakPassword',
+    'auth/invalid-email': 'auth.errors.invalidEmail',
+    'auth/too-many-requests': 'auth.errors.tooManyRequests',
+    'auth/network-request-failed': 'auth.errors.networkRequestFailed',
+    'auth/user-disabled': 'auth.errors.userDisabled',
+    'auth/operation-not-allowed': 'auth.errors.operationNotAllowed',
+    'auth/invalid-credential': 'auth.errors.invalidCredential',
+    'auth/popup-closed-by-user': 'auth.errors.popupClosedByUser',
+    'auth/popup-blocked': 'auth.errors.popupBlocked',
+    'auth/cancelled-popup-request': 'auth.errors.cancelledPopupRequest',
+    'auth/account-exists-with-different-credential': 'auth.errors.accountExistsWithDifferentCredential',
+    'auth/requires-recent-login': 'auth.errors.requiresRecentLogin',
   };
   
-  return errorMessages[errorCode] || '알 수 없는 오류가 발생했습니다.';
+  return errorKeyMap[errorCode] || 'auth.errors.unknownError';
 };
 
 // Firebase User를 앱 User 타입으로 변환
@@ -112,6 +114,16 @@ export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
     // Firestore에 사용자 정보 저장
     await saveUserToFirestore(user);
 
+    // 회원가입 시점의 언어 설정 저장 (동기적으로 처리)
+    const currentLanguage = getCurrentLanguage();
+    const settingsRef = doc(db, 'users', user.uid, 'settings', 'userSettings');
+    await setDoc(settingsRef, {
+      language: currentLanguage,
+      currency: getDefaultCurrencyForLanguage(currentLanguage),
+      businessType: ''
+    });
+    console.log('회원가입 시 언어 설정 저장 완료:', currentLanguage);
+
     // 테스트 데이터 생성 (비동기로 실행하되 에러는 무시)
     try {
       await createAllTestData();
@@ -127,7 +139,7 @@ export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
     }
     
     const firebaseError = error as FirebaseAuthError;
-    throw new Error(getErrorMessage(firebaseError.code));
+    throw new Error(getErrorTranslationKey(firebaseError.code));
   }
 };
 
@@ -153,7 +165,7 @@ export const signIn = async (credentials: LoginCredentials): Promise<User> => {
   } catch (error) {
     console.error('로그인 실패:', error);
     const firebaseError = error as FirebaseAuthError;
-    throw new Error(getErrorMessage(firebaseError.code));
+    throw new Error(getErrorTranslationKey(firebaseError.code));
   }
 };
 
@@ -205,6 +217,18 @@ export const onAuthStateChange = (callback: (user: User | null) => void) => {
 
         // Firestore에 사용자 정보 저장
         await saveUserToFirestore(user);
+
+        // 새 사용자인 경우 언어 설정 저장 (동기적으로 처리)
+        if (isNewUser && isRecentlyCreated) {
+          const currentLanguage = getCurrentLanguage();
+          const settingsRef = doc(db, 'users', user.uid, 'settings', 'userSettings');
+          await setDoc(settingsRef, {
+            language: currentLanguage,
+            currency: getDefaultCurrencyForLanguage(currentLanguage),
+            businessType: ''
+          });
+          console.log('인증 상태 변경 - 언어 설정 저장 완료:', currentLanguage);
+        }
 
         // 새 사용자인 경우에만 테스트 데이터 생성
         if (isNewUser && isRecentlyCreated) {
@@ -314,6 +338,18 @@ export const signInWithGoogle = async (): Promise<User> => {
     // Firestore에 사용자 정보 저장
     await saveUserToFirestore(user);
 
+    // 새 사용자인 경우 언어 설정 저장 (동기적으로 처리)
+    if (isNewUser && isRecentlyCreated) {
+      const currentLanguage = getCurrentLanguage();
+      const settingsRef = doc(db, 'users', user.uid, 'settings', 'userSettings');
+      await setDoc(settingsRef, {
+        language: currentLanguage,
+        currency: getDefaultCurrencyForLanguage(currentLanguage),
+        businessType: ''
+      });
+      console.log('Google 로그인 시 언어 설정 저장 완료:', currentLanguage);
+    }
+
     // 새 사용자인 경우에만 테스트 데이터 생성
     if (isNewUser && isRecentlyCreated) {
       console.log('신규 사용자 감지 - 테스트 데이터 생성 시작');
@@ -332,6 +368,6 @@ export const signInWithGoogle = async (): Promise<User> => {
   } catch (error) {
     console.error('Google 로그인 실패:', error);
     const firebaseError = error as FirebaseAuthError;
-    throw new Error(getErrorMessage(firebaseError.code));
+    throw new Error(getErrorTranslationKey(firebaseError.code));
   }
 }; 

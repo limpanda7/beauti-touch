@@ -1,5 +1,5 @@
 export interface Customer {
-  id: string; // 4자리 고유 ID
+  id: string; // 5자리 고유 ID (시각적으로 안전한 알파벳+숫자)
   name: string; // 마스킹된 이름
   phone: string; // 마스킹된 연락처 (뒤 4자리만)
   memo?: string; // 메모
@@ -42,16 +42,17 @@ export type ChartType = 'eyelash' | 'waxing' | 'nail' | 'skin' | 'massage' | 'de
 export interface ChartData {
   // 속눈썹
   eyelashType?: string;
-  eyelashMaterial?: string;
-  eyelashMix?: string;
   eyelashDesign?: string;
   eyelashGlue?: string;
-  eyelashFeedback?: string;
+  eyelashMaterial?: string;
+  eyelashMix?: string;
+  eyelashCurl?: string;
   // 왁싱
   waxingArea?: string;
-  waxingCycle?: string;
   waxingSkin?: string;
   waxingProduct?: string;
+  waxingCycle?: string;
+  waxingHairCondition?: string;
   waxingPain?: string;
   waxingAftercare?: string;
   // 네일
@@ -59,19 +60,22 @@ export interface ChartData {
   nailColor?: string;
   nailBaseTop?: string;
   nailCondition?: string;
+  nailLength?: string;
+  nailArt?: string;
   nailFeedback?: string;
   // 피부관리
   skinType?: 'normal' | 'dry' | 'oily' | 'combination' | 'sensitive' | '';
   skinTypeDetail?: string;
-  skinPurpose?: string;
   skinTrouble?: string;
   skinSensitivity?: string;
-  skinFeedback?: string;
+  skinPurpose?: string;
+  skinProduct?: string;
   // 마사지
   massageArea?: string;
   massageStrength?: string;
-  massagePreference?: string;
+  massagePurpose?: string;
   massageMuscle?: string;
+  massageOil?: string;
 }
 
 /*

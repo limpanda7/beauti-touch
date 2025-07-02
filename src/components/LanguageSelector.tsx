@@ -4,7 +4,8 @@ import { ChevronDown, Globe } from 'lucide-react';
 import { 
   SUPPORTED_LANGUAGES, 
   LANGUAGE_NAMES,
-  type SupportedLanguage 
+  type SupportedLanguage,
+  saveLanguageToStorage
 } from '../utils/languageUtils';
 
 const LanguageSelector: React.FC = () => {
@@ -28,6 +29,7 @@ const LanguageSelector: React.FC = () => {
 
   const handleLanguageChange = (language: SupportedLanguage) => {
     i18n.changeLanguage(language);
+    saveLanguageToStorage(language);
     setIsOpen(false);
   };
 

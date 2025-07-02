@@ -242,7 +242,25 @@
     "or": "hoặc",
     "continueWithGoogle": "Tiếp tục với Google",
     "continueWithApple": "Tiếp tục với Apple",
-    "socialLoginError": "Đã xảy ra lỗi trong quá trình đăng nhập xã hội"
+    "socialLoginError": "Đã xảy ra lỗi trong quá trình đăng nhập xã hội",
+    "errors": {
+      "userNotFound": "Không tìm thấy email.",
+      "wrongPassword": "Mật khẩu không đúng.",
+      "emailAlreadyInUse": "Email đã được sử dụng.",
+      "weakPassword": "Mật khẩu phải có ít nhất 6 ký tự.",
+      "invalidEmail": "Định dạng email không hợp lệ.",
+      "tooManyRequests": "Quá nhiều lần thử đăng nhập. Vui lòng thử lại sau.",
+      "networkRequestFailed": "Vui lòng kiểm tra kết nối mạng.",
+      "userDisabled": "Tài khoản bị vô hiệu hóa.",
+      "operationNotAllowed": "Thao tác này không được phép.",
+      "invalidCredential": "Thông tin đăng nhập không hợp lệ.",
+      "popupClosedByUser": "Cửa sổ đăng nhập đã bị đóng.",
+      "popupBlocked": "Popup bị chặn. Vui lòng cho phép popup.",
+      "cancelledPopupRequest": "Đăng nhập đã bị hủy.",
+      "accountExistsWithDifferentCredential": "Tài khoản tồn tại với thông tin đăng nhập khác.",
+      "requiresRecentLogin": "Vui lòng đăng nhập lại để bảo mật.",
+      "unknownError": "Đã xảy ra lỗi không xác định."
+    }
   },
   "calendar": {
     "days": {
@@ -269,33 +287,37 @@
       "waxingAftercare": "Chăm sóc sau"
     },
     "fields": {
-      "eyelashType": "Loại lông mi",
-      "eyelashMaterial": "Chất liệu lông mi",
-      "eyelashMix": "Mix",
+      "eyelashType": "Loại điều trị",
       "eyelashDesign": "Thiết kế",
       "eyelashGlue": "Keo",
-      "eyelashFeedback": "Phản hồi",
+      "eyelashMaterial": "Chất liệu lông mi",
+      "eyelashMix": "Mix",
+      "eyelashCurl": "Loại uốn",
       "waxingArea": "Khu vực tẩy lông",
-      "waxingCycle": "Chu kỳ tẩy lông",
       "waxingSkin": "Tình trạng da",
       "waxingProduct": "Sản phẩm tẩy lông",
+      "waxingCycle": "Chu kỳ tẩy lông",
+      "waxingHairCondition": "Tình trạng lông",
       "waxingPain": "Mức độ đau",
       "waxingAftercare": "Chăm sóc sau",
       "nailType": "Loại nail",
       "nailColor": "Màu nail",
       "nailBaseTop": "Base/Top",
       "nailCondition": "Tình trạng móng",
+      "nailLength": "Độ dài móng",
+      "nailArt": "Nghệ thuật",
       "nailFeedback": "Phản hồi",
       "skinType": "Loại da",
       "skinTypeDetail": "Loại da chi tiết",
-      "skinPurpose": "Mục đích chăm sóc",
       "skinTrouble": "Vấn đề da",
       "skinSensitivity": "Độ nhạy cảm",
-      "skinFeedback": "Phản hồi",
+      "skinPurpose": "Mục đích chăm sóc",
+      "skinProduct": "Sản phẩm sử dụng",
       "massageArea": "Khu vực massage",
       "massageStrength": "Cường độ",
-      "massagePreference": "Sở thích",
+      "massagePurpose": "Mục đích chăm sóc",
       "massageMuscle": "Tình trạng cơ",
+      "massageOil": "Dầu sử dụng",
       "visitCycle": "Chu kỳ đến",
       "usedDevice": "Thiết bị sử dụng",
       "usedProduct": "Sản phẩm sử dụng",
@@ -308,14 +330,38 @@
         "remove": "Gỡ"
       },
       "eyelashDesign": {
+        "natural": "Tự nhiên",
         "cat": "Mắt mèo",
         "doll": "Mắt búp bê",
-        "natural": "Tự nhiên"
+        "skinny": "Gầy",
+        "under": "Dưới",
+        "honeycomb": "Tổ ong",
+        "smoky": "Khói",
+        "sweet": "Ngọt"
+      },
+      "eyelashCurl": {
+        "J": "J",
+        "B": "B",
+        "C": "C",
+        "CC": "CC",
+        "D": "D",
+        "DD": "DD",
+        "L": "L",
+        "LD": "LD"
       },
       "waxingSkin": {
         "sensitive": "Nhạy cảm",
         "dry": "Khô",
-        "trouble": "Vấn đề"
+        "oily": "Dầu",
+        "trouble": "Vấn đề",
+        "normal": "Bình thường"
+      },
+      "waxingHairCondition": {
+        "uniform": "Đều",
+        "thick": "Dày",
+        "thin": "Mỏng",
+        "sparse": "Thưa",
+        "clumped": "Tụ lại"
       },
       "waxingPain": {
         "sensitive": "Nhạy cảm",
@@ -323,9 +369,12 @@
         "none": "Không có"
       },
       "waxingAftercare": {
-        "sensitive": "Nhạy cảm",
-        "dry": "Khô",
-        "trouble": "Vấn đề"
+        "soothing_gel": "Gel làm dịu",
+        "cream": "Kem",
+        "cold_compress": "Chườm lạnh",
+        "skin": "Da",
+        "lotion": "Kem dưỡng",
+        "none": "Không có"
       },
       "nailType": {
         "care": "Chăm sóc",
@@ -333,10 +382,27 @@
         "art": "Nghệ thuật",
         "remove": "Gỡ"
       },
+      "nailBaseTop": {
+        "both": "Cả hai",
+        "base_only": "Chỉ base",
+        "top_only": "Chỉ top",
+        "neither": "Không có"
+      },
       "nailCondition": {
         "thin": "Mỏng",
         "split": "Nứt",
-        "healthy": "Khỏe mạnh"
+        "healthy": "Khỏe mạnh",
+        "lifting": "Bong tróc",
+        "discolored": "Đổi màu"
+      },
+      "nailLength": {
+        "short": "Ngắn",
+        "medium": "Trung bình",
+        "long": "Dài"
+      },
+      "nailArt": {
+        "yes": "Có",
+        "no": "Không"
       },
       "skinType": {
         "normal": "Bình thường",
@@ -345,20 +411,38 @@
         "combination": "Hỗn hợp",
         "sensitive": "Nhạy cảm"
       },
-      "skinTypeDetail": {
-        "oily": "Dầu",
-        "dry": "Khô",
-        "combination": "Hỗn hợp",
-        "sensitive": "Nhạy cảm"
-      },
       "skinSensitivity": {
         "tingle": "Ngứa",
+        "hot": "Nóng",
+        "redness": "Đỏ",
         "none": "Không có"
+      },
+      "skinPurpose": {
+        "soothing": "Làm dịu",
+        "moisturizing": "Dưỡng ẩm",
+        "whitening": "Làm trắng",
+        "trouble": "Vấn đề",
+        "elasticity": "Đàn hồi",
+        "regeneration": "Tái tạo",
+        "exfoliation": "Tẩy tế bào chết"
       },
       "massageStrength": {
         "weak": "Yếu",
         "medium": "Trung bình",
         "strong": "Mạnh"
+      },
+      "massagePurpose": {
+        "pain_relief": "Giảm đau",
+        "circulation": "Tuần hoàn",
+        "fatigue_recovery": "Phục hồi mệt mỏi",
+        "swelling_reduction": "Giảm sưng",
+        "body_shape": "Hình dáng cơ thể"
+      },
+      "massageMuscle": {
+        "normal": "Bình thường",
+        "knots": "Cứng",
+        "tension": "Căng",
+        "lack_elasticity": "Thiếu đàn hồi"
       }
     },
     "saveError": "Không thể lưu thông tin biểu đồ.",
