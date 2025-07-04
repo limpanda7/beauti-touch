@@ -6,7 +6,7 @@ import type { Customer, Reservation, Product } from '../types';
 import { customerService, reservationService, productService } from '../services/firestore';
 import CustomerModal from '../components/CustomerModal';
 import ReservationModal from '../components/ReservationModal';
-import CustomerShareModal from '../components/CustomerShareModal.tsx';
+import ShareModal from '../components/ShareModal.tsx';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Button from '../components/Button';
 import CustomerInfo from '../components/CustomerInfo';
@@ -299,7 +299,7 @@ const CustomerDetailPage: React.FC = () => {
         <div className="customer-detail-header-right">
           <Button
             onClick={handleOpenShareCodeModal}
-            variant="secondary"
+            variant="share"
             size="sm"
           >
             <Share2 style={{ width: '1rem', height: '1rem' }} />
@@ -420,7 +420,7 @@ const CustomerDetailPage: React.FC = () => {
       )}
 
       {isShareCodeModalOpen && customer && (
-        <CustomerShareModal
+        <ShareModal
           customer={customer}
           isOpen={isShareCodeModalOpen}
           onClose={handleCloseShareCodeModal}

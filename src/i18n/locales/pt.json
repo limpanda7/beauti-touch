@@ -23,7 +23,8 @@
     "error": "Erro",
     "success": "Sucesso",
     "warning": "Aviso",
-    "info": "Informação"
+    "info": "Informação",
+    "currency": "₩"
   },
   "navigation": {
     "reservations": "Reservas",
@@ -354,6 +355,11 @@
   "chart": {
     "title": "Gráfico",
     "createChart": "Gráfico",
+    "viewChart": "Ver Gráfico",
+    "drawingTitle": "Desenhos do Gráfico",
+    "faceSide": "Perfil do Rosto",
+    "faceFront": "Frente do Rosto",
+    "body": "Corpo",
     "commonFields": "Campos Comuns",
     "typeFields": "Campos Específicos do Tipo",
     "type": {
@@ -553,11 +559,13 @@
     "passwordDescription": "O cliente precisará digitar a senha para acessar o link.",
     "changePassword": "Alterar Senha",
     "setPassword": "Definir Senha",
+    "removePassword": "Remover Senha",
     "downloadQR": "Baixar Código QR",
     "copy": "Copiar Link",
     "createError": "Erro ao criar código de compartilhamento.",
     "regenerateError": "Erro ao regenerar código de compartilhamento.",
     "disableError": "Erro ao desabilitar código de compartilhamento.",
+    "updatePasswordError": "Erro ao alterar senha.",
     "optional": "Opcional"
   },
   "sharePage": {
@@ -573,7 +581,7 @@
     "invalidCode": "Código de compartilhamento inválido.",
     "customerNotFound": "Informações do cliente não encontradas.",
     "loadError": "Erro ao carregar informações do cliente.",
-    "passwordRequired": "Por favor, digite a senha.",
+    "passwordRequiredError": "Por favor, digite a senha.",
     "invalidPassword": "Senha incorreta.",
     "verificationError": "Erro ao verificar senha.",
     "error": "Ocorreu um erro",

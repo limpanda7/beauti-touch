@@ -15,7 +15,7 @@ interface ShareCodeModalProps {
   onShareCodeUpdated: () => void;
 }
 
-const CustomerShareModal: React.FC<ShareCodeModalProps> = ({
+const ShareModal: React.FC<ShareCodeModalProps> = ({
   customer,
   isOpen,
   onClose,
@@ -306,4 +306,4 @@ const CustomerShareModal: React.FC<ShareCodeModalProps> = ({
   );
 };
 
-export default CustomerShareModal; 
+export default ShareModal; 

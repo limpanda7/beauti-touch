@@ -24,7 +24,8 @@
     "error": "Error",
     "success": "Berhasil",
     "warning": "Peringatan",
-    "info": "Info"
+    "info": "Info",
+    "currency": "₩"
   },
   "navigation": {
     "reservations": "Reservasi",
@@ -527,11 +528,13 @@
     "passwordDescription": "Pelanggan perlu memasukkan kata sandi untuk mengakses tautan.",
     "changePassword": "Ubah Kata Sandi",
     "setPassword": "Atur Kata Sandi",
+    "removePassword": "Hapus Kata Sandi",
     "downloadQR": "Unduh Kode QR",
     "copy": "Salin Tautan",
     "createError": "Gagal membuat kode bagikan.",
     "regenerateError": "Gagal regenerasi kode bagikan.",
     "disableError": "Gagal menonaktifkan kode bagikan.",
+    "updatePasswordError": "Gagal memperbarui kata sandi.",
     "optional": "Opsional"
   },
   "sharePage": {
@@ -547,7 +550,7 @@
     "invalidCode": "Kode bagikan tidak valid.",
     "customerNotFound": "Informasi pelanggan tidak ditemukan.",
     "loadError": "Gagal memuat informasi pelanggan.",
-    "passwordRequired": "Silakan masukkan kata sandi.",
+    "passwordRequiredError": "Silakan masukkan kata sandi.",
     "invalidPassword": "Kata sandi salah.",
     "verificationError": "Gagal verifikasi kata sandi.",
     "error": "Terjadi kesalahan",

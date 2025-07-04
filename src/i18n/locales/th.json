@@ -23,7 +23,8 @@
     "error": "ข้อผิดพลาด",
     "success": "สำเร็จ",
     "warning": "คำเตือน",
-    "info": "ข้อมูล"
+    "info": "ข้อมูล",
+    "currency": "₩"
   },
   "navigation": {
     "reservations": "การจอง",
@@ -556,11 +557,13 @@
     "passwordDescription": "ลูกค้าจะต้องใส่รหัสผ่านเพื่อเข้าถึงลิงก์",
     "changePassword": "เปลี่ยนรหัสผ่าน",
     "setPassword": "ตั้งรหัสผ่าน",
+    "removePassword": "ลบรหัสผ่าน",
     "downloadQR": "ดาวน์โหลดรหัส QR",
     "copy": "คัดลอกลิงก์",
     "createError": "ไม่สามารถสร้างรหัสแชร์ได้",
     "regenerateError": "ไม่สามารถสร้างรหัสแชร์ใหม่ได้",
     "disableError": "ไม่สามารถปิดใช้งานรหัสแชร์ได้",
+    "updatePasswordError": "ไม่สามารถเปลี่ยนรหัสผ่านได้",
     "optional": "ไม่บังคับ"
   },
   "sharePage": {
@@ -576,7 +579,7 @@
     "invalidCode": "รหัสแชร์ไม่ถูกต้อง",
     "customerNotFound": "ไม่พบข้อมูลลูกค้า",
     "loadError": "ไม่สามารถโหลดข้อมูลลูกค้าได้",
-    "passwordRequired": "กรุณาใส่รหัสผ่าน",
+    "passwordRequiredError": "กรุณาใส่รหัสผ่าน",
     "invalidPassword": "รหัสผ่านไม่ถูกต้อง",
     "verificationError": "ไม่สามารถยืนยันรหัสผ่านได้",
     "error": "เกิดข้อผิดพลาด",

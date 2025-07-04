@@ -1,23 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff, FileText } from 'lucide-react';
-import { shareCodeService } from '../services/firestore';
-import { reservationService } from '../services/firestore';
+import { shareCodeService, reservationService } from '../services/firestore';
 import type { Customer, Reservation } from '../types';
-import Button from '../components/Button';
 import LoadingSpinner from '../components/LoadingSpinner';
-import CustomerInfo from '../components/CustomerInfo';
 import ChartDisplay from '../components/ChartDisplay';
-import '../styles/components/_share-code.scss';
+import ChartDrawingDisplay from '../components/ChartDrawingDisplay';
+import Button from '../components/Button';
 
-const SharePage: React.FC = () => {
-  const { shareCode } = useParams<{ shareCode: string }>();
-  const navigate = useNavigate();
+// Shape 타입 정의
+type Shape = {
+  id: number;
+  type: 'circle';
+  x: number;
+  y: number;
+  text?: string;
+};
+
+// ChartData 타입 확장: drawings 필드 추가
+interface ChartDataWithDrawings {
+  memo?: string;
+  drawings?: {
+    faceSide: Shape[];
+    faceFront: Shape[];
+    body: Shape[];
+  };
+  [key: string]: any;
+}
+
+const ShareChartPage: React.FC = () => {
+  const { shareCode, reservationId } = useParams<{ shareCode: string; reservationId: string }>();
   const { t } = useTranslation();
-  
+  const navigate = useNavigate();
+
   const [customer, setCustomer] = useState<Customer | null>(null);
-  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [reservation, setReservation] = useState<Reservation | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isPasswordRequired, setIsPasswordRequired] = useState(false);
   const [password, setPassword] = useState('');
@@ -25,56 +42,47 @@ const SharePage: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Share Code로 고객 정보 조회
+  // 인증 및 데이터 로드
   useEffect(() => {
-    const loadCustomer = async () => {
-      if (!shareCode) {
+    const loadCustomerAndReservation = async () => {
+      if (!shareCode || !reservationId) {
         setError(t('sharePage.invalidCode'));
         setIsLoading(false);
         return;
       }
-
       // 인증 세션 체크
       const sessionKey = `shareAuth:${shareCode}`;
       const isSessionAuthed = sessionStorage.getItem(sessionKey) === 'true';
-
       try {
         const customerData = await shareCodeService.getCustomerByShareCode(shareCode);
-        
         if (!customerData) {
           setError(t('sharePage.customerNotFound'));
           setIsLoading(false);
           return;
         }
-
         setCustomer(customerData);
-        
-        // 비밀번호가 설정되어 있고 세션 인증이 없으면 비밀번호 요구
         if (customerData.sharePassword && !isSessionAuthed) {
           setIsPasswordRequired(true);
           setIsLoading(false);
         } else {
-          // 비밀번호가 없거나 세션 인증이 있으면 바로 인증 완료
           setIsAuthenticated(true);
-          await loadReservations(customerData.id);
+          await loadReservation(reservationId);
         }
-      } catch (error) {
-        console.error('고객 정보 조회 실패:', error);
+      } catch (e) {
         setError(t('sharePage.loadError'));
         setIsLoading(false);
       }
     };
+    loadCustomerAndReservation();
+    // eslint-disable-next-line
+  }, [shareCode, reservationId, t]);
 
-    loadCustomer();
-  }, [shareCode, t]);
-
-  // 예약 정보 로드
-  const loadReservations = async (customerId: string) => {
+  const loadReservation = async (reservationId: string) => {
     try {
-      const reservationData = await reservationService.getByCustomerId(customerId);
-      setReservations(reservationData);
-    } catch (error) {
-      console.error('예약 정보 조회 실패:', error);
+      const reservationData = await reservationService.getById(reservationId);
+      setReservation(reservationData);
+    } catch (e) {
+      setError(t('sharePage.loadError'));
     } finally {
       setIsLoading(false);
     }
@@ -83,37 +91,28 @@ const SharePage: React.FC = () => {
   // 비밀번호 인증
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!shareCode || !password.trim()) {
       setError(t('sharePage.passwordRequiredError'));
       return;
     }
-
     setIsLoading(true);
     setError('');
-
     try {
       const isValid = await shareCodeService.verifySharePassword(shareCode, password);
-      
       if (isValid) {
         setIsAuthenticated(true);
-        sessionStorage.setItem(`shareAuth:${shareCode}`, 'true');
-        if (customer) {
-          await loadReservations(customer.id);
+        if (reservationId) {
+          await loadReservation(reservationId);
         }
       } else {
         setError(t('sharePage.invalidPassword'));
       }
-    } catch (error) {
-      console.error('비밀번호 검증 실패:', error);
+    } catch (e) {
       setError(t('sharePage.verificationError'));
     } finally {
       setIsLoading(false);
     }
   };
-
-  // 방문이력: 차트 완료된 예약만 필터링
-  const completedReservations = reservations.filter(r => r.status === 'completed');
 
   if (isLoading) {
     return (
@@ -148,7 +147,6 @@ const SharePage: React.FC = () => {
           <div className="password-form">
             <h2>{t('sharePage.passwordRequired')}</h2>
             <p>{t('sharePage.passwordDescription')}</p>
-            
             <form onSubmit={handlePasswordSubmit}>
               <div className="form-group">
                 <label>{t('sharePage.password')}</label>
@@ -165,17 +163,11 @@ const SharePage: React.FC = () => {
                     className="password-toggle"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    {showPassword ? '🙈' : '👁️'}
                   </button>
                 </div>
               </div>
-              
-              {error && (
-                <div className="error-message">
-                  {error}
-                </div>
-              )}
-              
+              {error && <div className="error-message">{error}</div>}
               <Button type="submit" disabled={isLoading} className="btn-primary">
                 {isLoading ? <LoadingSpinner /> : t('sharePage.authenticate')}
               </Button>
@@ -186,7 +178,7 @@ const SharePage: React.FC = () => {
     );
   }
 
-  if (!customer) {
+  if (!customer || !reservation) {
     return (
       <div className="share-page">
         <div className="share-container">
@@ -205,80 +197,68 @@ const SharePage: React.FC = () => {
     <div className="share-page">
       <div className="share-container">
         <div className="share-header">
-          <h1>{t('sharePage.title')}</h1>
+          <h1>{t('chart.title')}</h1>
           <p>{t('sharePage.subtitle')}</p>
         </div>
-
         <div className="customer-section">
           <div className="customer-info-simple">
-            <h3>{t('customers.name')}: {customer.name}</h3>
-            <p>{t('customers.phone')}: {customer.phone}</p>
+            <h3>{customer.name}</h3>
+            <p>{customer.phone}</p>
           </div>
         </div>
-
-        <div className="reservations-section">
-          <h2>{t('sharePage.reservations')}</h2>
-          {completedReservations.length === 0 ? (
-            <div className="no-reservations">
-              <p>{t('sharePage.noReservations')}</p>
-            </div>
-          ) : (
-            <div className="reservations-list">
-              {completedReservations.map((reservation) => (
-                <div key={reservation.id} className="reservation-item">
-                  <div className="reservation-header">
-                    <h3>{reservation.productName}</h3>
-                    <span className={`status status-${reservation.status}`}>
-                      {t(`reservations.status${reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}`)}
-                    </span>
-                  </div>
-                  <div className="reservation-details">
-                    <p>
-                      <strong>{t('reservations.date')}:</strong> {new Date(reservation.date).toLocaleDateString(undefined, {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </p>
-                    <p>
-                      <strong>{t('reservations.time')}:</strong> {reservation.time}
-                    </p>
-                    <p>
-                      <strong>{t('reservations.price')}:</strong> {reservation.price.toLocaleString()}{t('common.currency')}
-                    </p>
-                    {reservation.memo && (
-                      <p>
-                        <strong>{t('reservations.memo')}:</strong> {reservation.memo}
-                      </p>
-                    )}
-                  </div>
-                  
-                  {/* 차트 보기 버튼 */}
-                  {reservation.chartType && reservation.chartData && (
-                    <div className="reservation-chart-section">
-                      <Button
-                        onClick={() => navigate(`/share/${shareCode}/chart/${reservation.id}`)}
-                        variant="secondary"
-                        size="sm"
-                        className="chart-view-btn"
-                      >
-                        <FileText style={{ width: '1rem', height: '1rem' }} />
-                        {t('chart.viewChart')}
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              ))}
+        <div className="chart-section">
+          <ChartDisplay chartType={reservation.chartType || ''} chartData={reservation.chartData || {}} />
+          
+          {/* 차트 그림 표시 */}
+          {(reservation.chartData as ChartDataWithDrawings)?.drawings && (
+            <div className="chart-drawings-section">
+              <h3 style={{ 
+                textAlign: 'center', 
+                marginBottom: '1.5rem', 
+                fontSize: '1.25rem', 
+                fontWeight: '600',
+                color: '#5C4630'
+              }}>
+                {t('chart.drawingTitle')}
+              </h3>
+              <div style={{ 
+                display: 'flex', 
+                gap: '1rem', 
+                flexWrap: 'wrap', 
+                justifyContent: 'center',
+                marginBottom: '2rem'
+              }}>
+                <ChartDrawingDisplay 
+                  imageUrl="/chart-templates/face-side.png" 
+                  width={300} 
+                  height={300} 
+                  shapes={(reservation.chartData as ChartDataWithDrawings)?.drawings?.faceSide || []}
+                  title={t('chart.faceSide')}
+                />
+                <ChartDrawingDisplay 
+                  imageUrl="/chart-templates/face-front.png" 
+                  width={300} 
+                  height={300} 
+                  shapes={(reservation.chartData as ChartDataWithDrawings)?.drawings?.faceFront || []}
+                  title={t('chart.faceFront')}
+                />
+                <ChartDrawingDisplay 
+                  imageUrl="/chart-templates/body.png" 
+                  width={300} 
+                  height={300} 
+                  shapes={(reservation.chartData as ChartDataWithDrawings)?.drawings?.body || []}
+                  title={t('chart.body')}
+                />
+              </div>
             </div>
           )}
         </div>
-
-        <div className="share-footer">
-          <p>{t('sharePage.footer')}</p>
+        <div className="share-footer" style={{ marginTop: '2rem' }}>
+          <Button onClick={() => navigate(-1)} className="btn-secondary">{t('common.back')}</Button>
         </div>
       </div>
     </div>
   );
 };
 
-export default SharePage; 
+export default ShareChartPage; 

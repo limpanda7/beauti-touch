@@ -4,7 +4,7 @@ export interface ButtonProps {
   children?: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
-  variant?: 'primary' | 'secondary' | 'danger' | 'icon' | 'chart';
+  variant?: 'primary' | 'secondary' | 'danger' | 'icon' | 'chart' | 'share';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   type?: 'button' | 'submit' | 'reset';
@@ -54,6 +54,7 @@ const Button: React.FC<ButtonProps> = ({
     danger: 'btn-danger',
     icon: 'btn-icon',
     chart: 'btn-chart',
+    share: 'btn-share',
   };
   
   const sizeClasses = {

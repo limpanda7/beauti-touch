@@ -15,6 +15,7 @@ import ProductsPage from './pages/ProductsPage';
 import SettingsPage from './pages/SettingsPage';
 import ChartPage from './pages/ChartPage';
 import SharePage from './pages/SharePage';
+import ShareChartPage from './pages/ShareChartPage';
 import { useAuthStore } from './stores/authStore';
 import { useSettingsStore } from './stores/settingsStore';
 import './styles/main.scss';
@@ -72,6 +73,7 @@ function App() {
               
               {/* Share Code 페이지 (공개 접근) */}
               <Route path="/share/:shareCode" element={<SharePage />} />
+              <Route path="/share/:shareCode/chart/:reservationId" element={<ShareChartPage />} />
               
               {/* 보호된 라우트들 */}
               <Route path="/dashboard" element={

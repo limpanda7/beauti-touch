@@ -53,6 +53,15 @@
     }
   }
   
+  &.btn-share {
+    background-color: #A0522D;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background-color: #8B4513;
+    }
+  }
+  
   &.btn-icon {
     padding: 0.5rem;
     min-width: auto;

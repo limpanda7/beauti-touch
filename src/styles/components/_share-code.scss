@@ -231,96 +231,85 @@
 // Share Page Styles
 .share-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #D4C4A7 0%, #C4B5A0 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
+  background: #FFFCFA;
+  padding: 2rem 0;
   
   .share-container {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     max-width: 800px;
-    width: 100%;
-    overflow: hidden;
+    margin: 0 auto;
+    padding: 0 1rem;
   }
   
   .share-header {
-    background: linear-gradient(135deg, #D4C4A7 0%, #C4B5A0 100%);
-    color: #5D534A;
-    padding: 2rem;
     text-align: center;
+    margin-bottom: 3rem;
     
     h1 {
-      margin: 0 0 0.5rem 0;
       font-size: 2rem;
-      font-weight: 600;
+      font-weight: 700;
+      color: #5C4630;
+      margin-bottom: 1rem;
     }
     
     p {
-      margin: 0;
-      opacity: 0.9;
-      font-size: 1.1rem;
+      font-size: 1.125rem;
+      color: #8B735A;
+      line-height: 1.6;
     }
   }
   
   .customer-section {
-    padding: 2rem;
-    border-bottom: 1px solid #E8E0D5;
-    background: #FAF8F5;
+    margin-bottom: 3rem;
     
     .customer-info-simple {
+      background: #FFF8F3;
+      padding: 2rem;
+      border-radius: 1rem;
+      border: 1px solid #E5D8CB;
       text-align: center;
       
       h3 {
-        margin: 0 0 0.5rem 0;
-        color: #5D534A;
         font-size: 1.5rem;
         font-weight: 600;
+        color: #5C4630;
+        margin-bottom: 0.5rem;
       }
       
       p {
-        margin: 0;
-        color: #8B7D6B;
-        font-size: 1.1rem;
+        color: #8B735A;
+        font-size: 1.125rem;
       }
     }
   }
   
   .reservations-section {
-    padding: 2rem;
-    background: white;
+    margin-bottom: 3rem;
     
     h2 {
-      margin: 0 0 1.5rem 0;
-      color: #5D534A;
       font-size: 1.5rem;
-      text-align: center;
+      font-weight: 600;
+      color: #5C4630;
+      margin-bottom: 1.5rem;
     }
     
     .no-reservations {
       text-align: center;
-      color: #8B7D6B;
-      padding: 2rem;
+      padding: 3rem 1rem;
+      color: #8B735A;
+      font-size: 1.125rem;
     }
     
     .reservations-list {
-      display: grid;
-      gap: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
     }
     
     .reservation-item {
-      background: #FAF8F5;
-      border-radius: 12px;
+      background: #FFF8F3;
       padding: 1.5rem;
-      border-left: 4px solid #D4C4A7;
-      transition: all 0.3s ease;
-      
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      }
+      border-radius: 1rem;
+      border: 1px solid #E5D8CB;
       
       .reservation-header {
         display: flex;
@@ -329,48 +318,48 @@
         margin-bottom: 1rem;
         
         h3 {
-          margin: 0;
-          color: #5D534A;
-          font-size: 1.1rem;
+          font-size: 1.25rem;
           font-weight: 600;
+          color: #5C4630;
+          margin: 0;
         }
         
         .status {
           padding: 0.25rem 0.75rem;
-          border-radius: 20px;
+          border-radius: 1rem;
           font-size: 0.875rem;
           font-weight: 500;
           
           &.status-confirmed {
-            background: #E8F5E8;
-            color: #2E7D32;
+            background: #DEF7EC;
+            color: #03543F;
           }
           
           &.status-completed {
-            background: #E3F2FD;
-            color: #1565C0;
+            background: #E1EFFE;
+            color: #1E429F;
           }
           
           &.status-noshow {
-            background: #FFF3E0;
-            color: #E65100;
+            background: #FDE8E8;
+            color: #9B1C1C;
           }
           
           &.status-cancelled {
-            background: #FFEBEE;
-            color: #C62828;
+            background: #FEF3C7;
+            color: #92400E;
           }
         }
       }
       
       .reservation-details {
         p {
-          margin: 0.5rem 0;
-          color: #8B7D6B;
+          margin-bottom: 0.5rem;
+          color: #8B735A;
           
           strong {
-            color: #5D534A;
-            margin-right: 0.5rem;
+            color: #5C4630;
+            font-weight: 600;
           }
         }
       }
@@ -378,44 +367,37 @@
   }
   
   .share-footer {
-    background: #FAF8F5;
-    padding: 1.5rem 2rem;
     text-align: center;
-    color: #8B7D6B;
-    font-size: 0.875rem;
-    border-top: 1px solid #E8E0D5;
-  }
-  
-  .error-container {
-    padding: 3rem 2rem;
-    text-align: center;
-    
-    h2 {
-      margin: 0 0 1rem 0;
-      color: #5D534A;
-    }
+    padding: 2rem 0;
+    border-top: 1px solid #E5D8CB;
     
     p {
-      margin: 0 0 2rem 0;
-      color: #8B7D6B;
+      color: #8B735A;
+      font-size: 0.875rem;
     }
   }
   
   .password-form {
-    padding: 2rem;
     max-width: 400px;
     margin: 0 auto;
+    padding: 2rem;
+    background: #FFF8F3;
+    border-radius: 1rem;
+    border: 1px solid #E5D8CB;
     
     h2 {
-      margin: 0 0 0.5rem 0;
-      color: #5D534A;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #5C4630;
+      margin-bottom: 1rem;
       text-align: center;
     }
     
     p {
-      margin: 0 0 2rem 0;
-      color: #8B7D6B;
+      color: #8B735A;
       text-align: center;
+      margin-bottom: 2rem;
+      line-height: 1.6;
     }
     
     .form-group {
@@ -425,71 +407,81 @@
         display: block;
         margin-bottom: 0.5rem;
         font-weight: 500;
-        color: #5D534A;
-      }
-    }
-    
-    .password-input {
-      position: relative;
-      display: flex;
-      align-items: center;
-      
-      input {
-        flex: 1;
-        padding: 0.75rem;
-        padding-right: 2.5rem;
-        border: 1px solid #D4C4A7;
-        border-radius: 8px;
-        font-size: 1rem;
-        background: white;
-        color: #5D534A;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        
-        &:focus {
-          outline: none;
-          border-color: #C4B5A0;
-          box-shadow: 0 0 0 3px rgba(196, 181, 160, 0.1);
-        }
-        
-        &:hover {
-          border-color: #B8A99A;
-        }
-        
-        &::placeholder {
-          color: #B8A99A;
-        }
+        color: #5C4630;
       }
       
-      .password-toggle {
-        position: absolute;
-        right: 14px;
-        background: none;
-        border: none;
-        color: #A8957A;
-        cursor: pointer;
-        padding: 4px;
-        border-radius: 4px;
-        transition: color 0.3s ease;
+      .password-input {
+        position: relative;
+        display: flex;
+        align-items: center;
         
-        &:hover {
-          color: #C7A17A;
+        input {
+          flex: 1;
+          padding: 0.75rem;
+          padding-right: 2.5rem;
+          border: 1px solid #D1D5DB;
+          border-radius: 0.375rem;
+          font-size: 0.875rem;
+          background-color: white;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          
+          &:focus {
+            outline: none;
+            border-color: #C7A17A;
+            box-shadow: 0 0 0 3px rgba(199, 161, 122, 0.1);
+          }
+          
+          &:hover {
+            border-color: #9CA3AF;
+          }
+          
+          &::placeholder {
+            color: #9CA3AF;
+          }
         }
         
-        &:disabled {
-          cursor: not-allowed;
-          opacity: 0.5;
+        .password-toggle {
+          position: absolute;
+          right: 14px;
+          background: none;
+          border: none;
+          color: #A8957A;
+          cursor: pointer;
+          padding: 4px;
+          border-radius: 4px;
+          transition: color 0.3s ease;
+          
+          &:hover {
+            color: #C7A17A;
+          }
         }
       }
     }
     
     .error-message {
-      background: #FFEBEE;
-      color: #C62828;
+      background: #FDE8E8;
+      color: #9B1C1C;
       padding: 0.75rem;
-      border-radius: 8px;
+      border-radius: 0.375rem;
       margin-bottom: 1rem;
       font-size: 0.875rem;
-      border: 1px solid #FFCDD2;
+    }
+  }
+  
+  .error-container {
+    text-align: center;
+    padding: 3rem 1rem;
+    
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #5C4630;
+      margin-bottom: 1rem;
+    }
+    
+    p {
+      color: #8B735A;
+      margin-bottom: 2rem;
     }
   }
 }
@@ -542,6 +534,104 @@
       p {
         font-size: 1rem;
       }
+    }
+  }
+}
+
+// Chart Display Styles
+.chart-display {
+  background: #FFF8F3;
+  border-radius: 1rem;
+  border: 1px solid #E5D8CB;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: none; // 기본적으로 숨김
+  
+  &.show {
+    display: block; // show 클래스가 있을 때만 표시
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #5C4630;
+    margin: 0 0 1rem 0;
+    text-align: center;
+  }
+  
+  .chart-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .chart-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 0.5rem;
+    border: 1px solid #E5E7EB;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+  
+  .chart-field-label {
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+    
+    @media (max-width: 768px) {
+      font-size: 0.8rem;
+    }
+  }
+  
+  .chart-field-value {
+    color: #6B7280;
+    font-size: 0.875rem;
+    text-align: right;
+    word-break: break-word;
+    max-width: 60%;
+    
+    @media (max-width: 768px) {
+      text-align: left;
+      max-width: 100%;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+// Chart View Button Styles
+.reservation-chart-section {
+  margin-top: 1rem;
+  
+  .chart-view-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #F3F4F6;
+    border: 1px solid #D1D5DB;
+    border-radius: 0.5rem;
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: #E5E7EB;
+      border-color: #9CA3AF;
+    }
+    
+    svg {
+      width: 1rem;
+      height: 1rem;
     }
   }
 } 

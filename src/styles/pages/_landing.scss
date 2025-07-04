@@ -111,6 +111,143 @@
   }
 }
 
+// Core Features Section
+.core-features-section {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, #FFFCFA 0%, #FFF8F3 100%);
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #5C4630;
+      margin-bottom: 1rem;
+
+      @media (max-width: 768px) {
+        font-size: 2rem;
+      }
+    }
+
+    p {
+      font-size: 1.125rem;
+      color: #8B735A;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+  }
+
+  .core-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 3rem;
+    margin-bottom: 2rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+
+  .core-feature-card {
+    background: #FFFCFA;
+    padding: 3rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 12px -1px rgba(92, 70, 48, 0.15), 0 4px 6px -1px rgba(92, 70, 48, 0.1);
+    border: 2px solid #E5D8CB;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #C7A17A 0%, #B08D6A 100%);
+    }
+
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 35px -5px rgba(92, 70, 48, 0.2), 0 15px 15px -5px rgba(92, 70, 48, 0.1);
+    }
+
+    &--chart {
+      border-color: #4facfe;
+      
+      &::before {
+        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+      }
+    }
+
+    &--share {
+      border-color: #f093fb;
+      
+      &::before {
+        background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+      }
+    }
+
+    .core-feature-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+      color: white;
+    }
+
+    &--chart .core-feature-icon {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    &--share .core-feature-icon {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #5C4630;
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      color: #8B735A;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .core-feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        color: #5C4630;
+        font-weight: 500;
+
+        svg {
+          color: #C7A17A;
+          flex-shrink: 0;
+        }
+      }
+    }
+  }
+}
+
 // Features Section
 .features-section {
   padding: 5rem 0;
@@ -153,10 +290,22 @@
     box-shadow: 0 4px 6px -1px rgba(92, 70, 48, 0.1), 0 2px 4px -1px rgba(92, 70, 48, 0.06);
     border: 1px solid #E5D8CB;
     transition: all 0.3s ease;
+    position: relative;
 
     &:hover {
       transform: translateY(-4px);
       box-shadow: 0 20px 25px -5px rgba(92, 70, 48, 0.15), 0 10px 10px -5px rgba(92, 70, 48, 0.08);
+    }
+
+    &--highlight {
+      background: linear-gradient(135deg, #FFFCFA 0%, #FFF8F3 100%);
+      border: 2px solid #C7A17A;
+      box-shadow: 0 8px 12px -1px rgba(199, 161, 122, 0.2), 0 4px 6px -1px rgba(199, 161, 122, 0.1);
+
+      &:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 25px 30px -5px rgba(199, 161, 122, 0.25), 0 15px 15px -5px rgba(199, 161, 122, 0.15);
+      }
     }
 
     .feature-icon {
@@ -185,6 +334,23 @@
 
     &:nth-child(4) .feature-icon {
       background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .feature-badge {
+      position: absolute;
+      top: -10px;
+      right: 20px;
+      background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+      color: #92400E;
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+      border: 1px solid #F59E0B;
     }
 
     h3 {

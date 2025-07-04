@@ -24,7 +24,8 @@
     "error": "오류",
     "success": "성공",
     "warning": "경고",
-    "info": "정보"
+    "info": "정보",
+    "currency": "원"
   },
   "navigation": {
     "reservations": "예약",
@@ -168,8 +169,8 @@
     "saveError": "상품 정보 저장에 실패했습니다."
   },
   "features": {
-    "pageTitle": "Beauti-Touch - 1인 뷰티샵을 위한 완벽한 관리 솔루션",
-    "pageDescription": "1인 뷰티샵을 위한 예약·고객·상품 관리 서비스. 지금 가입 시 1개월 무료 체험 제공!",
+    "pageTitle": "Beauti-Touch - 차트와 고객공유로 완성하는 뷰티샵 관리",
+    "pageDescription": "1인 뷰티샵을 위한 차트 관리와 고객공유 기능이 특별한 예약·고객·상품 관리 서비스. 지금 가입 시 1개월 무료 체험 제공!",
     "hero": {
       "title": "손끝에서 아름답게",
       "subtitle": "1인 뷰티샵을 위한 완벽한 예약·고객·상품 관리 솔루션",
@@ -179,8 +180,8 @@
       "betaBadge": "베타 기간",
       "betaDescription": "현재 베타 기간으로 1개월 무료 이용"
     },
-    "sectionTitle": "뷰티샵 운영의 모든 것",
-    "sectionDescription": "예약부터 고객 관리까지, 뷰티샵 운영에 필요한 모든 기능을 제공합니다",
+    "sectionTitle": "차트와 고객공유가 특별한 뷰티샵 관리",
+    "sectionDescription": "디지털 차트 작성과 고객공유 기능으로 고객 만족도를 높이는 뷰티샵 운영",
     "reservation": {
       "title": "스마트 예약 관리",
       "description": "캘린더 기반의 직관적인 예약 시스템으로 고객 예약을 효율적으로 관리하세요",
@@ -196,11 +197,11 @@
       "benefit3": "개인정보 보호 자동 마스킹"
     },
     "chart": {
-      "title": "고객 차트 관리",
-      "description": "고객별 시술 기록과 차트를 디지털로 관리하여 정확한 고객 케어를 제공하세요",
-      "benefit1": "디지털 차트 작성 도구",
-      "benefit2": "시술 전후 사진 저장",
-      "benefit3": "고객별 맞춤 관리 기록"
+      "title": "디지털 차트 작성",
+      "description": "고객별 시술 기록을 디지털 차트로 체계적으로 관리하여 전문적인 고객 케어를 제공하세요",
+      "benefit1": "직관적인 디지털 차트 작성 도구",
+      "benefit2": "업종별 맞춤 차트 템플릿",
+      "benefit3": "고객별 맞춤 시술 기록 관리"
     },
     "product": {
       "title": "상품/시술 관리",
@@ -208,6 +209,13 @@
       "benefit1": "카테고리별 상품 관리",
       "benefit2": "가격 및 소요시간 설정",
       "benefit3": "활성/비활성 상태 관리"
+    },
+    "share": {
+      "title": "고객공유 기능",
+      "description": "고객에게 시술 이력을 안전하게 공유하여 신뢰도를 높이고 재방문을 유도하세요",
+      "benefit1": "QR코드로 간편한 공유",
+      "benefit2": "비밀번호 보호로 안전한 공유",
+      "benefit3": "고객별 시술 이력 공유"
     },
     "advantages": {
       "title": "왜 Beauti-Touch인가요?",
@@ -234,6 +242,30 @@
       "description": "1개월 무료 체험으로 뷰티샵 운영의 새로운 경험을 만나보세요",
       "startNow": "무료로 시작하기",
       "login": "기존 계정으로 로그인"
+    },
+    "coreFeatures": {
+      "title": "차트와 고객공유로 차별화된 뷰티샵",
+      "description": "다른 뷰티샵 관리 앱과는 다른 특별한 기능들",
+      "chart": {
+        "title": "디지털 차트 작성",
+        "description": "종이 차트의 시대는 끝났습니다. 디지털 차트로 고객의 시술 기록을 체계적으로 관리하세요.",
+        "features": [
+          "직관적인 그리기 도구",
+          "업종별 맞춤 차트 템플릿",
+          "고객별 맞춤 차트 관리",
+          "디지털 차트 저장 및 관리"
+        ]
+      },
+      "share": {
+        "title": "고객공유 기능",
+        "description": "고객에게 시술 이력을 안전하게 공유하여 신뢰도를 높이고 재방문을 유도하세요.",
+        "features": [
+          "QR코드로 간편한 공유",
+          "비밀번호 보호로 안전한 공유",
+          "고객별 시술 이력 공유",
+          "모바일 최적화된 공유 페이지"
+        ]
+      }
     },
     "footer": {
       "rights": "모든 권리 보유"
@@ -378,6 +410,11 @@
   "chart": {
     "title": "차트",
     "createChart": "차트",
+    "viewChart": "차트 보기",
+    "drawingTitle": "차트 그림",
+    "faceSide": "얼굴 측면",
+    "faceFront": "얼굴 정면",
+    "body": "전신",
     "commonFields": "공통 필드",
     "typeFields": "업종별 필드",
     "type": {
@@ -586,7 +623,7 @@
     "invalidCode": "유효하지 않은 공유 코드입니다.",
     "customerNotFound": "고객 정보를 찾을 수 없습니다.",
     "loadError": "고객 정보를 불러오는데 실패했습니다.",
-    "passwordRequired": "비밀번호를 입력해주세요.",
+    "passwordRequiredError": "비밀번호를 입력해주세요.",
     "invalidPassword": "비밀번호가 올바르지 않습니다.",
     "verificationError": "비밀번호 확인에 실패했습니다.",
     "error": "오류가 발생했습니다",

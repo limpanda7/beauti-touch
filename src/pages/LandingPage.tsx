@@ -12,7 +12,8 @@ import {
   Zap,
   CheckCircle,
   ArrowRight,
-  Star
+  Star,
+  Share2
 } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';
 import SEO from '../components/SEO';
@@ -24,6 +25,28 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   const features = [
+    {
+      icon: FileText,
+      title: t('features.chart.title'),
+      description: t('features.chart.description'),
+      benefits: [
+        t('features.chart.benefit1'),
+        t('features.chart.benefit2'),
+        t('features.chart.benefit3')
+      ],
+      highlight: true
+    },
+    {
+      icon: Share2,
+      title: t('features.share.title'),
+      description: t('features.share.description'),
+      benefits: [
+        t('features.share.benefit1'),
+        t('features.share.benefit2'),
+        t('features.share.benefit3')
+      ],
+      highlight: true
+    },
     {
       icon: Calendar,
       title: t('features.reservation.title'),
@@ -42,16 +65,6 @@ const LandingPage: React.FC = () => {
         t('features.customer.benefit1'),
         t('features.customer.benefit2'),
         t('features.customer.benefit3')
-      ]
-    },
-    {
-      icon: FileText,
-      title: t('features.chart.title'),
-      description: t('features.chart.description'),
-      benefits: [
-        t('features.chart.benefit1'),
-        t('features.chart.benefit2'),
-        t('features.chart.benefit3')
       ]
     },
     {
@@ -128,7 +141,7 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
-
+      
       {/* Features Section */}
       <section className="features-section">
         <div className="container">
@@ -139,10 +152,16 @@ const LandingPage: React.FC = () => {
           
           <div className="features-grid">
             {features.map((feature, index) => (
-              <div key={index} className="feature-card">
+              <div key={index} className={`feature-card ${feature.highlight ? 'feature-card--highlight' : ''}`}>
                 <div className="feature-icon">
                   <feature.icon size={32} />
                 </div>
+                {feature.highlight && (
+                  <div className="feature-badge">
+                    <Star size={16} />
+                    <span>핵심 기능</span>
+                  </div>
+                )}
                 <h3>{feature.title}</h3>
                 <p>{feature.description}</p>
                 <ul className="feature-benefits">

@@ -23,7 +23,8 @@
     "error": "Lỗi",
     "success": "Thành công",
     "warning": "Cảnh báo",
-    "info": "Thông tin"
+    "info": "Thông tin",
+    "currency": "₩"
   },
   "navigation": {
     "reservations": "Đặt lịch",
@@ -564,11 +565,13 @@
     "passwordDescription": "Khách hàng cần nhập mật khẩu để truy cập liên kết.",
     "changePassword": "Đổi mật khẩu",
     "setPassword": "Đặt mật khẩu",
+    "removePassword": "Xóa mật khẩu",
     "downloadQR": "Tải xuống mã QR",
     "copy": "Sao chép liên kết",
     "createError": "Không thể tạo mã chia sẻ.",
     "regenerateError": "Không thể tạo lại mã chia sẻ.",
     "disableError": "Không thể vô hiệu hóa mã chia sẻ.",
+    "updatePasswordError": "Không thể cập nhật mật khẩu.",
     "optional": "Tùy chọn"
   },
   "sharePage": {
@@ -584,7 +587,7 @@
     "invalidCode": "Mã chia sẻ không hợp lệ.",
     "customerNotFound": "Không tìm thấy thông tin khách hàng.",
     "loadError": "Không thể tải thông tin khách hàng.",
-    "passwordRequired": "Vui lòng nhập mật khẩu.",
+    "passwordRequiredError": "Vui lòng nhập mật khẩu.",
     "invalidPassword": "Mật khẩu không đúng.",
     "verificationError": "Không thể xác minh mật khẩu.",
     "error": "Đã xảy ra lỗi",

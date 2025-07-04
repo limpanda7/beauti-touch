@@ -24,7 +24,8 @@
     "error": "Error",
     "success": "Success",
     "warning": "Warning",
-    "info": "Info"
+    "info": "Info",
+    "currency": "₩"
   },
   "navigation": {
     "reservations": "Reservations",
@@ -373,6 +374,11 @@
   "chart": {
     "title": "Chart",
     "createChart": "Chart",
+    "viewChart": "View Chart",
+    "drawingTitle": "Chart Drawings",
+    "faceSide": "Face Side",
+    "faceFront": "Face Front",
+    "body": "Body",
     "commonFields": "Common Fields",
     "typeFields": "Type-specific Fields",
     "type": {
@@ -564,11 +570,13 @@
     "passwordDescription": "Customer will need to enter password to access the link.",
     "changePassword": "Change Password",
     "setPassword": "Set Password",
+    "removePassword": "Remove Password",
     "downloadQR": "Download QR Code",
     "copy": "Copy Link",
     "createError": "Failed to create share code.",
     "regenerateError": "Failed to regenerate share code.",
     "disableError": "Failed to disable share code.",
+    "updatePasswordError": "Failed to update password.",
     "optional": "Optional"
   },
   "sharePage": {
@@ -584,7 +592,7 @@
     "invalidCode": "Invalid share code.",
     "customerNotFound": "Customer information not found.",
     "loadError": "Failed to load customer information.",
-    "passwordRequired": "Please enter password.",
+    "passwordRequiredError": "Please enter password.",
     "invalidPassword": "Incorrect password.",
     "verificationError": "Failed to verify password.",
     "error": "An error occurred",

@@ -23,7 +23,8 @@
     "error": "Error",
     "success": "Éxito",
     "warning": "Advertencia",
-    "info": "Información"
+    "info": "Información",
+    "currency": "₩"
   },
   "navigation": {
     "reservations": "Reservas",
@@ -366,6 +367,11 @@
   "chart": {
     "title": "Gráfico",
     "createChart": "Gráfico",
+    "viewChart": "Ver Gráfico",
+    "drawingTitle": "Dibujos del Gráfico",
+    "faceSide": "Perfil de la Cara",
+    "faceFront": "Frente de la Cara",
+    "body": "Cuerpo",
     "commonFields": "Campos Comunes",
     "typeFields": "Campos Específicos del Tipo",
     "type": {
@@ -556,11 +562,13 @@
     "passwordDescription": "El cliente necesitará ingresar contraseña para acceder al enlace.",
     "changePassword": "Cambiar Contraseña",
     "setPassword": "Establecer Contraseña",
+    "removePassword": "Eliminar Contraseña",
     "downloadQR": "Descargar Código QR",
     "copy": "Copiar Enlace",
     "createError": "Error al crear código de compartir.",
     "regenerateError": "Error al regenerar código de compartir.",
     "disableError": "Error al deshabilitar código de compartir.",
+    "updatePasswordError": "Error al cambiar contraseña.",
     "optional": "Opcional"
   },
   "sharePage": {
@@ -576,7 +584,7 @@
     "invalidCode": "Código de compartir inválido.",
     "customerNotFound": "Información del cliente no encontrada.",
     "loadError": "Error al cargar información del cliente.",
-    "passwordRequired": "Por favor ingresa contraseña.",
+    "passwordRequiredError": "Por favor ingresa contraseña.",
     "invalidPassword": "Contraseña incorrecta.",
     "verificationError": "Error al verificar contraseña.",
     "error": "Ocurrió un error",
