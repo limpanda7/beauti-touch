@@ -94,11 +94,6 @@ const LandingPage: React.FC = () => {
       icon: Shield,
       title: t('features.advantages.security.title'),
       description: t('features.advantages.security.description')
-    },
-    {
-      icon: Zap,
-      title: t('features.advantages.automation.title'),
-      description: t('features.advantages.automation.description')
     }
   ];
 
@@ -124,12 +119,6 @@ const LandingPage: React.FC = () => {
           </div>
           <h1 className="hero-title">{t('features.hero.title')}</h1>
           <p className="hero-subtitle">{t('features.hero.subtitle')}</p>
-          
-          {/* 베타 배지 */}
-          <div className="hero-badge">
-            <Star size={16} />
-            <span>{t('features.hero.betaBadge')}</span>
-          </div>
           
           <p className="hero-beta-description">{t('features.hero.betaDescription')}</p>
           

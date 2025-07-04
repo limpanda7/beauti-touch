@@ -60,13 +60,11 @@
 
   .hero-beta-description {
     font-size: 1rem;
-    margin-bottom: 2rem;
-    opacity: 0.8;
+    margin: 1.5rem auto;
+    opacity: 0.9;
     max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
     color: #8B735A;
-    font-weight: 500;
+    font-weight: 700;
 
     @media (max-width: 768px) {
       font-size: 0.9rem;
@@ -317,6 +315,13 @@
       justify-content: center;
       margin-bottom: 1.5rem;
       color: white;
+      background: #C7A17A;
+      
+      svg {
+        width: 32px;
+        height: 32px;
+        color: white;
+      }
     }
 
     // 각 feature별 다른 색상 적용
@@ -334,6 +339,10 @@
 
     &:nth-child(4) .feature-icon {
       background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    &:nth-child(5) .feature-icon {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
     }
 
     .feature-badge {
@@ -436,6 +445,13 @@
       justify-content: center;
       margin: 0 auto 1rem;
       color: white;
+      background: #C7A17A;
+      
+      svg {
+        width: 24px;
+        height: 24px;
+        color: white;
+      }
     }
 
     // 각 advantage별 다른 색상 적용
