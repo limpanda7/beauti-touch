@@ -270,6 +270,12 @@
   width: auto;
 }
 
+.customer-detail-page .customer-detail-header-right {
+  flex-shrink: 0;
+  min-width: auto;
+  width: auto;
+}
+
 .customer-detail-page .customer-detail-title {
   font-size: 1.5rem;
   font-weight: bold;
@@ -433,6 +439,35 @@
   color: var(--text-primary);
   margin-bottom: 0.5rem;
   display: block;
+}
+
+.customer-detail-delete-section {
+  padding-top: 1rem;
+}
+
+.customer-detail-delete-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.customer-detail-delete-warning {
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #991B1B;
+    line-height: 1.4;
+  }
 }
 
 .customer-detail-value {

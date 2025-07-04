@@ -96,13 +96,13 @@
     "customerInfo": "Informações do Cliente",
     "name": "Nome",
     "phone": "Últimos 4 dígitos do telefone",
-    "memo": "Observação",
+    "memo": "Observação (Privada)",
     "registrationDate": "Data de Registro",
     "reservationHistory": "Histórico de Reservas",
     "noCustomers": "Não há clientes registrados.",
     "noSearchResults": "Nenhum resultado encontrado.",
     "searchPlaceholder": "Pesquisar por nome ou número de telefone",
-    "deleteConfirm": "Tem certeza de que deseja excluir este cliente? As informações de reserva relacionadas também podem ser excluídas.",
+    "deleteConfirm": "Tem certeza de que deseja excluir este cliente?",
     "saveSuccess": "Informações do cliente salvas com sucesso.",
     "saveError": "Falha ao salvar informações do cliente.",
     "noMemo": "Nenhuma observação escrita.",
@@ -135,7 +135,8 @@
     "detailLoadError": "Falha ao carregar informações detalhadas do cliente.",
     "deleteError": "Falha ao excluir cliente.",
     "updateError": "Não foi possível obter dados após atualização do cliente.",
-    "createError": "Não foi possível obter dados após criação do cliente."
+    "createError": "Não foi possível obter dados após criação do cliente.",
+    "deleteWarning": "⚠️ Excluir um cliente removerá as informações do cliente das reservas vinculadas."
   },
   "products": {
     "title": "Gestão de Produtos/Serviços",
@@ -353,6 +354,8 @@
   "chart": {
     "title": "Gráfico",
     "createChart": "Gráfico",
+    "commonFields": "Campos Comuns",
+    "typeFields": "Campos Específicos do Tipo",
     "type": {
       "label": "Tipo de Gráfico",
       "eyelash": "Cílios",
@@ -364,6 +367,7 @@
       "waxingAftercare": "Cuidados Pós-tratamento"
     },
     "fields": {
+      "memo": "Memo (Privado)",
       "eyelashType": "Tipo de Tratamento",
       "eyelashDesign": "Design",
       "eyelashGlue": "Cola",
@@ -394,7 +398,7 @@
       "massageStrength": "Força",
       "massagePurpose": "Propósito do Cuidado",
       "massageMuscle": "Condição Muscular",
-      "massageOil": "Óleo Usado",
+      "massageOil": "Produto Usado",
       "visitCycle": "Ciclo de Visita",
       "usedDevice": "Dispositivo Usado",
       "usedProduct": "Produto Usado",
@@ -534,5 +538,46 @@
     "mediumFormat": "Formato Médio",
     "longFormat": "Formato Longo",
     "unsavedChangesConfirm": "O conteúdo do gráfico não salvo será perdido. Tem certeza de que quer sair?"
+  },
+  "shareCode": {
+    "title": "Compartilhar",
+    "modalTitle": "Compartilhar com Cliente",
+    "create": "Criar Código de Compartilhamento",
+    "regenerate": "Regenerar Código",
+    "disable": "Desabilitar",
+    "qrCode": "Código QR",
+    "shareUrl": "URL de Compartilhamento",
+    "password": "Senha",
+    "passwordLabel": "Senha",
+    "passwordPlaceholder": "Digite a senha (opcional)",
+    "passwordDescription": "O cliente precisará digitar a senha para acessar o link.",
+    "changePassword": "Alterar Senha",
+    "setPassword": "Definir Senha",
+    "downloadQR": "Baixar Código QR",
+    "copy": "Copiar Link",
+    "createError": "Erro ao criar código de compartilhamento.",
+    "regenerateError": "Erro ao regenerar código de compartilhamento.",
+    "disableError": "Erro ao desabilitar código de compartilhamento.",
+    "optional": "Opcional"
+  },
+  "sharePage": {
+    "title": "Informações do Cliente",
+    "subtitle": "Você pode verificar seu histórico de tratamentos.",
+    "reservations": "Histórico de Tratamentos",
+    "noReservations": "Nenhum histórico de tratamento.",
+    "passwordRequired": "Senha necessária",
+    "passwordDescription": "Por favor, digite a senha para proteção de privacidade.",
+    "password": "Senha",
+    "passwordPlaceholder": "Digite a senha",
+    "authenticate": "Verificar",
+    "invalidCode": "Código de compartilhamento inválido.",
+    "customerNotFound": "Informações do cliente não encontradas.",
+    "loadError": "Erro ao carregar informações do cliente.",
+    "passwordRequired": "Por favor, digite a senha.",
+    "invalidPassword": "Senha incorreta.",
+    "verificationError": "Erro ao verificar senha.",
+    "error": "Ocorreu um erro",
+    "goHome": "Ir para o Início",
+    "footer": "Este link é gerenciado com segurança para proteção de privacidade."
   }
 } 

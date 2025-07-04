@@ -12,12 +12,14 @@ import {
   Timestamp,
   setDoc,
   onSnapshot,
-  limit
+  limit,
+  collectionGroup
 } from 'firebase/firestore';
 import type { QuerySnapshot, DocumentData } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Customer, Product, Reservation, AutoCompleteData, AutoCompleteSuggestion, ChartType } from '../types';
 import { generateCustomerNumber, maskCustomerData, generateUniqueCustomerNumber } from '../utils/customerUtils';
+import { generateShareCode, hashPassword, verifyPassword } from '../utils/shareCodeUtils';
 import { getAuth } from 'firebase/auth';
 
 // 현재 사용자의 UID를 가져오는 함수
@@ -107,8 +109,8 @@ export const customerService = {
     try {
       const now = new Date();
       
-      // 고객 데이터 마스킹 처리 (언어 자동 감지)
-      const maskedData = maskCustomerData(customer);
+      // 회원가입 고객(테스트 고객)인 경우 마스킹을 적용하지 않음
+      const customerDataToUse = isSignUpCustomer ? customer : maskCustomerData(customer);
       
       // 기존 고객 번호 목록 가져오기
       const existingCustomers = await this.getAll();
@@ -118,7 +120,7 @@ export const customerService = {
       const customerNumber = await generateUniqueCustomerNumber(existingNumbers, isSignUpCustomer);
       
       const customerData = {
-        ...maskedData,
+        ...customerDataToUse,
         id: customerNumber, // 4자리 숫자 고객번호
         createdAt: Timestamp.fromDate(now),
         updatedAt: Timestamp.fromDate(now)
@@ -146,11 +148,12 @@ export const customerService = {
       const collectionPath = getUserCollectionPath('customers');
       const docRef = doc(db, collectionPath, id);
       
-      // 고객 데이터 마스킹 처리 (언어 자동 감지)
-      const maskedData = maskCustomerData(customer);
+      // 회원가입 고객(0000번)인 경우 마스킹을 적용하지 않음
+      const isSignUpCustomer = id === '0000';
+      const customerDataToUse = isSignUpCustomer ? customer : maskCustomerData(customer);
       
       const updateData = {
-        ...maskedData,
+        ...customerDataToUse,
         updatedAt: Timestamp.fromDate(new Date())
       };
       
@@ -574,6 +577,151 @@ export const autoCompleteService = {
       await Promise.all(deletePromises);
     } catch (error) {
       console.error('자동완성 데이터 삭제 실패:', error);
+    }
+  }
+};
+
+// Share Code 관리
+export const shareCodeService = {
+  // Share Code로 고객 조회 (공개 접근용)
+  async getCustomerByShareCode(shareCode: string): Promise<Customer | null> {
+    try {
+      // 공개 페이지에서는 collectionGroup으로 모든 유저의 customers에서 검색
+      const q = query(
+        collectionGroup(db, 'customers'),
+        where('shareCode', '==', shareCode)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      if (querySnapshot.empty) return null;
+      
+      const doc = querySnapshot.docs[0];
+      const customerData = doc.data();
+      
+      // shareEnabled 체크
+      if (!customerData.shareEnabled) return null;
+      
+      return {
+        id: doc.id,
+        ...customerData,
+        createdAt: customerData.createdAt?.toDate(),
+        updatedAt: customerData.updatedAt?.toDate(),
+        shareCreatedAt: customerData.shareCreatedAt?.toDate()
+      } as Customer;
+    } catch (error) {
+      console.error('Share Code로 고객 조회 실패:', error);
+      return null;
+    }
+  },
+
+  // Share Code 생성 및 활성화
+  async createShareCode(customerId: string, password?: string): Promise<string> {
+    try {
+      console.log('Share Code 생성 시작:', { customerId, hasPassword: !!password });
+      
+      const shareCode = generateShareCode();
+      console.log('Share Code 생성됨:', shareCode);
+      
+      const hashedPassword = password ? hashPassword(password) : undefined;
+      const now = new Date();
+      
+      const collectionPath = getUserCollectionPath('customers');
+      const docRef = doc(db, collectionPath, customerId);
+      
+      const updateData: any = {
+        shareCode,
+        shareEnabled: true,
+        shareCreatedAt: Timestamp.fromDate(now),
+        updatedAt: Timestamp.fromDate(now)
+      };
+      
+      // undefined 값은 제외하고 저장
+      if (hashedPassword !== undefined) {
+        updateData.sharePassword = hashedPassword;
+      } else {
+        // 비밀번호가 없으면 기존 비밀번호를 null로 덮어씀(삭제)
+        updateData.sharePassword = null;
+      }
+      
+      console.log('Firestore 업데이트 데이터:', updateData);
+      
+      await updateDoc(docRef, updateData);
+      
+      console.log('Share Code 생성 완료:', shareCode);
+      return shareCode;
+    } catch (error: any) {
+      console.error('Share Code 생성 실패:', error);
+      console.error('에러 상세:', {
+        message: error.message,
+        code: error.code,
+        stack: error.stack
+      });
+      throw new Error('Share Code 생성에 실패했습니다.');
+    }
+  },
+
+  // Share Code 비활성화
+  async disableShareCode(customerId: string): Promise<void> {
+    try {
+      const collectionPath = getUserCollectionPath('customers');
+      const docRef = doc(db, collectionPath, customerId);
+      
+      await updateDoc(docRef, {
+        shareEnabled: false,
+        updatedAt: Timestamp.fromDate(new Date())
+      });
+    } catch (error) {
+      console.error('Share Code 비활성화 실패:', error);
+      throw new Error('Share Code 비활성화에 실패했습니다.');
+    }
+  },
+
+  // Share Code 재생성
+  async regenerateShareCode(customerId: string, password?: string): Promise<string> {
+    try {
+      const newShareCode = generateShareCode();
+      const hashedPassword = password ? hashPassword(password) : undefined;
+      const now = new Date();
+      
+      const collectionPath = getUserCollectionPath('customers');
+      const docRef = doc(db, collectionPath, customerId);
+      
+      const updateData: any = {
+        shareCode: newShareCode,
+        shareEnabled: true,
+        shareCreatedAt: Timestamp.fromDate(now),
+        updatedAt: Timestamp.fromDate(now)
+      };
+      
+      // undefined 값은 제외하고 저장
+      if (hashedPassword !== undefined) {
+        updateData.sharePassword = hashedPassword;
+      } else {
+        // 비밀번호가 없으면 기존 비밀번호를 null로 덮어씀(삭제)
+        updateData.sharePassword = null;
+      }
+      
+      await updateDoc(docRef, updateData);
+      
+      return newShareCode;
+    } catch (error) {
+      console.error('Share Code 재생성 실패:', error);
+      throw new Error('Share Code 재생성에 실패했습니다.');
+    }
+  },
+
+  // 비밀번호 검증
+  async verifySharePassword(shareCode: string, password: string): Promise<boolean> {
+    try {
+      const customer = await this.getCustomerByShareCode(shareCode);
+      if (!customer || !customer.sharePassword) {
+        return false;
+      }
+      
+      return verifyPassword(password, customer.sharePassword);
+    } catch (error) {
+      console.error('Share Code 비밀번호 검증 실패:', error);
+      return false;
     }
   }
 }; 

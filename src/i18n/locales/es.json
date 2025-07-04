@@ -107,13 +107,13 @@
     "customerInfo": "Información del Cliente",
     "name": "Nombre",
     "phone": "Últimos 4 dígitos del teléfono",
-    "memo": "Memo",
+    "memo": "Nota (privada)",
     "registrationDate": "Fecha de Registro",
     "reservationHistory": "Historial de Reservas",
     "noCustomers": "No hay clientes registrados.",
     "noSearchResults": "No se encontraron resultados.",
     "searchPlaceholder": "Buscar por nombre o número de teléfono",
-    "deleteConfirm": "¿Está seguro de que desea eliminar este cliente? La información de reserva relacionada también puede ser eliminada.",
+    "deleteConfirm": "¿Está seguro de que desea eliminar este cliente?",
     "saveSuccess": "Información del cliente guardada exitosamente.",
     "saveError": "Error al guardar la información del cliente.",
     "noMemo": "No hay memo escrito.",
@@ -147,7 +147,8 @@
     "updateError": "No se pudo obtener datos después de actualizar cliente.",
     "createError": "No se pudo obtener datos después de crear cliente.",
     "saveError": "Error al guardar cliente",
-    "deleteError": "Error al eliminar cliente."
+    "deleteError": "Error al eliminar cliente.",
+    "deleteWarning": "⚠️ Eliminar un cliente eliminará la información del cliente de las reservas vinculadas."
   },
   "products": {
     "title": "Gestión de Productos/Servicios",
@@ -365,6 +366,8 @@
   "chart": {
     "title": "Gráfico",
     "createChart": "Gráfico",
+    "commonFields": "Campos Comunes",
+    "typeFields": "Campos Específicos del Tipo",
     "type": {
       "label": "Tipo de Gráfico",
       "eyelash": "Pestañas",
@@ -376,6 +379,7 @@
       "waxingAftercare": "Cuidado Posterior"
     },
     "fields": {
+      "memo": "Memo (Privado)",
       "eyelashType": "Tipo de Tratamiento",
       "eyelashDesign": "Diseño",
       "eyelashGlue": "Pegamento",
@@ -406,7 +410,7 @@
       "massageStrength": "Fuerza",
       "massagePurpose": "Propósito de Cuidado",
       "massageMuscle": "Condición Muscular",
-      "massageOil": "Aceite Usado",
+      "massageOil": "Producto Usado",
       "visitCycle": "Ciclo de Visita",
       "usedDevice": "Dispositivo Usado",
       "usedProduct": "Producto Usado",
@@ -537,5 +541,46 @@
     "saveError": "Error al guardar la información del gráfico.",
     "loadError": "Error al cargar la información del gráfico.",
     "unsavedChangesConfirm": "El contenido del gráfico sin guardar se perderá. ¿Estás seguro de que quieres salir?"
+  },
+  "shareCode": {
+    "title": "Compartir",
+    "modalTitle": "Compartir con Cliente",
+    "create": "Crear Código de Compartir",
+    "regenerate": "Regenerar Código",
+    "disable": "Deshabilitar",
+    "qrCode": "Código QR",
+    "shareUrl": "URL de Compartir",
+    "password": "Contraseña",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "Ingresa contraseña (opcional)",
+    "passwordDescription": "El cliente necesitará ingresar contraseña para acceder al enlace.",
+    "changePassword": "Cambiar Contraseña",
+    "setPassword": "Establecer Contraseña",
+    "downloadQR": "Descargar Código QR",
+    "copy": "Copiar Enlace",
+    "createError": "Error al crear código de compartir.",
+    "regenerateError": "Error al regenerar código de compartir.",
+    "disableError": "Error al deshabilitar código de compartir.",
+    "optional": "Opcional"
+  },
+  "sharePage": {
+    "title": "Información del Cliente",
+    "subtitle": "Puedes verificar tu historial de tratamientos.",
+    "reservations": "Historial de Tratamientos",
+    "noReservations": "No hay historial de tratamientos.",
+    "passwordRequired": "Contraseña requerida",
+    "passwordDescription": "Por favor ingresa contraseña para protección de privacidad.",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Ingresa contraseña",
+    "authenticate": "Verificar",
+    "invalidCode": "Código de compartir inválido.",
+    "customerNotFound": "Información del cliente no encontrada.",
+    "loadError": "Error al cargar información del cliente.",
+    "passwordRequired": "Por favor ingresa contraseña.",
+    "invalidPassword": "Contraseña incorrecta.",
+    "verificationError": "Error al verificar contraseña.",
+    "error": "Ocurrió un error",
+    "goHome": "Ir al Inicio",
+    "footer": "Este enlace está gestionado de forma segura para protección de privacidad."
   }
 } 

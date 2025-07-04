@@ -81,6 +81,11 @@ const ChartPage: React.FC = () => {
     { value: 'massage', label: t('chart.type.massage') },
   ];
 
+  // 공통 필드 정의 (모든 업종에 공통으로 적용)
+  const commonFields: { name: keyof ChartData; label: string; type?: string; options?: string[] }[] = [
+    { name: 'memo', label: t('chart.fields.memo'), type: 'textarea' },
+  ];
+
   // 차트 필드 정의
   const chartFieldDefs: Record<ChartType, { name: keyof ChartData; label: string; type?: string; options?: string[] }[]> = {
     eyelash: [
@@ -111,7 +116,6 @@ const ChartPage: React.FC = () => {
     ],
     skin: [
       { name: 'skinType', label: t('chart.fields.skinType'), type: 'select', options: ['normal', 'dry', 'oily', 'combination', 'sensitive'] },
-      { name: 'skinTypeDetail', label: t('chart.fields.skinTypeDetail') },
       { name: 'skinTrouble', label: t('chart.fields.skinTrouble') },
       { name: 'skinSensitivity', label: t('chart.fields.skinSensitivity'), type: 'select', options: ['tingle', 'hot', 'redness', 'none'] },
       { name: 'skinPurpose', label: t('chart.fields.skinPurpose'), type: 'select', options: ['soothing', 'moisturizing', 'whitening', 'trouble', 'elasticity', 'regeneration', 'exfoliation'] },
@@ -179,6 +183,13 @@ const ChartPage: React.FC = () => {
   // 차트 데이터 변경 핸들러
   const handleChartDataChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    
+    // 공통 필드들 (업종과 관계없이 항상 처리)
+    if (commonFields.some(field => field.name === name)) {
+      setChartData(prev => ({ ...prev, [name]: value }));
+      setHasUnsavedChanges(true);
+      return;
+    }
     
     // 차트 데이터 필드들
     if (chartType && chartFieldDefs[chartType]?.some(field => field.name === name)) {
@@ -349,38 +360,73 @@ const ChartPage: React.FC = () => {
           </div>
         </div>
 
+        {/* 업종별 필드 */}
         {chartType && (
+          <div className="chart-page-type-fields">
+            <div className="chart-page-fields-grid">
+              {chartFieldDefs[chartType].map(field => (
+                <div key={field.name} className="form-group">
+                  <label htmlFor={field.name}>{field.label}</label>
+                  {field.type === 'select' ? (
+                    <select
+                      id={field.name}
+                      name={field.name}
+                      value={chartData[field.name] as string || ''}
+                      onChange={handleChartDataChange}
+                    >
+                      <option value="">-</option>
+                      {field.options?.map(opt => (
+                        <option key={opt} value={opt}>{t(`chart.options.${field.name}.${opt}`, opt)}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <AutoCompleteInput
+                      key={`${field.name}-${chartType}`}
+                      id={field.name}
+                      name={field.name}
+                      value={chartData[field.name] as string || ''}
+                      onChange={handleChartDataChange}
+                      chartType={chartType}
+                      placeholder={field.label}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 공통 필드 (업종과 관계없이 항상 표시) */}
+        <div className="chart-page-common-fields">
           <div className="chart-page-fields-grid">
-            {chartFieldDefs[chartType].map(field => (
+            {commonFields.map(field => (
               <div key={field.name} className="form-group">
                 <label htmlFor={field.name}>{field.label}</label>
-                {field.type === 'select' ? (
-                  <select
+                {field.type === 'textarea' ? (
+                  <textarea
                     id={field.name}
                     name={field.name}
                     value={chartData[field.name] as string || ''}
                     onChange={handleChartDataChange}
-                  >
-                    <option value="">-</option>
-                    {field.options?.map(opt => (
-                      <option key={opt} value={opt}>{t(`chart.options.${field.name}.${opt}`, opt)}</option>
-                    ))}
-                  </select>
+                    placeholder={field.label}
+                    rows={4}
+                    style={{ resize: 'vertical' }}
+                  />
                 ) : (
                   <AutoCompleteInput
-                    key={`${field.name}-${chartType}`}
+                    key={`${field.name}-common`}
                     id={field.name}
                     name={field.name}
                     value={chartData[field.name] as string || ''}
                     onChange={handleChartDataChange}
-                    chartType={chartType}
+                    chartType="default"
                     placeholder={field.label}
                   />
                 )}
               </div>
             ))}
           </div>
-        )}
+        </div>
       </div>
       {/* 차트 드로잉 도구 (SVG 기반) */}
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>

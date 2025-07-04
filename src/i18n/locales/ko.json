@@ -98,13 +98,13 @@
     "customerInfo": "고객 정보",
     "name": "이름",
     "phone": "연락처 뒤 4자리",
-    "memo": "메모",
+    "memo": "메모 (비공개)",
     "registrationDate": "등록일",
     "reservationHistory": "예약 내역",
     "noCustomers": "등록된 고객이 없습니다.",
     "noSearchResults": "검색 결과가 없습니다.",
     "searchPlaceholder": "고객 이름 또는 연락처로 검색",
-    "deleteConfirm": "정말로 이 고객을 삭제하시겠습니까? 관련 예약 정보도 모두 삭제될 수 있습니다.",
+    "deleteConfirm": "정말로 이 고객을 삭제하시겠습니까?",
     "saveSuccess": "고객 정보가 저장되었습니다.",
     "saveError": "고객 정보 저장에 실패했습니다.",
     "noMemo": "작성된 메모가 없습니다.",
@@ -139,7 +139,8 @@
     "deleteError": "고객 삭제에 실패했습니다.",
     "updateError": "고객 업데이트 후 데이터를 가져올 수 없습니다.",
     "createError": "고객 생성 후 데이터를 가져올 수 없습니다.",
-    "saveError": "고객 저장 실패"
+    "saveError": "고객 저장 실패",
+    "deleteWarning": "⚠️ 고객을 삭제하면 연결된 예약에서 고객 정보가 제거됩니다."
   },
   "products": {
     "title": "상품/시술 관리",
@@ -377,6 +378,8 @@
   "chart": {
     "title": "차트",
     "createChart": "차트",
+    "commonFields": "공통 필드",
+    "typeFields": "업종별 필드",
     "type": {
       "label": "차트 종류",
       "eyelash": "속눈썹",
@@ -388,6 +391,7 @@
       "waxingAftercare": "애프터케어"
     },
     "fields": {
+      "memo": "메모 (비공개)",
       "eyelashType": "시술 종류",
       "eyelashDesign": "디자인",
       "eyelashGlue": "글루",
@@ -418,7 +422,7 @@
       "massageStrength": "강도",
       "massagePurpose": "관리 목적",
       "massageMuscle": "근육 상태",
-      "massageOil": "사용 오일",
+      "massageOil": "사용 제품",
       "visitCycle": "방문주기",
       "usedDevice": "사용 기기",
       "usedProduct": "사용 제품",
@@ -549,5 +553,44 @@
     "saveError": "차트 정보 저장에 실패했습니다.",
     "loadError": "차트 정보를 불러오는데 실패했습니다.",
     "unsavedChangesConfirm": "작성 중인 차트 내용이 저장되지 않습니다. 정말로 나가시겠습니까?"
+  },
+  "shareCode": {
+    "title": "공유",
+    "modalTitle": "고객에게 공유하기",
+    "create": "공유 코드 생성",
+    "qrCode": "QR 코드",
+    "shareUrl": "공유 링크",
+    "password": "비밀번호",
+    "passwordLabel": "비밀번호",
+    "passwordPlaceholder": "비밀번호를 입력하세요 (선택사항)",
+    "passwordDescription": "고객이 링크에 접근할 때 비밀번호를 입력해야 합니다.",
+    "changePassword": "비밀번호 변경",
+    "setPassword": "비밀번호 설정",
+    "removePassword": "비밀번호 제거",
+    "downloadQR": "QR 코드 다운로드",
+    "copy": "링크 복사",
+    "createError": "공유 코드 생성에 실패했습니다.",
+    "updatePasswordError": "비밀번호 변경에 실패했습니다.",
+    "optional": "선택사항"
+  },
+  "sharePage": {
+    "title": "고객 정보",
+    "subtitle": "고객님의 시술 이력을 확인하실 수 있습니다.",
+    "reservations": "시술 내역",
+    "noReservations": "시술 내역이 없습니다.",
+    "passwordRequired": "비밀번호가 필요합니다",
+    "passwordDescription": "개인정보 보호를 위해 비밀번호를 입력해주세요.",
+    "password": "비밀번호",
+    "passwordPlaceholder": "비밀번호를 입력하세요",
+    "authenticate": "확인",
+    "invalidCode": "유효하지 않은 공유 코드입니다.",
+    "customerNotFound": "고객 정보를 찾을 수 없습니다.",
+    "loadError": "고객 정보를 불러오는데 실패했습니다.",
+    "passwordRequired": "비밀번호를 입력해주세요.",
+    "invalidPassword": "비밀번호가 올바르지 않습니다.",
+    "verificationError": "비밀번호 확인에 실패했습니다.",
+    "error": "오류가 발생했습니다",
+    "goHome": "홈으로 이동",
+    "footer": "이 링크는 개인정보 보호를 위해 안전하게 관리됩니다."
   }
 } 

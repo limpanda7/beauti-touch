@@ -434,8 +434,13 @@
   .customer-detail-header-center {
     order: 2;
   }
-  .customer-detail-btn-group {
+  .customer-detail-header-right {
     order: 3;
+    display: flex;
+    justify-content: center;
+  }
+  .customer-detail-btn-group {
+    order: 4;
     justify-content: center;
   }
   

@@ -3,6 +3,11 @@ export interface Customer {
   name: string; // 마스킹된 이름
   phone: string; // 마스킹된 연락처 (뒤 4자리만)
   memo?: string; // 메모
+  // Share Code 관련 필드들
+  shareCode?: string; // 공개 접근 코드 (nanoid로 생성)
+  sharePassword?: string; // 해시된 비밀번호
+  shareEnabled?: boolean; // 공개 접근 활성화 여부
+  shareCreatedAt?: Date; // 공개 접근 생성일
   createdAt: Date;
   updatedAt: Date;
 }
@@ -40,6 +45,8 @@ export interface Reservation {
 export type ChartType = 'eyelash' | 'waxing' | 'nail' | 'skin' | 'massage' | 'default' | '';
 
 export interface ChartData {
+  // 공통 필드
+  memo?: string; // 메모(비공개)
   // 속눈썹
   eyelashType?: string;
   eyelashDesign?: string;
@@ -129,4 +136,17 @@ export interface AutoCompleteSuggestion {
   value: string;
   usageCount: number;
   lastUsed: Date;
+}
+
+// Share Code 관련 타입들
+export interface ShareCodeData {
+  shareCode: string;
+  password?: string;
+  enabled: boolean;
+}
+
+export interface ShareCodeAccess {
+  customerId: string;
+  shareCode: string;
+  password?: string;
 } 

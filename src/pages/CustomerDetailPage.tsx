@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit, Trash2, Plus, Save, X, FileText } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Plus, Save, X, FileText, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Customer, Reservation, Product } from '../types';
 import { customerService, reservationService, productService } from '../services/firestore';
 import CustomerModal from '../components/CustomerModal';
 import ReservationModal from '../components/ReservationModal';
+import CustomerShareModal from '../components/CustomerShareModal.tsx';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Button from '../components/Button';
 import CustomerInfo from '../components/CustomerInfo';
@@ -33,6 +34,7 @@ const CustomerDetailPage: React.FC = () => {
   const [detailForm, setDetailForm] = useState<Partial<Customer>>({});
   const [originalData, setOriginalData] = useState<Partial<Customer>>({});
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
+  const [isShareCodeModalOpen, setIsShareCodeModalOpen] = useState(false);
 
   const loadData = async () => {
     if (!id) return;
@@ -96,6 +98,18 @@ const CustomerDetailPage: React.FC = () => {
   const handleSaveReservation = async (savedReservation: Reservation) => {
     handleCloseReservationModal();
     await loadData(); // 예약 목록 새로고침
+  };
+
+  const handleOpenShareCodeModal = () => {
+    setIsShareCodeModalOpen(true);
+  };
+
+  const handleCloseShareCodeModal = () => {
+    setIsShareCodeModalOpen(false);
+  };
+
+  const handleShareCodeUpdated = async () => {
+    await loadData(); // 고객 정보 새로고침
   };
 
   const handleSave = async () => {
@@ -282,6 +296,16 @@ const CustomerDetailPage: React.FC = () => {
         <div className="customer-detail-header-center">
           <h1 className="customer-detail-title">{customer.name}</h1>
         </div>
+        <div className="customer-detail-header-right">
+          <Button
+            onClick={handleOpenShareCodeModal}
+            variant="secondary"
+            size="sm"
+          >
+            <Share2 style={{ width: '1rem', height: '1rem' }} />
+            {t('shareCode.title')}
+          </Button>
+        </div>
       </div>
 
       <div className="customer-detail-grid">
@@ -307,22 +331,12 @@ const CustomerDetailPage: React.FC = () => {
                   </Button>
                 </>
               ) : (
-                <>
-                  <Button
-                    onClick={handleDetailEdit}
-                    variant="primary"
-                  >
-                    {t('common.edit')}
-                  </Button>
-                  <Button
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                    loading={isDeleting}
-                    variant="danger"
-                  >
-                    {t('common.delete')}
-                  </Button>
-                </>
+                <Button
+                  onClick={handleDetailEdit}
+                  variant="primary"
+                >
+                  {t('common.edit')}
+                </Button>
               )}
             </div>
           </div>
@@ -338,6 +352,25 @@ const CustomerDetailPage: React.FC = () => {
             formData={detailForm}
             onFormChange={handleFormChange}
           />
+          
+          {isDetailEdit && (
+            <div className="customer-detail-delete-section">
+              <div className="customer-detail-delete-content">
+                <div className="customer-detail-delete-warning">
+                  <p>{t('customers.deleteWarning')}</p>
+                  <Button
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                    loading={isDeleting}
+                    variant="danger"
+                    size="sm"
+                  >
+                    {t('common.delete')}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="customer-detail-section">
@@ -383,6 +416,15 @@ const CustomerDetailPage: React.FC = () => {
             handleCloseReservationModal();
             await loadData();
           }}
+        />
+      )}
+
+      {isShareCodeModalOpen && customer && (
+        <CustomerShareModal
+          customer={customer}
+          isOpen={isShareCodeModalOpen}
+          onClose={handleCloseShareCodeModal}
+          onShareCodeUpdated={handleShareCodeUpdated}
         />
       )}
     </div>

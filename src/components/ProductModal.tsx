@@ -124,8 +124,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave, o
 
   return (
     <>
-      <div className="product-modal-overlay" onClick={onClose}></div>
-      <div className="product-modal">
+      <div className="product-modal-overlay" onClick={onClose}>
+        <div className="product-modal">
         <div className="product-modal-header">
           <h2 className="product-modal-title">
             {product ? t('products.editProduct') : t('products.newProduct')}
@@ -273,6 +273,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onSave, o
             </button>
           </div>
         </form>
+        </div>
       </div>
     </>
   );

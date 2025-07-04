@@ -10,7 +10,6 @@
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   
   &:disabled {
@@ -45,6 +44,15 @@
     }
   }
   
+  &.btn-warning {
+    background-color: #F59E0B;
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background-color: #D97706;
+    }
+  }
+  
   &.btn-icon {
     padding: 0.5rem;
     min-width: auto;
@@ -59,7 +67,6 @@
   width: 2.5rem;
   height: 2.5rem;
   background: none;
-  transition: box-shadow 0.15s, background 0.15s;
   cursor: pointer;
   padding: 0;
 
@@ -124,17 +131,3 @@
     display: none;
   }
 }
-
-@media (min-width: 1024px) {
-  .btn {
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-    
-    &:active {
-      transform: translateY(0);
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    }
-  }
-} 

@@ -98,13 +98,13 @@
     "customerInfo": "Customer Information",
     "name": "Name",
     "phone": "Last 4 digits of phone",
-    "memo": "Memo",
+    "memo": "Memo (Private)",
     "registrationDate": "Registration Date",
     "reservationHistory": "Reservation History",
     "noCustomers": "No customers registered.",
     "noSearchResults": "No search results.",
     "searchPlaceholder": "Search by name or phone number",
-    "deleteConfirm": "Are you sure you want to delete this customer? Related reservation information may also be deleted.",
+    "deleteConfirm": "Are you sure you want to delete this customer?",
     "saveSuccess": "Customer information saved successfully.",
     "saveError": "Failed to save customer information.",
     "noMemo": "No memo written.",
@@ -139,7 +139,8 @@
     "deleteError": "Failed to delete customer.",
     "updateError": "Unable to get data after customer update.",
     "createError": "Unable to get data after customer creation.",
-    "saveError": "Failed to save customer"
+    "saveError": "Failed to save customer",
+    "deleteWarning": "⚠️ Deleting a customer will remove customer information from linked reservations."
   },
   "products": {
     "title": "Products/Services Management",
@@ -372,6 +373,8 @@
   "chart": {
     "title": "Chart",
     "createChart": "Chart",
+    "commonFields": "Common Fields",
+    "typeFields": "Type-specific Fields",
     "type": {
       "label": "Chart Type",
       "eyelash": "Eyelash",
@@ -383,6 +386,7 @@
       "waxingAftercare": "Aftercare"
     },
     "fields": {
+      "memo": "Memo (Private)",
       "eyelashType": "Treatment Type",
       "eyelashDesign": "Design",
       "eyelashGlue": "Glue",
@@ -413,7 +417,7 @@
       "massageStrength": "Strength",
       "massagePurpose": "Care Purpose",
       "massageMuscle": "Muscle Condition",
-      "massageOil": "Used Oil",
+      "massageOil": "Used Product",
       "visitCycle": "Visit Cycle",
       "usedDevice": "Used Device",
       "usedProduct": "Used Product",
@@ -544,5 +548,47 @@
     "saveError": "Failed to save chart information.",
     "loadError": "Failed to load chart information.",
     "unsavedChangesConfirm": "Unsaved chart content will be lost. Are you sure you want to leave?"
+  },
+  "shareCode": {
+    "title": "Share",
+    "modalTitle": "Share with Customer",
+    "share": "Share",
+    "create": "Create Share Code",
+    "regenerate": "Regenerate Code",
+    "disable": "Disable",
+    "qrCode": "QR Code",
+    "shareUrl": "Share URL",
+    "password": "Password",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter password (optional)",
+    "passwordDescription": "Customer will need to enter password to access the link.",
+    "changePassword": "Change Password",
+    "setPassword": "Set Password",
+    "downloadQR": "Download QR Code",
+    "copy": "Copy Link",
+    "createError": "Failed to create share code.",
+    "regenerateError": "Failed to regenerate share code.",
+    "disableError": "Failed to disable share code.",
+    "optional": "Optional"
+  },
+  "sharePage": {
+    "title": "Customer Information",
+    "subtitle": "You can check your treatment history.",
+    "reservations": "Treatment History",
+    "noReservations": "No treatment history.",
+    "passwordRequired": "Password required",
+    "passwordDescription": "Please enter password for privacy protection.",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "authenticate": "Verify",
+    "invalidCode": "Invalid share code.",
+    "customerNotFound": "Customer information not found.",
+    "loadError": "Failed to load customer information.",
+    "passwordRequired": "Please enter password.",
+    "invalidPassword": "Incorrect password.",
+    "verificationError": "Failed to verify password.",
+    "error": "An error occurred",
+    "goHome": "Go to Home",
+    "footer": "This link is securely managed for privacy protection."
   }
 } 

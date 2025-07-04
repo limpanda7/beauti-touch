@@ -14,6 +14,7 @@ import CustomerDetailPage from './pages/CustomerDetailPage';
 import ProductsPage from './pages/ProductsPage';
 import SettingsPage from './pages/SettingsPage';
 import ChartPage from './pages/ChartPage';
+import SharePage from './pages/SharePage';
 import { useAuthStore } from './stores/authStore';
 import { useSettingsStore } from './stores/settingsStore';
 import './styles/main.scss';
@@ -68,6 +69,9 @@ function App() {
               
               {/* 인증 페이지 */}
               <Route path="/auth" element={<AuthPage />} />
+              
+              {/* Share Code 페이지 (공개 접근) */}
+              <Route path="/share/:shareCode" element={<SharePage />} />
               
               {/* 보호된 라우트들 */}
               <Route path="/dashboard" element={

@@ -96,13 +96,13 @@
     "customerInfo": "Thông tin khách hàng",
     "name": "Tên",
     "phone": "4 số cuối điện thoại",
-    "memo": "Ghi chú",
+    "memo": "Ghi chú (riêng tư)",
     "registrationDate": "Ngày đăng ký",
     "reservationHistory": "Lịch sử đặt lịch",
     "noCustomers": "Không có khách hàng đăng ký.",
     "noSearchResults": "Không tìm thấy kết quả.",
     "searchPlaceholder": "Tìm kiếm theo tên hoặc số điện thoại",
-    "deleteConfirm": "Bạn có chắc chắn muốn xóa khách hàng này? Thông tin đặt lịch liên quan cũng có thể bị xóa.",
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa khách hàng này?",
     "saveSuccess": "Lưu thông tin khách hàng thành công.",
     "saveError": "Lưu thông tin khách hàng thất bại.",
     "noMemo": "Không có ghi chú.",
@@ -137,7 +137,8 @@
     "deleteError": "Xóa khách hàng thất bại.",
     "updateError": "Không thể lấy dữ liệu sau khi cập nhật khách hàng.",
     "createError": "Không thể lấy dữ liệu sau khi tạo khách hàng.",
-    "saveError": "Lưu khách hàng thất bại"
+    "saveError": "Lưu khách hàng thất bại",
+    "deleteWarning": "⚠️ Xóa khách hàng sẽ xóa thông tin khách hàng khỏi các đặt lịch được liên kết."
   },
   "products": {
     "title": "Quản lý Sản phẩm/Dịch vụ",
@@ -373,6 +374,8 @@
   "chart": {
     "title": "Biểu đồ",
     "createChart": "Biểu đồ",
+    "commonFields": "Trường chung",
+    "typeFields": "Trường riêng biệt",
     "type": {
       "label": "Loại biểu đồ",
       "eyelash": "Lông mi",
@@ -384,6 +387,7 @@
       "waxingAftercare": "Chăm sóc sau"
     },
     "fields": {
+      "memo": "Ghi chú (Riêng tư)",
       "eyelashType": "Loại điều trị",
       "eyelashDesign": "Thiết kế",
       "eyelashGlue": "Keo",
@@ -414,7 +418,7 @@
       "massageStrength": "Cường độ",
       "massagePurpose": "Mục đích chăm sóc",
       "massageMuscle": "Tình trạng cơ",
-      "massageOil": "Dầu sử dụng",
+      "massageOil": "Sản phẩm sử dụng",
       "visitCycle": "Chu kỳ đến",
       "usedDevice": "Thiết bị sử dụng",
       "usedProduct": "Sản phẩm sử dụng",
@@ -545,5 +549,46 @@
     "saveError": "Không thể lưu thông tin biểu đồ.",
     "loadError": "Không thể tải thông tin biểu đồ.",
     "unsavedChangesConfirm": "Nội dung biểu đồ chưa lưu sẽ bị mất. Bạn có chắc chắn muốn rời đi?"
+  },
+  "shareCode": {
+    "title": "Chia sẻ",
+    "modalTitle": "Chia sẻ với khách hàng",
+    "create": "Tạo mã chia sẻ",
+    "regenerate": "Tạo lại mã",
+    "disable": "Vô hiệu hóa",
+    "qrCode": "Mã QR",
+    "shareUrl": "URL chia sẻ",
+    "password": "Mật khẩu",
+    "passwordLabel": "Mật khẩu",
+    "passwordPlaceholder": "Nhập mật khẩu (tùy chọn)",
+    "passwordDescription": "Khách hàng cần nhập mật khẩu để truy cập liên kết.",
+    "changePassword": "Đổi mật khẩu",
+    "setPassword": "Đặt mật khẩu",
+    "downloadQR": "Tải xuống mã QR",
+    "copy": "Sao chép liên kết",
+    "createError": "Không thể tạo mã chia sẻ.",
+    "regenerateError": "Không thể tạo lại mã chia sẻ.",
+    "disableError": "Không thể vô hiệu hóa mã chia sẻ.",
+    "optional": "Tùy chọn"
+  },
+  "sharePage": {
+    "title": "Thông tin khách hàng",
+    "subtitle": "Bạn có thể kiểm tra lịch sử điều trị của mình.",
+    "reservations": "Lịch sử điều trị",
+    "noReservations": "Không có lịch sử điều trị.",
+    "passwordRequired": "Yêu cầu mật khẩu",
+    "passwordDescription": "Vui lòng nhập mật khẩu để bảo vệ quyền riêng tư.",
+    "password": "Mật khẩu",
+    "passwordPlaceholder": "Nhập mật khẩu",
+    "authenticate": "Xác minh",
+    "invalidCode": "Mã chia sẻ không hợp lệ.",
+    "customerNotFound": "Không tìm thấy thông tin khách hàng.",
+    "loadError": "Không thể tải thông tin khách hàng.",
+    "passwordRequired": "Vui lòng nhập mật khẩu.",
+    "invalidPassword": "Mật khẩu không đúng.",
+    "verificationError": "Không thể xác minh mật khẩu.",
+    "error": "Đã xảy ra lỗi",
+    "goHome": "Về trang chủ",
+    "footer": "Liên kết này được quản lý an toàn để bảo vệ quyền riêng tư."
   }
 } 

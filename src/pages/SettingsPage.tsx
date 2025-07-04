@@ -26,35 +26,29 @@ const SettingsPage: React.FC = () => {
   // 날짜 형식 미리보기를 위한 샘플 날짜
   const sampleDate = new Date(2024, 11, 25); // 2024년 12월 25일
 
-  // 차트 필드 정의
+  // 차트 필드 정의 (주관식 필드만 포함)
   const chartFieldDefs: Record<ChartType, { name: string; label: string }[]> = {
     eyelash: [
       { name: 'eyelashMaterial', label: t('chart.fields.eyelashMaterial') },
       { name: 'eyelashMix', label: t('chart.fields.eyelashMix') },
       { name: 'eyelashGlue', label: t('chart.fields.eyelashGlue') },
-      { name: 'eyelashFeedback', label: t('chart.fields.eyelashFeedback') },
     ],
     waxing: [
       { name: 'waxingArea', label: t('chart.fields.waxingArea') },
-      { name: 'waxingCycle', label: t('chart.fields.waxingCycle') },
       { name: 'waxingProduct', label: t('chart.fields.waxingProduct') },
-      { name: 'waxingAftercare', label: t('chart.fields.waxingAftercare') },
+      { name: 'waxingCycle', label: t('chart.fields.waxingCycle') },
     ],
     nail: [
       { name: 'nailColor', label: t('chart.fields.nailColor') },
-      { name: 'nailBaseTop', label: t('chart.fields.nailBaseTop') },
       { name: 'nailFeedback', label: t('chart.fields.nailFeedback') },
     ],
     skin: [
-      { name: 'skinTypeDetail', label: t('chart.fields.skinTypeDetail') },
-      { name: 'skinPurpose', label: t('chart.fields.skinPurpose') },
       { name: 'skinTrouble', label: t('chart.fields.skinTrouble') },
-      { name: 'skinFeedback', label: t('chart.fields.skinFeedback') },
+      { name: 'skinProduct', label: t('chart.fields.skinProduct') },
     ],
     massage: [
       { name: 'massageArea', label: t('chart.fields.massageArea') },
-      { name: 'massagePreference', label: t('chart.fields.massagePreference') },
-      { name: 'massageMuscle', label: t('chart.fields.massageMuscle') },
+      { name: 'massageOil', label: t('chart.fields.massageOil') },
     ],
     default: [], // 기본 타입은 빈 배열
     '': [],
