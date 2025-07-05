@@ -203,6 +203,23 @@ export const isWebViewEnvironment = (): boolean => {
 if (typeof window !== 'undefined') {
   console.log('웹뷰 브리지 초기화: 전역 메시지 리스너 설정');
   
+  // React Native WebView에서 직접 메시지를 받는 경우도 처리
+  if (window.ReactNativeWebView) {
+    console.log('React Native WebView 환경 감지됨');
+    
+    // 기존 postMessage 함수를 백업
+    const originalPostMessage = window.ReactNativeWebView.postMessage;
+    
+    // postMessage 호출 시 로그 추가
+    window.ReactNativeWebView.postMessage = (message: string) => {
+      console.log('네이티브로 메시지 전송:', message);
+      originalPostMessage(message);
+    };
+    
+    console.log('React Native WebView 메시지 리스너 설정 완료');
+  }
+  
+  // 일반적인 window message 이벤트 리스너 설정
   window.addEventListener('message', (event) => {
     console.log('=== 전역 메시지 이벤트 수신 ===');
     console.log('이벤트 데이터:', event.data);
@@ -218,20 +235,6 @@ if (typeof window !== 'undefined') {
       console.error('원본 데이터:', event.data);
     }
   });
-  
-  // React Native WebView에서 직접 메시지를 받는 경우도 처리
-  if (window.ReactNativeWebView) {
-    console.log('React Native WebView 환경 감지됨');
-    
-    // 기존 postMessage 함수를 백업
-    const originalPostMessage = window.ReactNativeWebView.postMessage;
-    
-    // postMessage 호출 시 로그 추가
-    window.ReactNativeWebView.postMessage = (message: string) => {
-      console.log('네이티브로 메시지 전송:', message);
-      originalPostMessage(message);
-    };
-  }
 }
 
 // React Native WebView 타입 정의
