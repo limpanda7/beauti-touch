@@ -130,6 +130,10 @@ export const useAuthStore = create<AuthStore>()(
             
           case 'googleLoginSuccess':
             console.log('네이티브 구글 로그인 성공:', message.value);
+            // 파이어베이스 로그인이 완료된 사용자 정보를 스토어에 설정
+            if (message.value) {
+              set({ user: message.value, isLoading: false, isInitialized: true });
+            }
             break;
             
           case 'googleLoginFail':

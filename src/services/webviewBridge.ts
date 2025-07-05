@@ -1,3 +1,6 @@
+import { signInWithNativeGoogle } from './auth';
+import type { GoogleLoginResponse, WebViewGoogleLoginMessage } from '../types';
+
 interface WebViewMessage {
   type: string;
   value?: any;
@@ -70,9 +73,32 @@ export const handleNativeMessage = (message: WebViewMessage) => {
 };
 
 // 구글 로그인 성공 처리
-const handleGoogleLoginSuccess = (user: FirebaseUser) => {
-  console.log('구글 로그인 성공:', user);
-  // 여기서 필요한 추가 처리를 할 수 있습니다
+const handleGoogleLoginSuccess = async (googleResponse: GoogleLoginResponse) => {
+  try {
+    console.log('구글 로그인 성공 응답 받음:', googleResponse);
+    
+    // 파이어베이스 로그인 처리
+    const user = await signInWithNativeGoogle(googleResponse);
+    console.log('파이어베이스 로그인 완료:', user);
+    
+    // 성공 콜백 호출 (필요한 경우)
+    if (messageListener) {
+      messageListener({
+        type: 'googleLoginSuccess',
+        value: user
+      });
+    }
+  } catch (error) {
+    console.error('구글 로그인 처리 실패:', error);
+    
+    // 실패 콜백 호출
+    if (messageListener) {
+      messageListener({
+        type: 'googleLoginFail',
+        value: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'
+      });
+    }
+  }
 };
 
 // 구글 로그인 실패 처리

@@ -149,4 +149,20 @@ export interface ShareCodeAccess {
   customerId: string;
   shareCode: string;
   password?: string;
+}
+
+// 네이티브 구글 로그인 응답 타입
+export interface GoogleLoginResponse {
+  photo: string;
+  givenName: string;
+  familyName: string;
+  email: string;
+  name: string;
+  id: string;
+  token: string;
+}
+
+export interface WebViewGoogleLoginMessage {
+  type: 'googleLoginSuccess';
+  value: GoogleLoginResponse;
 } 

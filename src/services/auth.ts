@@ -8,11 +8,12 @@ import {
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
+  signInWithCredential,
 } from 'firebase/auth';
 import type { User as FirebaseUser, AuthError as FirebaseAuthError } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import type { User, LoginCredentials, SignUpCredentials, AuthError } from '../types';
+import type { User, LoginCredentials, SignUpCredentials, AuthError, GoogleLoginResponse } from '../types';
 import { createAllTestData } from '../utils/testData';
 import { getCurrentLanguage } from '../utils/languageUtils';
 import { getDefaultCurrencyForLanguage } from '../utils/currency';
@@ -493,6 +494,76 @@ export const handleGoogleRedirectResult = async (): Promise<User | null> => {
     return user;
   } catch (error) {
     console.error('Google 리다이렉트 결과 처리 실패:', error);
+    const firebaseError = error as FirebaseAuthError;
+    throw new Error(getErrorTranslationKey(firebaseError.code));
+  }
+};
+
+// 네이티브 구글 로그인 응답으로 파이어베이스 로그인 처리
+export const signInWithNativeGoogle = async (googleResponse: GoogleLoginResponse): Promise<User> => {
+  try {
+    console.log('네이티브 구글 로그인 응답 받음:', googleResponse);
+    
+    // Google Auth Provider 생성
+    const provider = new GoogleAuthProvider();
+    
+    // ID 토큰으로 Firebase 인증
+    const credential = GoogleAuthProvider.credential(googleResponse.token);
+    const userCredential = await signInWithCredential(auth, credential);
+    
+    const firebaseUser = userCredential.user;
+    console.log('Firebase 구글 로그인 성공:', firebaseUser);
+    
+    // 사용자 정보 생성
+    const user: User = {
+      uid: firebaseUser.uid,
+      email: firebaseUser.email || googleResponse.email,
+      displayName: firebaseUser.displayName || googleResponse.name,
+      photoURL: firebaseUser.photoURL || googleResponse.photo,
+      emailVerified: firebaseUser.emailVerified,
+      createdAt: new Date(firebaseUser.metadata.creationTime || Date.now()),
+      lastLoginAt: new Date(firebaseUser.metadata.lastSignInTime || Date.now()),
+    };
+    
+    console.log('변환된 사용자 정보:', user);
+    
+    // Firestore에 사용자 정보 저장
+    await saveUserToFirestore(user);
+    
+    // 신규 사용자인 경우 설정 초기화
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (!userDoc.exists()) {
+      console.log('신규 사용자 감지, 설정 초기화 시작');
+      
+      // 언어 설정 저장
+      const currentLanguage = getCurrentLanguage();
+      const settingsRef = doc(db, 'users', user.uid, 'settings', 'userSettings');
+      await setDoc(settingsRef, {
+        language: currentLanguage,
+        currency: getDefaultCurrencyForLanguage(currentLanguage),
+        businessType: ''
+      });
+      console.log('신규 사용자 언어 설정 저장 완료:', currentLanguage);
+      
+      // 테스트 데이터 생성 (비동기로 실행하되 에러는 무시)
+      try {
+        console.log('=== 신규 사용자 테스트 데이터 생성 시작 ===');
+        await createAllTestData();
+        console.log('=== 신규 사용자 테스트 데이터 생성 완료 ===');
+      } catch (testDataError) {
+        console.error('=== 신규 사용자 테스트 데이터 생성 실패 ===');
+        console.warn('테스트 데이터 생성 실패 (무시됨):', testDataError);
+      }
+    }
+    
+    return user;
+  } catch (error) {
+    console.error('네이티브 구글 로그인 처리 실패:', error);
+    
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    
     const firebaseError = error as FirebaseAuthError;
     throw new Error(getErrorTranslationKey(firebaseError.code));
   }
