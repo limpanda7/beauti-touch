@@ -18,11 +18,31 @@ import SharePage from './pages/SharePage';
 import ShareChartPage from './pages/ShareChartPage';
 import { useAuthStore } from './stores/authStore';
 import { useSettingsStore } from './stores/settingsStore';
+import { handleNativeMessage } from './services/webviewBridge';
 import './styles/main.scss';
 
 function App() {
   const { user, isInitialized } = useAuthStore();
   const { language, isLoading: settingsLoading } = useSettingsStore();
+
+  // 웹뷰 메시지 처리 설정
+  useEffect(() => {
+    // React Native WebView에서 메시지를 받을 수 있도록 이벤트 리스너 설정
+    const handleMessage = (event: MessageEvent) => {
+      try {
+        const message = JSON.parse(event.data);
+        handleNativeMessage(message);
+      } catch (error) {
+        console.error('웹뷰 메시지 파싱 오류:', error);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
 
   // 언어 설정 우선순위: 계정 언어 > localStorage > 브라우저 언어
   useEffect(() => {

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, Mail, Lock, AlertTriangle } from 'lucide-react';
 import { useAuthStore, useIsAuthenticated } from '../stores/authStore';
 import { getBrowserInfo } from '../utils/browserUtils';
+import { isWebViewEnvironment, requestGoogleLogin } from '../services/webviewBridge';
 import type { LoginCredentials } from '../types';
 
 interface LoginFormProps {
@@ -92,6 +93,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp }) => {
 
   const handleGoogleLogin = async () => {
     try {
+      // 웹뷰 환경인지 확인
+      if (isWebViewEnvironment()) {
+        console.log('웹뷰 환경에서 네이티브 구글 로그인 요청');
+        requestGoogleLogin();
+        return;
+      }
+      
+      // 일반 웹 환경에서는 기존 방식 사용
       await signInWithGoogle();
     } catch (error) {
       if (error instanceof Error && error.message === 'REDIRECT_INITIATED') {

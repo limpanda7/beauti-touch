@@ -41,7 +41,7 @@ const getErrorTranslationKey = (errorCode: string): string => {
 };
 
 // Firebase User를 앱 User 타입으로 변환
-const convertFirebaseUser = (firebaseUser: FirebaseUser): User => {
+export const convertFirebaseUser = (firebaseUser: FirebaseUser): User => {
   return {
     uid: firebaseUser.uid,
     email: firebaseUser.email || '',

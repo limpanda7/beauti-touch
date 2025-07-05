@@ -350,6 +350,8 @@
       "cancelledPopupRequest": "El inicio de sesión fue cancelado.",
       "accountExistsWithDifferentCredential": "La cuenta existe con credenciales diferentes.",
       "requiresRecentLogin": "Por favor inicia sesión nuevamente por seguridad.",
+      "googleLoginFailed": "Error en el inicio de sesión con Google.",
+      "googleLogoutFailed": "Error en el cierre de sesión con Google.",
       "unknownError": "Ocurrió un error desconocido."
     }
   },

@@ -338,6 +338,8 @@
       "cancelledPopupRequest": "Login foi cancelado.",
       "accountExistsWithDifferentCredential": "Conta existe com credenciais diferentes.",
       "requiresRecentLogin": "Por favor, faça login novamente por segurança.",
+      "googleLoginFailed": "Falha no login com Google.",
+      "googleLogoutFailed": "Falha no logout com Google.",
       "unknownError": "Ocorreu um erro desconhecido."
     }
   },

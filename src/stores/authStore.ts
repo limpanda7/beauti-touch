@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import type { User, LoginCredentials, SignUpCredentials } from '../types';
 import * as authService from '../services/auth';
+import { setWebViewMessageListener, removeWebViewMessageListener } from '../services/webviewBridge';
 
 interface AuthState {
   user: User | null;
@@ -109,6 +110,42 @@ export const useAuthStore = create<AuthStore>()(
       // 인증 상태 변경 감지
       const unsubscribe = authService.onAuthStateChange((user) => {
         set({ user, isLoading: false, isInitialized: true });
+      });
+
+      // 웹뷰 메시지 리스너 설정
+      setWebViewMessageListener((message) => {
+        console.log('AuthStore에서 웹뷰 메시지 수신:', message);
+        
+        switch (message.type) {
+          case 'firebaseAuthStateChanged':
+            if (message.value?.isSignedIn && message.value?.user) {
+              // 네이티브 앱에서 로그인된 사용자 정보를 웹 Firebase에 동기화
+              console.log('네이티브 앱에서 로그인 상태 변경 감지:', message.value.user);
+            } else {
+              // 네이티브 앱에서 로그아웃된 경우 웹 Firebase에서도 로그아웃
+              console.log('네이티브 앱에서 로그아웃 상태 변경 감지');
+              authService.signOutUser().catch(console.error);
+            }
+            break;
+            
+          case 'googleLoginSuccess':
+            console.log('네이티브 구글 로그인 성공:', message.value);
+            break;
+            
+          case 'googleLoginFail':
+            console.error('네이티브 구글 로그인 실패:', message.value);
+            set({ error: message.value, errorCode: 'auth.errors.googleLoginFailed', isLoading: false });
+            break;
+            
+          case 'googleLogoutSuccess':
+            console.log('네이티브 구글 로그아웃 성공');
+            break;
+            
+          case 'googleLogoutFail':
+            console.error('네이티브 구글 로그아웃 실패:', message.value);
+            set({ error: message.value, errorCode: 'auth.errors.googleLogoutFailed', isLoading: false });
+            break;
+        }
       });
 
       // 초기화 완료를 기다림

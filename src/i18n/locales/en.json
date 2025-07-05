@@ -357,6 +357,8 @@
       "cancelledPopupRequest": "Login was cancelled.",
       "accountExistsWithDifferentCredential": "Account exists with different credentials.",
       "requiresRecentLogin": "Please sign in again for security.",
+      "googleLoginFailed": "Google login failed.",
+      "googleLogoutFailed": "Google logout failed.",
       "unknownError": "An unknown error occurred."
     }
   },

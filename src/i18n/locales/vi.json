@@ -358,6 +358,8 @@
       "cancelledPopupRequest": "Đăng nhập đã bị hủy.",
       "accountExistsWithDifferentCredential": "Tài khoản tồn tại với thông tin đăng nhập khác.",
       "requiresRecentLogin": "Vui lòng đăng nhập lại để bảo mật.",
+      "googleLoginFailed": "Đăng nhập Google thất bại.",
+      "googleLogoutFailed": "Đăng xuất Google thất bại.",
       "unknownError": "Đã xảy ra lỗi không xác định."
     }
   },

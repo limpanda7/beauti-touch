@@ -322,6 +322,8 @@
       "cancelledPopupRequest": "Login dibatalkan.",
       "accountExistsWithDifferentCredential": "Akun ada dengan kredensial berbeda.",
       "requiresRecentLogin": "Silakan login lagi untuk keamanan.",
+      "googleLoginFailed": "Login Google gagal.",
+      "googleLogoutFailed": "Logout Google gagal.",
       "unknownError": "Terjadi kesalahan yang tidak diketahui."
     }
   },
