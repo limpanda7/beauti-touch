@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, AlertTriangle } from 'lucide-react';
 import { useAuthStore, useIsAuthenticated } from '../stores/authStore';
 import { getBrowserInfo } from '../utils/browserUtils';
@@ -29,6 +30,7 @@ const renderBoldText = (text: string) => {
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { signIn, signInWithGoogle, isLoading, error, errorCode, clearError } = useAuthStore();
   const isAuthenticated = useIsAuthenticated();
   const browserInfo = getBrowserInfo();
@@ -115,9 +117,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp }) => {
   // 로그인 성공 시 리다이렉트
   useEffect(() => {
     if (isAuthenticated) {
-      window.location.href = '/dashboard/reservations';
+      console.log('로그인 성공, 대시보드로 이동');
+      navigate('/dashboard/reservations', { replace: true });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="auth-form-container">

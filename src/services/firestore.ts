@@ -21,15 +21,54 @@ import type { Customer, Product, Reservation, AutoCompleteData, AutoCompleteSugg
 import { generateCustomerNumber, maskCustomerData, generateUniqueCustomerNumber } from '../utils/customerUtils';
 import { generateShareCode, hashPassword, verifyPassword } from '../utils/shareCodeUtils';
 import { getAuth } from 'firebase/auth';
+import { useAuthStore } from '../stores/authStore';
 
 // 현재 사용자의 UID를 가져오는 함수
 const getCurrentUserId = (): string => {
+  // 먼저 스토어에서 사용자 정보 확인
+  const authStore = useAuthStore.getState();
+  if (authStore.user && authStore.user.uid) {
+    console.log('스토어에서 사용자 ID 가져옴:', authStore.user.uid);
+    return authStore.user.uid;
+  }
+  
+  // 스토어에 없으면 Firebase Auth에서 확인
   const auth = getAuth();
   const user = auth.currentUser;
-  if (!user) {
-    throw new Error('사용자가 로그인되지 않았습니다.');
+  
+  if (user) {
+    console.log('Firebase Auth에서 사용자 ID 가져옴:', user.uid);
+    return user.uid;
   }
-  return user.uid;
+  
+  // 둘 다 없으면 잠시 대기 후 재시도 (최대 2초)
+  console.log('사용자 정보가 없음, 잠시 대기 후 재시도...');
+  
+  const startTime = Date.now();
+  while (Date.now() - startTime < 2000) {
+    // 스토어 재확인
+    const retryAuthStore = useAuthStore.getState();
+    if (retryAuthStore.user && retryAuthStore.user.uid) {
+      console.log('재시도 후 스토어에서 사용자 ID 발견:', retryAuthStore.user.uid);
+      return retryAuthStore.user.uid;
+    }
+    
+    // Firebase Auth 재확인
+    const retryAuth = getAuth();
+    const retryUser = retryAuth.currentUser;
+    if (retryUser) {
+      console.log('재시도 후 Firebase Auth에서 사용자 ID 발견:', retryUser.uid);
+      return retryUser.uid;
+    }
+    
+    // 100ms 대기
+    const waitStart = Date.now();
+    while (Date.now() - waitStart < 100) {
+      // 동기적 대기
+    }
+  }
+  
+  throw new Error('사용자가 로그인되지 않았습니다.');
 };
 
 // 사용자별 컬렉션 경로를 생성하는 함수

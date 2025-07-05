@@ -18,31 +18,32 @@ import SharePage from './pages/SharePage';
 import ShareChartPage from './pages/ShareChartPage';
 import { useAuthStore } from './stores/authStore';
 import { useSettingsStore } from './stores/settingsStore';
-import { handleNativeMessage } from './services/webviewBridge';
+import './services/webviewBridge'; // 웹뷰 브리지 초기화
 import './styles/main.scss';
 
 function App() {
-  const { user, isInitialized } = useAuthStore();
+  const { user, isInitialized, initialize: initializeAuth } = useAuthStore();
   const { language, isLoading: settingsLoading } = useSettingsStore();
 
-  // 웹뷰 메시지 처리 설정
+  // 앱 초기화
   useEffect(() => {
-    // React Native WebView에서 메시지를 받을 수 있도록 이벤트 리스너 설정
-    const handleMessage = (event: MessageEvent) => {
+    const initializeApp = async () => {
+      console.log('=== 앱 초기화 시작 ===');
+      
       try {
-        const message = JSON.parse(event.data);
-        handleNativeMessage(message);
+        // 인증 스토어 초기화 (웹뷰 메시지 리스너 설정 포함)
+        console.log('인증 스토어 초기화 시작...');
+        await initializeAuth();
+        console.log('인증 스토어 초기화 완료');
+        
+        console.log('=== 앱 초기화 완료 ===');
       } catch (error) {
-        console.error('웹뷰 메시지 파싱 오류:', error);
+        console.error('앱 초기화 실패:', error);
       }
     };
 
-    window.addEventListener('message', handleMessage);
-
-    return () => {
-      window.removeEventListener('message', handleMessage);
-    };
-  }, []);
+    initializeApp();
+  }, [initializeAuth]);
 
   // 언어 설정 우선순위: 계정 언어 > localStorage > 브라우저 언어
   useEffect(() => {

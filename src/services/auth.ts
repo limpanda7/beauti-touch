@@ -9,6 +9,7 @@ import {
   signInWithRedirect,
   getRedirectResult,
   signInWithCredential,
+  getAuth,
 } from 'firebase/auth';
 import type { User as FirebaseUser, AuthError as FirebaseAuthError } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
@@ -499,72 +500,81 @@ export const handleGoogleRedirectResult = async (): Promise<User | null> => {
   }
 };
 
-// 네이티브 구글 로그인 응답으로 파이어베이스 로그인 처리
-export const signInWithNativeGoogle = async (googleResponse: GoogleLoginResponse): Promise<User> => {
+// 네이티브 구글 로그인 처리
+export const signInWithNativeGoogle = async (nativeGoogleResponse: GoogleLoginResponse): Promise<User> => {
+  console.log('=== 네이티브 구글 로그인 처리 시작 ===');
+  console.log('네이티브 구글 로그인 응답 받음:', nativeGoogleResponse);
+  
   try {
-    console.log('네이티브 구글 로그인 응답 받음:', googleResponse);
+    const { token, email, name, photo, givenName, familyName, id } = nativeGoogleResponse;
+    
+    // 토큰 유효성 검사
+    if (!token || token.length < 100) {
+      throw new Error('유효하지 않은 구글 로그인 토큰입니다.');
+    }
+    
+    console.log('토큰 길이:', token.length);
+    console.log('토큰 시작 부분:', token.substring(0, 50) + '...');
     
     // Google Auth Provider 생성
     const provider = new GoogleAuthProvider();
+    console.log('Google Auth Provider 생성 완료');
     
-    // ID 토큰으로 Firebase 인증
-    const credential = GoogleAuthProvider.credential(googleResponse.token);
+    // Firebase 인증 시작
+    console.log('Firebase 인증 시작...');
+    const credential = GoogleAuthProvider.credential(token);
+    console.log('Credential 생성 완료:', credential);
+    
+    // 실제 Firebase Auth에 로그인
+    const auth = getAuth();
     const userCredential = await signInWithCredential(auth, credential);
-    
     const firebaseUser = userCredential.user;
-    console.log('Firebase 구글 로그인 성공:', firebaseUser);
     
-    // 사용자 정보 생성
+    console.log('Firebase Auth 로그인 성공:', firebaseUser.uid);
+    
+    // User 객체 생성 (Firebase Auth 사용자 정보 기반)
     const user: User = {
       uid: firebaseUser.uid,
-      email: firebaseUser.email || googleResponse.email,
-      displayName: firebaseUser.displayName || googleResponse.name,
-      photoURL: firebaseUser.photoURL || googleResponse.photo,
+      email: firebaseUser.email || email,
+      displayName: firebaseUser.displayName || name,
+      photoURL: firebaseUser.photoURL || photo,
       emailVerified: firebaseUser.emailVerified,
-      createdAt: new Date(firebaseUser.metadata.creationTime || Date.now()),
-      lastLoginAt: new Date(firebaseUser.metadata.lastSignInTime || Date.now()),
+      createdAt: firebaseUser.metadata.creationTime ? new Date(firebaseUser.metadata.creationTime) : new Date(),
+      lastLoginAt: firebaseUser.metadata.lastSignInTime ? new Date(firebaseUser.metadata.lastSignInTime) : new Date()
     };
     
-    console.log('변환된 사용자 정보:', user);
+    console.log('=== 네이티브 구글 로그인 처리 성공 ===');
+    console.log('생성된 사용자 정보:', user);
     
-    // Firestore에 사용자 정보 저장
-    await saveUserToFirestore(user);
+    return user;
     
-    // 신규 사용자인 경우 설정 초기화
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
-    if (!userDoc.exists()) {
-      console.log('신규 사용자 감지, 설정 초기화 시작');
+  } catch (error: any) {
+    console.error('=== 네이티브 구글 로그인 처리 실패 ===');
+    console.error('에러 타입:', typeof error);
+    console.error('에러 객체:', error);
+    console.error('에러 메시지:', error.message);
+    console.error('에러 스택:', error.stack);
+    
+    // Firebase Auth 에러 코드 확인
+    if (error.code) {
+      console.error('Firebase Auth 에러 코드:', error.code);
+      console.error('Firebase Auth 에러 메시지:', error.message);
       
-      // 언어 설정 저장
-      const currentLanguage = getCurrentLanguage();
-      const settingsRef = doc(db, 'users', user.uid, 'settings', 'userSettings');
-      await setDoc(settingsRef, {
-        language: currentLanguage,
-        currency: getDefaultCurrencyForLanguage(currentLanguage),
-        businessType: ''
-      });
-      console.log('신규 사용자 언어 설정 저장 완료:', currentLanguage);
-      
-      // 테스트 데이터 생성 (비동기로 실행하되 에러는 무시)
-      try {
-        console.log('=== 신규 사용자 테스트 데이터 생성 시작 ===');
-        await createAllTestData();
-        console.log('=== 신규 사용자 테스트 데이터 생성 완료 ===');
-      } catch (testDataError) {
-        console.error('=== 신규 사용자 테스트 데이터 생성 실패 ===');
-        console.warn('테스트 데이터 생성 실패 (무시됨):', testDataError);
+      // 특정 에러 코드에 대한 처리
+      if (error.code === 'auth/invalid-credential') {
+        throw new Error('구글 로그인 토큰이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요.');
+      } else if (error.code === 'auth/account-exists-with-different-credential') {
+        throw new Error('이미 다른 방법으로 가입된 계정입니다.');
+      } else if (error.code === 'auth/network-request-failed') {
+        throw new Error('네트워크 연결을 확인해주세요.');
       }
     }
     
-    return user;
-  } catch (error) {
-    console.error('네이티브 구글 로그인 처리 실패:', error);
-    
-    if (error instanceof Error) {
+    // 일반적인 에러 처리
+    if (error.message) {
       throw new Error(error.message);
+    } else {
+      throw new Error('구글 로그인 중 오류가 발생했습니다.');
     }
-    
-    const firebaseError = error as FirebaseAuthError;
-    throw new Error(getErrorTranslationKey(firebaseError.code));
   }
 }; 
