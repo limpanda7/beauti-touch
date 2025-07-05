@@ -352,6 +352,7 @@
       "requiresRecentLogin": "Por favor inicia sesión nuevamente por seguridad.",
       "googleLoginFailed": "Error en el inicio de sesión con Google.",
       "googleLogoutFailed": "Error en el cierre de sesión con Google.",
+      "authStatusFailed": "Error al verificar el estado de autenticación.",
       "unknownError": "Ocurrió un error desconocido."
     }
   },

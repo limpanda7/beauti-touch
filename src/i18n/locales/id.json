@@ -324,6 +324,7 @@
       "requiresRecentLogin": "Silakan login lagi untuk keamanan.",
       "googleLoginFailed": "Login Google gagal.",
       "googleLogoutFailed": "Logout Google gagal.",
+      "authStatusFailed": "Gagal memeriksa status autentikasi.",
       "unknownError": "Terjadi kesalahan yang tidak diketahui."
     }
   },

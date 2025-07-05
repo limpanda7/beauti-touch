@@ -360,6 +360,7 @@
       "requiresRecentLogin": "Vui lòng đăng nhập lại để bảo mật.",
       "googleLoginFailed": "Đăng nhập Google thất bại.",
       "googleLogoutFailed": "Đăng xuất Google thất bại.",
+      "authStatusFailed": "Không thể kiểm tra trạng thái xác thực.",
       "unknownError": "Đã xảy ra lỗi không xác định."
     }
   },

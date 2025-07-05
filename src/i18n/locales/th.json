@@ -343,6 +343,7 @@
       "requiresRecentLogin": "กรุณาเข้าสู่ระบบอีกครั้งเพื่อความปลอดภัย",
       "googleLoginFailed": "การเข้าสู่ระบบ Google ล้มเหลว",
       "googleLogoutFailed": "การออกจากระบบ Google ล้มเหลว",
+      "authStatusFailed": "ไม่สามารถตรวจสอบสถานะการยืนยันตัวตนได้",
       "unknownError": "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ"
     }
   },

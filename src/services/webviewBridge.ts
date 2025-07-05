@@ -1,17 +1,18 @@
-import { signInWithNativeGoogle } from './auth';
-import type { GoogleLoginResponse, WebViewGoogleLoginMessage } from '../types';
+import type { User } from '../types';
 
 interface WebViewMessage {
   type: string;
   value?: any;
 }
 
-interface FirebaseUser {
+interface NativeUserInfo {
   uid: string;
   email: string | null;
   displayName: string | null;
   photoURL: string | null;
-  idToken: string | null;
+  emailVerified: boolean;
+  createdAt: string;
+  lastLoginAt: string;
 }
 
 // 웹뷰 메시지 리스너 등록
@@ -40,6 +41,19 @@ export const postMessageToNative = (type: string, value?: any) => {
   }
 };
 
+// 네이티브 유저 정보를 앱 User 타입으로 변환
+const convertNativeUserInfo = (nativeUserInfo: NativeUserInfo): User => {
+  return {
+    uid: nativeUserInfo.uid,
+    email: nativeUserInfo.email || '',
+    displayName: nativeUserInfo.displayName || undefined,
+    photoURL: nativeUserInfo.photoURL || undefined,
+    emailVerified: nativeUserInfo.emailVerified,
+    createdAt: new Date(nativeUserInfo.createdAt),
+    lastLoginAt: new Date(nativeUserInfo.lastLoginAt),
+  };
+};
+
 // 네이티브 앱에서 받은 메시지 처리
 export const handleNativeMessage = (message: WebViewMessage) => {
   console.log('=== 네이티브 앱에서 받은 메시지 처리 시작 ===');
@@ -47,24 +61,34 @@ export const handleNativeMessage = (message: WebViewMessage) => {
   console.log('메시지 값:', message.value);
   
   switch (message.type) {
-    case 'googleLoginSuccess':
-      console.log('구글 로그인 성공 메시지 처리 시작');
-      handleGoogleLoginSuccess(message.value);
+    case 'userLoginSuccess':
+      console.log('네이티브 유저 로그인 성공 메시지 처리');
+      handleUserLoginSuccess(message.value);
       break;
       
-    case 'googleLoginFail':
-      console.log('구글 로그인 실패 메시지 처리');
-      handleGoogleLoginFail(message.value);
+    case 'userLoginFail':
+      console.log('네이티브 유저 로그인 실패 메시지 처리');
+      handleUserLoginFail(message.value);
       break;
       
-    case 'googleLogoutSuccess':
-      console.log('구글 로그아웃 성공 메시지 처리');
-      handleGoogleLogoutSuccess();
+    case 'userLogoutSuccess':
+      console.log('네이티브 유저 로그아웃 성공 메시지 처리');
+      handleUserLogoutSuccess();
       break;
       
-    case 'googleLogoutFail':
-      console.log('구글 로그아웃 실패 메시지 처리');
-      handleGoogleLogoutFail(message.value);
+    case 'userLogoutFail':
+      console.log('네이티브 유저 로그아웃 실패 메시지 처리');
+      handleUserLogoutFail(message.value);
+      break;
+
+    case 'authStatusSuccess':
+      console.log('네이티브 인증 상태 확인 성공 메시지 처리');
+      handleAuthStatusSuccess(message.value);
+      break;
+
+    case 'authStatusFail':
+      console.log('네이티브 인증 상태 확인 실패 메시지 처리');
+      handleAuthStatusFail(message.value);
       break;
       
     default:
@@ -83,105 +107,119 @@ export const handleNativeMessage = (message: WebViewMessage) => {
   console.log('=== 네이티브 앱에서 받은 메시지 처리 완료 ===');
 };
 
-// 구글 로그인 성공 처리
-const handleGoogleLoginSuccess = async (googleResponse: GoogleLoginResponse) => {
-  console.log('=== 구글 로그인 성공 처리 시작 ===');
-  console.log('구글 로그인 성공 응답 받음:', googleResponse);
+// 네이티브 유저 로그인 성공 처리
+const handleUserLoginSuccess = (nativeUserInfo: NativeUserInfo) => {
+  console.log('=== 네이티브 유저 로그인 성공 처리 시작 ===');
+  console.log('네이티브 유저 정보 받음:', nativeUserInfo);
   
   try {
-    // 네이티브에 진행상황 메시지 전송
-    postMessageToNative('googleLoginProgress', {
-      status: 'processing',
-      message: 'Firebase 인증 처리 중...'
-    });
-    
-    // 파이어베이스 로그인 처리 시작...
-    console.log('파이어베이스 로그인 처리 시작...');
-    const user = await signInWithNativeGoogle(googleResponse);
-    
-    // 네이티브에 성공 메시지 전송
-    postMessageToNative('googleLoginProgress', {
-      status: 'success',
-      message: '로그인 완료'
-    });
+    // 네이티브 유저 정보를 앱 User 타입으로 변환
+    const user = convertNativeUserInfo(nativeUserInfo);
+    console.log('변환된 유저 정보:', user);
     
     // 등록된 메시지 리스너 호출
     if (messageListener) {
-      console.log('등록된 메시지 리스너 호출');
+      console.log('등록된 메시지 리스너 호출 - 성공');
       messageListener({
-        type: 'googleLoginSuccess',
+        type: 'userLoginSuccess',
         value: user
       });
     }
     
-    console.log('=== 구글 로그인 처리 성공 완료 ===');
+    console.log('=== 네이티브 유저 로그인 처리 성공 완료 ===');
     
   } catch (error) {
-    console.error('=== 구글 로그인 처리 실패 ===');
-    console.error('에러 타입:', typeof error);
-    console.error('에러 객체:', error);
-    console.error('에러 메시지:', error instanceof Error ? error.message : '알 수 없는 오류');
-    console.error('에러 스택:', error instanceof Error ? error.stack : '스택 없음');
+    console.error('=== 네이티브 유저 로그인 처리 실패 ===');
+    console.error('에러:', error);
     
-    // Firebase 인증 실패 시에도 테스트용 사용자 정보 생성
-    if (error instanceof Error && error.message.includes('토큰이 만료되었거나 유효하지 않습니다')) {
-      console.log('Firebase 인증 실패, 테스트용 사용자 정보 생성');
-      
-      const testUser = {
-        uid: 'test-user-' + Date.now(),
-        email: googleResponse.email,
-        displayName: googleResponse.name,
-        photoURL: googleResponse.photo,
-        emailVerified: true,
-        createdAt: new Date(),
-        lastLoginAt: new Date()
-      };
-      
-      // 네이티브에 실패 메시지 전송
-      postMessageToNative('googleLoginFail', error.message);
-      
-      // 등록된 메시지 리스너 호출 (실패)
-      if (messageListener) {
-        console.log('메시지 리스너 호출 - 실패');
-        messageListener({
-          type: 'googleLoginFail',
-          value: error.message
-        });
-      }
-    } else {
-      // 네이티브에 실패 메시지 전송
-      postMessageToNative('googleLoginFail', error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
-      
-      // 등록된 메시지 리스너 호출 (실패)
-      if (messageListener) {
-        console.log('메시지 리스너 호출 - 실패');
-        messageListener({
-          type: 'googleLoginFail',
-          value: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'
-        });
-      }
+    // 등록된 메시지 리스너 호출 (실패)
+    if (messageListener) {
+      console.log('메시지 리스너 호출 - 실패');
+      messageListener({
+        type: 'userLoginFail',
+        value: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.'
+      });
     }
     
-    console.log('=== 구글 로그인 처리 실패 완료 ===');
+    console.log('=== 네이티브 유저 로그인 처리 실패 완료 ===');
   }
 };
 
-// 구글 로그인 실패 처리
-const handleGoogleLoginFail = (errorMessage: string) => {
-  console.error('구글 로그인 실패:', errorMessage);
-  // 에러 처리 로직
+// 네이티브 유저 로그인 실패 처리
+const handleUserLoginFail = (errorMessage: string) => {
+  console.error('네이티브 유저 로그인 실패:', errorMessage);
+  
+  // 등록된 메시지 리스너 호출 (실패)
+  if (messageListener) {
+    messageListener({
+      type: 'userLoginFail',
+      value: errorMessage
+    });
+  }
 };
 
-// 구글 로그아웃 성공 처리
-const handleGoogleLogoutSuccess = () => {
-  console.log('구글 로그아웃 성공');
-  // 로그아웃 성공 처리 로직
+// 네이티브 유저 로그아웃 성공 처리
+const handleUserLogoutSuccess = () => {
+  console.log('네이티브 유저 로그아웃 성공');
+  
+  // 등록된 메시지 리스너 호출
+  if (messageListener) {
+    messageListener({
+      type: 'userLogoutSuccess'
+    });
+  }
 };
 
-// 구글 로그아웃 실패 처리
-const handleGoogleLogoutFail = (errorMessage: string) => {
-  console.error('구글 로그아웃 실패:', errorMessage);
-  // 에러 처리 로직
+// 네이티브 유저 로그아웃 실패 처리
+const handleUserLogoutFail = (errorMessage: string) => {
+  console.error('네이티브 유저 로그아웃 실패:', errorMessage);
+  
+  // 등록된 메시지 리스너 호출 (실패)
+  if (messageListener) {
+    messageListener({
+      type: 'userLogoutFail',
+      value: errorMessage
+    });
+  }
+};
+
+// 네이티브 인증 상태 확인 성공 처리
+const handleAuthStatusSuccess = (authStatus: { isSignedIn: boolean; user: NativeUserInfo | null }) => {
+  console.log('네이티브 인증 상태 확인 성공:', authStatus);
+  
+  if (authStatus.isSignedIn && authStatus.user) {
+    const user = convertNativeUserInfo(authStatus.user);
+    console.log('변환된 유저 정보:', user);
+    
+    // 등록된 메시지 리스너 호출
+    if (messageListener) {
+      messageListener({
+        type: 'authStatusSuccess',
+        value: { isSignedIn: true, user }
+      });
+    }
+  } else {
+    // 등록된 메시지 리스너 호출
+    if (messageListener) {
+      messageListener({
+        type: 'authStatusSuccess',
+        value: { isSignedIn: false, user: null }
+      });
+    }
+  }
+};
+
+// 네이티브 인증 상태 확인 실패 처리
+const handleAuthStatusFail = (errorMessage: string) => {
+  console.error('네이티브 인증 상태 확인 실패:', errorMessage);
+  
+  // 등록된 메시지 리스너 호출 (실패)
+  if (messageListener) {
+    messageListener({
+      type: 'authStatusFail',
+      value: errorMessage
+    });
+  }
 };
 
 // 네이티브 앱에 구글 로그인 요청
@@ -194,10 +232,60 @@ export const requestGoogleLogout = () => {
   postMessageToNative('googleLogout');
 };
 
+// 네이티브 앱에 인증 상태 확인 요청
+export const requestAuthStatus = () => {
+  postMessageToNative('checkAuthStatus');
+};
+
 // 웹뷰 환경인지 확인
 export const isWebViewEnvironment = (): boolean => {
   return !!(window.ReactNativeWebView);
 };
+
+// 테스트용 함수들 (개발 환경에서만 사용)
+export const testNativeGoogleLogin = () => {
+  if (isWebViewEnvironment()) {
+    requestGoogleLogin();
+  } else {
+    console.log('웹뷰 환경이 아닙니다. 테스트를 실행할 수 없습니다.');
+  }
+};
+
+export const testNativeGoogleLogout = () => {
+  if (isWebViewEnvironment()) {
+    requestGoogleLogout();
+  } else {
+    console.log('웹뷰 환경이 아닙니다. 테스트를 실행할 수 없습니다.');
+  }
+};
+
+export const testAuthStatus = () => {
+  if (isWebViewEnvironment()) {
+    requestAuthStatus();
+  } else {
+    console.log('웹뷰 환경이 아닙니다. 테스트를 실행할 수 없습니다.');
+  }
+};
+
+// 전역 타입 선언
+declare global {
+  interface Window {
+    ReactNativeWebView?: {
+      postMessage: (message: string) => void;
+    };
+    // 테스트용 전역 함수
+    testNativeGoogleLogin?: () => void;
+    testNativeGoogleLogout?: () => void;
+    testAuthStatus?: () => void;
+  }
+}
+
+// 개발 환경에서 전역 함수 등록
+if (typeof window !== 'undefined') {
+  window.testNativeGoogleLogin = testNativeGoogleLogin;
+  window.testNativeGoogleLogout = testNativeGoogleLogout;
+  window.testAuthStatus = testAuthStatus;
+}
 
 // 전역 메시지 리스너 설정
 if (typeof window !== 'undefined') {
@@ -235,131 +323,4 @@ if (typeof window !== 'undefined') {
       console.error('원본 데이터:', event.data);
     }
   });
-}
-
-// React Native WebView 타입 정의
-declare global {
-  interface Window {
-    ReactNativeWebView?: {
-      postMessage: (message: string) => void;
-    };
-    // 테스트용 전역 함수
-    testNativeGoogleLogin?: () => void;
-    testNativeGoogleLoginWithoutFirebase?: () => void;
-  }
-}
-
-// 테스트용 전역 함수들 (브라우저에서만 사용)
-if (typeof window !== 'undefined' && !isWebViewEnvironment()) {
-  // 네이티브 구글 로그인 응답 시뮬레이션 (Firebase 인증 포함)
-  (window as any).testNativeGoogleLogin = () => {
-    console.log('테스트: 네이티브 구글 로그인 응답 시뮬레이션');
-    
-    const testResponse = {
-      type: 'googleLoginSuccess',
-      value: {
-        photo: 'https://lh3.googleusercontent.com/a/ACg8ocJIpma2ZHB4X7V-gg7vNqOqPo0mvZpgu34mAoKaU8LgPUbAvXc=s96-c',
-        givenName: '성훈',
-        familyName: '임',
-        email: 'limpanda7@gmail.com',
-        name: '임성훈',
-        id: '118431536161630265973',
-        token: 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjhlOGZjOGU1NTZmN2E3NmQwOGQzNTgyOWQ2ZjkwYWUyZTEyY2ZkMGQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiIxOTE5OTgwNTY5MTgtYWZhbWFub245bnJzaWdodmpkNHRqM2lkOWxoZWQ4YzguYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiIxOTE5OTgwNTY5MTgtdXZmbmNybXFkcHNhdTliYTgzbzNzdjA3bmE0cm5zZHEuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTg0MzE1MzYxNjE2MzAyNjU5NzMiLCJlbWFpbCI6ImxpbXBhbmRhN0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IuyehOyEse2biCIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NKSXBtYTJaSEI0WDdWLWdnN3ZOcU9xUG8wbXZacGd1MzRtQW9LYVU4TGdQVWJBdlhjPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6IuyEse2biCIsImZhbWlseV9uYW1lIjoi7J6EIiwiaWF0IjoxNzUxNzIwNjg3LCJleHAiOjE3NTE3MjQyODd9.dtp5_f0jPWrVJzL0WHUjzCiCSQVJIv5Lj238KBNkDoJ0Y0wx0T7vXAcsid9P4FZaSK6ulXJRq14qXyaxB_qssDXnDrsmutI8iBxF3hrlmBo7b2sVjYS3EAcQU66znFgXExO2wrtqHTVdXcpdctQpx2xUQdulyls6QVc6MgEjqL2-IWBcRBiVkCLb1_jFB4SdyaAstUWHw4ZUaMWvbXpVsTWWGZ9XDUsQoTONV_OZvaKHZ-twNORTIrBL3wrtKsbuVVG9f506DBOuiSKvh4BM6i1TiCQkh6Q2mk-hcl6LeJ-uzDrgP2hc5Th-QxX69av47t389Mlg1c8ukT588I_p6g'
-      }
-    };
-    
-    console.log('테스트 응답 생성 완료:', testResponse);
-    
-    // 메시지 이벤트 디스패치
-    console.log('메시지 이벤트 디스패치 시작...');
-    const event = new MessageEvent('message', {
-      data: JSON.stringify(testResponse),
-      origin: '',
-      source: null
-    });
-    
-    window.dispatchEvent(event);
-    console.log('메시지 이벤트 디스패치 완료');
-  };
-
-  // 네이티브 구글 로그인 응답 시뮬레이션 (Firebase 인증 없이)
-  (window as any).testNativeGoogleLoginWithoutFirebase = () => {
-    console.log('테스트: 네이티브 구글 로그인 응답 시뮬레이션 (Firebase 인증 없이)');
-    
-    const testResponse = {
-      type: 'googleLoginSuccess',
-      value: {
-        photo: 'https://lh3.googleusercontent.com/a/ACg8ocJIpma2ZHB4X7V-gg7vNqOqPo0mvZpgu34mAoKaU8LgPUbAvXc=s96-c',
-        givenName: '성훈',
-        familyName: '임',
-        email: 'limpanda7@gmail.com',
-        name: '임성훈',
-        id: '118431536161630265973',
-        token: 'invalid_test_token'
-      }
-    };
-    
-    const event = new MessageEvent('message', {
-      data: JSON.stringify(testResponse),
-      origin: '',
-      source: null
-    });
-    
-    window.dispatchEvent(event);
-  };
-
-  // Firebase Auth 없이 직접 스토어에 사용자 정보 설정 (테스트용)
-  (window as any).testSetUserDirectly = async () => {
-    console.log('테스트: Firebase Auth 없이 직접 스토어에 사용자 정보 설정');
-    
-    // 동적 import 사용
-    const { useAuthStore } = await import('../stores/authStore');
-    const authStore = useAuthStore.getState();
-    
-    const testUser = {
-      uid: 'test-user-123',
-      email: 'limpanda7@gmail.com',
-      displayName: '임성훈',
-      photoURL: 'https://lh3.googleusercontent.com/a/ACg8ocJIpma2ZHB4X7V-gg7vNqOqPo0mvZpgu34mAoKaU8LgPUbAvXc=s96-c',
-      emailVerified: true,
-      createdAt: new Date(),
-      lastLoginAt: new Date()
-    };
-    
-    authStore.setUser(testUser);
-    console.log('스토어에 사용자 정보 설정 완료:', testUser);
-  };
-
-  // 간단한 테스트 함수 (브라우저 콘솔에서 사용)
-  (window as any).testLogin = async () => {
-    console.log('간단한 로그인 테스트 시작');
-    
-    try {
-      // 1. 스토어에 사용자 정보 설정
-      const { useAuthStore } = await import('../stores/authStore');
-      const authStore = useAuthStore.getState();
-      
-      const testUser = {
-        uid: 'test-user-' + Date.now(),
-        email: 'test@example.com',
-        displayName: '테스트 사용자',
-        photoURL: 'https://example.com/photo.jpg',
-        emailVerified: true,
-        createdAt: new Date(),
-        lastLoginAt: new Date()
-      };
-      
-      authStore.setUser(testUser);
-      console.log('✅ 사용자 정보 설정 완료:', testUser);
-      
-      // 2. 페이지 새로고침 없이 상태 확인
-      setTimeout(() => {
-        const currentState = useAuthStore.getState();
-        console.log('✅ 현재 인증 상태:', currentState);
-      }, 100);
-      
-    } catch (error) {
-      console.error('❌ 테스트 중 오류 발생:', error);
-    }
-  };
 }

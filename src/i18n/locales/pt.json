@@ -340,6 +340,7 @@
       "requiresRecentLogin": "Por favor, faça login novamente por segurança.",
       "googleLoginFailed": "Falha no login com Google.",
       "googleLogoutFailed": "Falha no logout com Google.",
+      "authStatusFailed": "Falha ao verificar o status de autenticação.",
       "unknownError": "Ocorreu um erro desconhecido."
     }
   },

@@ -359,6 +359,7 @@
       "requiresRecentLogin": "Please sign in again for security.",
       "googleLoginFailed": "Google login failed.",
       "googleLogoutFailed": "Google logout failed.",
+      "authStatusFailed": "Failed to check authentication status.",
       "unknownError": "An unknown error occurred."
     }
   },

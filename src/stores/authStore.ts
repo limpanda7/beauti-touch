@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import type { User, LoginCredentials, SignUpCredentials } from '../types';
 import * as authService from '../services/auth';
-import { setWebViewMessageListener, removeWebViewMessageListener } from '../services/webviewBridge';
+import { setWebViewMessageListener, removeWebViewMessageListener, isWebViewEnvironment, requestAuthStatus } from '../services/webviewBridge';
 
 interface AuthState {
   user: User | null;
@@ -65,9 +65,19 @@ export const useAuthStore = create<AuthStore>()(
     signInWithGoogle: async () => {
       set({ isLoading: true, error: null, errorCode: null });
       try {
-        const user = await authService.signInWithGoogle();
-        console.log('AuthStore - Google 로그인 성공, 사용자 설정:', user);
-        set({ user, isLoading: false, isInitialized: true });
+        // 웹뷰 환경에서는 네이티브 구글 로그인 사용
+        if (isWebViewEnvironment()) {
+          console.log('웹뷰 환경에서 네이티브 구글 로그인 요청');
+          // 네이티브 앱에 구글 로그인 요청 (결과는 메시지 리스너에서 처리)
+          const { requestGoogleLogin } = await import('../services/webviewBridge');
+          requestGoogleLogin();
+          // 로딩 상태는 메시지 리스너에서 처리됨
+        } else {
+          // 일반 웹 환경에서는 기존 Firebase Auth 사용
+          const user = await authService.signInWithGoogle();
+          console.log('AuthStore - Google 로그인 성공, 사용자 설정:', user);
+          set({ user, isLoading: false, isInitialized: true });
+        }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Google 로그인 중 오류가 발생했습니다.';
         console.error('AuthStore - Google 로그인 실패:', errorMessage);
@@ -79,8 +89,18 @@ export const useAuthStore = create<AuthStore>()(
     signOut: async () => {
       set({ isLoading: true, error: null, errorCode: null });
       try {
-        await authService.signOutUser();
-        set({ user: null, isLoading: false });
+        // 웹뷰 환경에서는 네이티브 로그아웃 사용
+        if (isWebViewEnvironment()) {
+          console.log('웹뷰 환경에서 네이티브 로그아웃 요청');
+          // 네이티브 앱에 로그아웃 요청 (결과는 메시지 리스너에서 처리)
+          const { requestGoogleLogout } = await import('../services/webviewBridge');
+          requestGoogleLogout();
+          // 로딩 상태는 메시지 리스너에서 처리됨
+        } else {
+          // 일반 웹 환경에서는 기존 Firebase Auth 사용
+          await authService.signOutUser();
+          set({ user: null, isLoading: false });
+        }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '로그아웃 중 오류가 발생했습니다.';
         set({ error: errorMessage, errorCode: errorMessage, isLoading: false });
@@ -107,52 +127,85 @@ export const useAuthStore = create<AuthStore>()(
     initialize: async () => {
       set({ isLoading: true });
       
-      // 인증 상태 변경 감지
-      const unsubscribe = authService.onAuthStateChange((user) => {
-        set({ user, isLoading: false, isInitialized: true });
-      });
+      // 웹뷰 환경에서는 네이티브 인증 상태 확인
+      if (isWebViewEnvironment()) {
+        console.log('웹뷰 환경에서 네이티브 인증 상태 확인');
+        requestAuthStatus();
+      } else {
+        // 일반 웹 환경에서는 Firebase Auth 상태 변경 감지
+        const unsubscribe = authService.onAuthStateChange((user) => {
+          set({ user, isLoading: false, isInitialized: true });
+        });
+      }
 
       // 웹뷰 메시지 리스너 설정
       setWebViewMessageListener((message) => {
         console.log('AuthStore에서 웹뷰 메시지 수신:', message);
         
         switch (message.type) {
-          case 'firebaseAuthStateChanged':
-            if (message.value?.isSignedIn && message.value?.user) {
-              // 네이티브 앱에서 로그인된 사용자 정보를 웹 Firebase에 동기화
-              console.log('네이티브 앱에서 로그인 상태 변경 감지:', message.value.user);
-            } else {
-              // 네이티브 앱에서 로그아웃된 경우 웹 Firebase에서도 로그아웃
-              console.log('네이티브 앱에서 로그아웃 상태 변경 감지');
-              authService.signOutUser().catch(console.error);
-            }
-            break;
-            
-          case 'googleLoginSuccess':
-            console.log('네이티브 구글 로그인 성공:', message.value);
+          case 'userLoginSuccess':
+            console.log('네이티브 유저 로그인 성공:', message.value);
             console.log('현재 스토어 상태 (업데이트 전):', get());
-            // 파이어베이스 로그인이 완료된 사용자 정보를 스토어에 설정
+            // 네이티브에서 전달받은 유저 정보를 스토어에 설정
             if (message.value) {
-              console.log('사용자 정보를 스토어에 설정 중...');
+              console.log('유저 정보를 스토어에 설정 중...');
               set({ user: message.value, isLoading: false, isInitialized: true });
               console.log('스토어 상태 업데이트 완료');
               console.log('업데이트 후 스토어 상태:', get());
             } else {
-              console.log('message.value가 없어서 사용자 정보를 설정하지 않음');
+              console.log('message.value가 없어서 유저 정보를 설정하지 않음');
+            }
+            break;
+            
+          case 'userLoginFail':
+            console.error('네이티브 유저 로그인 실패:', message.value);
+            set({ error: message.value, errorCode: 'auth.errors.googleLoginFailed', isLoading: false });
+            break;
+            
+          case 'userLogoutSuccess':
+            console.log('네이티브 유저 로그아웃 성공');
+            set({ user: null, isLoading: false });
+            break;
+            
+          case 'userLogoutFail':
+            console.error('네이티브 유저 로그아웃 실패:', message.value);
+            set({ error: message.value, errorCode: 'auth.errors.googleLogoutFailed', isLoading: false });
+            break;
+
+          case 'authStatusSuccess':
+            console.log('네이티브 인증 상태 확인 성공:', message.value);
+            if (message.value?.isSignedIn && message.value?.user) {
+              set({ user: message.value.user, isLoading: false, isInitialized: true });
+            } else {
+              set({ user: null, isLoading: false, isInitialized: true });
+            }
+            break;
+
+          case 'authStatusFail':
+            console.error('네이티브 인증 상태 확인 실패:', message.value);
+            set({ error: message.value, errorCode: 'auth.errors.authStatusFailed', isLoading: false, isInitialized: true });
+            break;
+
+          // 기존 메시지 타입들 (하위 호환성)
+          case 'googleLoginSuccess':
+            console.log('네이티브 구글 로그인 성공 (기존 타입):', message.value);
+            if (message.value) {
+              set({ user: message.value, isLoading: false, isInitialized: true });
             }
             break;
             
           case 'googleLoginFail':
-            console.error('네이티브 구글 로그인 실패:', message.value);
+            console.error('네이티브 구글 로그인 실패 (기존 타입):', message.value);
             set({ error: message.value, errorCode: 'auth.errors.googleLoginFailed', isLoading: false });
             break;
             
           case 'googleLogoutSuccess':
-            console.log('네이티브 구글 로그아웃 성공');
+            console.log('네이티브 구글 로그아웃 성공 (기존 타입)');
+            set({ user: null, isLoading: false });
             break;
             
           case 'googleLogoutFail':
-            console.error('네이티브 구글 로그아웃 실패:', message.value);
+            console.error('네이티브 구글 로그아웃 실패 (기존 타입):', message.value);
             set({ error: message.value, errorCode: 'auth.errors.googleLogoutFailed', isLoading: false });
             break;
         }
@@ -160,7 +213,7 @@ export const useAuthStore = create<AuthStore>()(
 
       // 초기화 완료를 기다림
       return new Promise<void>((resolve) => {
-        // 약간의 지연 후 resolve (Firebase Auth 상태 확인 시간 확보)
+        // 약간의 지연 후 resolve (인증 상태 확인 시간 확보)
         setTimeout(() => {
           resolve();
         }, 100);
