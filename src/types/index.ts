@@ -42,14 +42,14 @@ export interface Reservation {
   chartData?: ChartData; // 업종별 세부 정보
 }
 
-export type ChartType = 'eyelash' | 'waxing' | 'nail' | 'skin' | 'massage' | 'default' | '';
+export type ChartType = 'eyelash' | 'waxing' | 'nail' | 'skin' | 'massage' | 'pilates' | 'default' | '';
 
 export interface ChartData {
   // 공통 필드
   memo?: string; // 메모(비공개)
   // 속눈썹
   eyelashType?: string;
-  eyelashDesign?: string;
+  eyelashDesign?: string[]; // 체크박스로 변경
   eyelashGlue?: string;
   eyelashMaterial?: string;
   eyelashMix?: string;
@@ -61,7 +61,7 @@ export interface ChartData {
   waxingCycle?: string;
   waxingHairCondition?: string;
   waxingPain?: string;
-  waxingAftercare?: string;
+  waxingAftercare?: string[]; // 체크박스로 변경
   // 네일
   nailType?: string;
   nailColor?: string;
@@ -75,14 +75,20 @@ export interface ChartData {
   skinTypeDetail?: string;
   skinTrouble?: string;
   skinSensitivity?: string;
-  skinPurpose?: string;
+  skinPurpose?: string[]; // 체크박스로 변경
   skinProduct?: string;
   // 마사지
   massageArea?: string;
   massageStrength?: string;
-  massagePurpose?: string;
+  massagePurpose?: string[]; // 체크박스로 변경
   massageMuscle?: string;
   massageOil?: string;
+  // 필라테스
+  pilatesPurpose?: string;
+  pilatesPosture?: string[];
+  pilatesIntensity?: string;
+  pilatesPain?: string;
+  pilatesFeedback?: string;
 }
 
 /*

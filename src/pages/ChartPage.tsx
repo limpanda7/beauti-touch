@@ -79,6 +79,7 @@ const ChartPage: React.FC = () => {
     { value: 'nail', label: t('chart.type.nail') },
     { value: 'skin', label: t('chart.type.skin') },
     { value: 'massage', label: t('chart.type.massage') },
+    { value: 'pilates', label: t('chart.type.pilates') },
   ];
 
   // 공통 필드 정의 (모든 업종에 공통으로 적용)
@@ -90,7 +91,7 @@ const ChartPage: React.FC = () => {
   const chartFieldDefs: Record<ChartType, { name: keyof ChartData; label: string; type?: string; options?: string[] }[]> = {
     eyelash: [
       { name: 'eyelashType', label: t('chart.fields.eyelashType'), type: 'select', options: ['extension', 'perm', 'remove'] },
-      { name: 'eyelashDesign', label: t('chart.fields.eyelashDesign'), type: 'select', options: ['natural', 'cat', 'doll', 'skinny', 'under', 'honeycomb', 'smoky', 'sweet'] },
+      { name: 'eyelashDesign', label: t('chart.fields.eyelashDesign'), type: 'checkbox', options: ['natural', 'cat', 'doll', 'skinny', 'under', 'honeycomb', 'smoky', 'sweet'] },
       { name: 'eyelashGlue', label: t('chart.fields.eyelashGlue') },
       { name: 'eyelashMaterial', label: t('chart.fields.eyelashMaterial') },
       { name: 'eyelashMix', label: t('chart.fields.eyelashMix') },
@@ -103,7 +104,7 @@ const ChartPage: React.FC = () => {
       { name: 'waxingCycle', label: t('chart.fields.waxingCycle') },
       { name: 'waxingHairCondition', label: t('chart.fields.waxingHairCondition'), type: 'select', options: ['uniform', 'thick', 'thin', 'sparse', 'clumped'] },
       { name: 'waxingPain', label: t('chart.fields.waxingPain'), type: 'select', options: ['sensitive', 'normal', 'none'] },
-      { name: 'waxingAftercare', label: t('chart.fields.waxingAftercare'), type: 'select', options: ['soothing_gel', 'cream', 'cold_compress', 'skin', 'lotion', 'none'] },
+      { name: 'waxingAftercare', label: t('chart.fields.waxingAftercare'), type: 'checkbox', options: ['soothing_gel', 'cream', 'cold_compress', 'skin', 'lotion', 'none'] },
     ],
     nail: [
       { name: 'nailType', label: t('chart.fields.nailType'), type: 'select', options: ['care', 'gel', 'art', 'remove'] },
@@ -118,15 +119,22 @@ const ChartPage: React.FC = () => {
       { name: 'skinType', label: t('chart.fields.skinType'), type: 'select', options: ['normal', 'dry', 'oily', 'combination', 'sensitive'] },
       { name: 'skinTrouble', label: t('chart.fields.skinTrouble') },
       { name: 'skinSensitivity', label: t('chart.fields.skinSensitivity'), type: 'select', options: ['tingle', 'hot', 'redness', 'none'] },
-      { name: 'skinPurpose', label: t('chart.fields.skinPurpose'), type: 'select', options: ['soothing', 'moisturizing', 'whitening', 'trouble', 'elasticity', 'regeneration', 'exfoliation'] },
+      { name: 'skinPurpose', label: t('chart.fields.skinPurpose'), type: 'checkbox', options: ['soothing', 'moisturizing', 'whitening', 'trouble', 'elasticity', 'regeneration', 'exfoliation'] },
       { name: 'skinProduct', label: t('chart.fields.skinProduct') },
     ],
     massage: [
       { name: 'massageArea', label: t('chart.fields.massageArea') },
       { name: 'massageStrength', label: t('chart.fields.massageStrength'), type: 'select', options: ['weak', 'medium', 'strong'] },
-      { name: 'massagePurpose', label: t('chart.fields.massagePurpose'), type: 'select', options: ['pain_relief', 'circulation', 'fatigue_recovery', 'swelling_reduction', 'body_shape'] },
+      { name: 'massagePurpose', label: t('chart.fields.massagePurpose'), type: 'checkbox', options: ['pain_relief', 'circulation', 'fatigue_recovery', 'swelling_reduction', 'body_shape'] },
       { name: 'massageMuscle', label: t('chart.fields.massageMuscle'), type: 'select', options: ['normal', 'knots', 'tension', 'lack_elasticity'] },
       { name: 'massageOil', label: t('chart.fields.massageOil') },
+    ],
+    pilates: [
+      { name: 'pilatesPurpose', label: t('chart.fields.pilatesPurpose'), type: 'select', options: ['posture_correction', 'pain_relief', 'strength', 'weight_loss', 'flexibility', 'stress_relief'] },
+      { name: 'pilatesPosture', label: t('chart.fields.pilatesPosture'), type: 'checkbox', options: ['turtle_neck', 'pelvic_asymmetry', 'hunched_back', 'x_legs', 'o_legs', 'scoliosis', 'shoulder_imbalance'] },
+      { name: 'pilatesIntensity', label: t('chart.fields.pilatesIntensity'), type: 'select', options: ['weak', 'normal', 'strong'] },
+      { name: 'pilatesPain', label: t('chart.fields.pilatesPain'), type: 'select', options: ['none', 'neck', 'shoulder', 'back', 'knee', 'ankle', 'wrist', 'hip'] },
+      { name: 'pilatesFeedback', label: t('chart.fields.pilatesFeedback') },
     ],
     default: [], // 기본 타입은 빈 배열
     '': [],
@@ -198,6 +206,26 @@ const ChartPage: React.FC = () => {
     }
   };
 
+  // 체크박스 변경 핸들러
+  const handleCheckboxChange = (fieldName: string, optionValue: string, checked: boolean) => {
+    const currentValues = (chartData[fieldName as keyof ChartData] as string[]) || [];
+    
+    if (checked) {
+      // 체크된 경우 배열에 추가
+      setChartData(prev => ({ 
+        ...prev, 
+        [fieldName]: [...currentValues, optionValue] 
+      }));
+    } else {
+      // 체크 해제된 경우 배열에서 제거
+      setChartData(prev => ({ 
+        ...prev, 
+        [fieldName]: currentValues.filter(value => value !== optionValue) 
+      }));
+    }
+    setHasUnsavedChanges(true);
+  };
+
   // 도형 변경 시 unsaved changes 플래그 설정
   const handleFaceSideShapesChange: React.Dispatch<React.SetStateAction<Shape[]>> = (shapes) => {
     setFaceSideShapes(shapes);
@@ -220,11 +248,24 @@ const ChartPage: React.FC = () => {
     setSaving(true);
     try {
       if (chartType) {
-        const savePromises = Object.entries(chartData)
-          .filter(([_, value]) => typeof value === 'string' && value.trim())
-          .map(([fieldName, fieldValue]) => 
-            autoCompleteService.saveFieldValue(fieldName, (fieldValue as string).trim(), chartType)
-          );
+        const savePromises: Promise<void>[] = [];
+        
+        Object.entries(chartData).forEach(([fieldName, fieldValue]) => {
+          if (typeof fieldValue === 'string' && fieldValue.trim()) {
+            savePromises.push(
+              autoCompleteService.saveFieldValue(fieldName, fieldValue.trim(), chartType)
+            );
+          } else if (Array.isArray(fieldValue) && fieldValue.length > 0) {
+            // 체크박스 필드의 경우 각 선택된 값들을 자동완성에 저장
+            fieldValue.forEach(value => {
+              if (value.trim()) {
+                savePromises.push(
+                  autoCompleteService.saveFieldValue(fieldName, value.trim(), chartType)
+                );
+              }
+            });
+          }
+        });
         
         await Promise.all(savePromises);
       }
@@ -379,6 +420,23 @@ const ChartPage: React.FC = () => {
                         <option key={opt} value={opt}>{t(`chart.options.${field.name}.${opt}`, opt)}</option>
                       ))}
                     </select>
+                  ) : field.type === 'checkbox' ? (
+                    <div className="checkbox-group">
+                      {field.options?.map(opt => {
+                        const currentValues = (chartData[field.name] as string[]) || [];
+                        const isChecked = currentValues.includes(opt);
+                        return (
+                          <label key={opt} className="checkbox-item">
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={(e) => handleCheckboxChange(field.name, opt, e.target.checked)}
+                            />
+                            <span className="checkbox-label">{t(`chart.options.${field.name}.${opt}`, opt)}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
                   ) : (
                     <AutoCompleteInput
                       key={`${field.name}-${chartType}`}

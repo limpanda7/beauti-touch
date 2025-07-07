@@ -65,6 +65,14 @@ const ChartDisplay: React.FC<ChartDisplayProps> = ({ chartType, chartData }) => 
           { key: 'massageMuscle', label: t('chart.fields.massageMuscle') },
           { key: 'massageOil', label: t('chart.fields.massageOil') },
         ];
+      case 'pilates':
+        return [
+          { key: 'pilatesPurpose', label: t('chart.fields.pilatesPurpose') },
+          { key: 'pilatesPosture', label: t('chart.fields.pilatesPosture') },
+          { key: 'pilatesIntensity', label: t('chart.fields.pilatesIntensity') },
+          { key: 'pilatesPain', label: t('chart.fields.pilatesPain') },
+          { key: 'pilatesFeedback', label: t('chart.fields.pilatesFeedback') },
+        ];
       default:
         return [];
     }
@@ -83,13 +91,23 @@ const ChartDisplay: React.FC<ChartDisplayProps> = ({ chartType, chartData }) => 
   }
 
   const getFieldValue = (key: string, value: any) => {
+    // 체크박스 필드들 (배열)
+    const checkboxKeys = [
+      'eyelashDesign', 'waxingAftercare', 'skinPurpose', 'massagePurpose', 'pilatesPosture'
+    ];
+
+    if (checkboxKeys.includes(key) && Array.isArray(value)) {
+      return value.map(v => t(`chart.options.${key}.${v}`, v)).join(', ');
+    }
+
     // 옵션 값인 경우 번역된 텍스트 반환
     const optionKeys = [
-      'eyelashType', 'eyelashDesign', 'eyelashCurl',
-      'waxingSkin', 'waxingHairCondition', 'waxingPain', 'waxingAftercare',
+      'eyelashType', 'eyelashCurl',
+      'waxingSkin', 'waxingHairCondition', 'waxingPain',
       'nailType', 'nailBaseTop', 'nailCondition', 'nailLength', 'nailArt',
-      'skinType', 'skinSensitivity', 'skinPurpose',
-      'massageStrength', 'massagePurpose', 'massageMuscle'
+      'skinType', 'skinSensitivity',
+      'massageStrength', 'massageMuscle',
+      'pilatesPurpose', 'pilatesIntensity', 'pilatesPain'
     ];
 
     if (optionKeys.includes(key)) {

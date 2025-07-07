@@ -312,7 +312,8 @@
       "waxing": "왁싱",
       "nail": "네일",
       "skin": "피부관리",
-      "massage": "마사지"
+      "massage": "마사지",
+      "pilates": "필라테스"
     },
     "billing": "결제",
     "billingDescription": "구독 및 결제 정보를 관리합니다.",
@@ -427,6 +428,7 @@
       "nail": "네일",
       "skin": "피부관리",
       "massage": "마사지",
+      "pilates": "필라테스",
       "waxingPain": "통증 정도",
       "waxingAftercare": "애프터케어"
     },
@@ -463,6 +465,11 @@
       "massagePurpose": "관리 목적",
       "massageMuscle": "근육 상태",
       "massageOil": "사용 제품",
+      "pilatesPurpose": "운동 목적",
+      "pilatesPosture": "체형 상태",
+      "pilatesIntensity": "운동 강도",
+      "pilatesPain": "통증 부위",
+      "pilatesFeedback": "피드백",
       "visitCycle": "방문주기",
       "usedDevice": "사용 기기",
       "usedProduct": "사용 제품",
@@ -588,6 +595,38 @@
         "knots": "뭉침 있음",
         "tension": "긴장됨",
         "lack_elasticity": "탄력 부족"
+      },
+      "pilatesPurpose": {
+        "posture_correction": "체형교정",
+        "pain_relief": "통증완화",
+        "strength": "근력강화",
+        "weight_loss": "체중감량",
+        "flexibility": "유연성증가",
+        "stress_relief": "스트레스해소"
+      },
+      "pilatesPosture": {
+        "turtle_neck": "거북목",
+        "pelvic_asymmetry": "골반비대칭",
+        "hunched_back": "굽은등",
+        "x_legs": "X자 다리",
+        "o_legs": "O자 다리",
+        "scoliosis": "척추측만증",
+        "shoulder_imbalance": "어깨 불균형"
+      },
+      "pilatesIntensity": {
+        "weak": "약함",
+        "normal": "보통",
+        "strong": "강함"
+      },
+      "pilatesPain": {
+        "none": "없음",
+        "neck": "목",
+        "shoulder": "어깨",
+        "back": "허리",
+        "knee": "무릎",
+        "ankle": "발목",
+        "wrist": "손목",
+        "hip": "엉덩이"
       }
     },
     "saveError": "차트 정보 저장에 실패했습니다.",

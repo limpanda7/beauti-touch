@@ -26,7 +26,7 @@ const SettingsPage: React.FC = () => {
   // 날짜 형식 미리보기를 위한 샘플 날짜
   const sampleDate = new Date(2024, 11, 25); // 2024년 12월 25일
 
-  // 차트 필드 정의 (주관식 필드만 포함)
+  // 차트 필드 정의 (주관식 필드만 포함, 체크박스 필드 제외)
   const chartFieldDefs: Record<ChartType, { name: string; label: string }[]> = {
     eyelash: [
       { name: 'eyelashMaterial', label: t('chart.fields.eyelashMaterial') },
@@ -49,6 +49,9 @@ const SettingsPage: React.FC = () => {
     massage: [
       { name: 'massageArea', label: t('chart.fields.massageArea') },
       { name: 'massageOil', label: t('chart.fields.massageOil') },
+    ],
+    pilates: [
+      { name: 'pilatesFeedback', label: t('chart.fields.pilatesFeedback') },
     ],
     default: [], // 기본 타입은 빈 배열
     '': [],
