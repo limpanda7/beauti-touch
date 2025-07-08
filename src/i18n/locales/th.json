@@ -308,6 +308,7 @@
     "confirmPasswordPlaceholder": "ยืนยันรหัสผ่านของคุณ",
     "namePlaceholder": "ใส่ชื่อของคุณ",
     "loggingIn": "กำลังเข้าสู่ระบบ...",
+    "loggingInWithGoogle": "กำลังเข้าสู่ระบบด้วย Google...",
     "signingUp": "กำลังสมัครสมาชิก...",
     "noAccount": "ไม่มีบัญชี?",
     "haveAccount": "มีบัญชีอยู่แล้ว?",

@@ -62,6 +62,7 @@
             min-height: 0;
             flex: 1;
             overflow: hidden; // 스크롤 방지
+            padding: 0; // 900px 이하에서 padding 제거
           }
         }
       }
@@ -203,6 +204,7 @@
             min-height: 0;
             flex: 1;
             overflow: hidden; // 스크롤 방지
+            padding: 0; // 900px 이하에서 padding 제거
           }
         }
       }

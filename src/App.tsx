@@ -16,6 +16,7 @@ import SettingsPage from './pages/SettingsPage';
 import ChartPage from './pages/ChartPage';
 import SharePage from './pages/SharePage';
 import ShareChartPage from './pages/ShareChartPage';
+import DebugPanel from './components/DebugPanel';
 import { useAuthStore } from './stores/authStore';
 import { useSettingsStore } from './stores/settingsStore';
 import './services/webviewBridge'; // 웹뷰 브리지 초기화
@@ -115,6 +116,7 @@ function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Router>
+          <DebugPanel />
         </div>
       </I18nextProvider>
     </HelmetProvider>

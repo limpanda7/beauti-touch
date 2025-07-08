@@ -41,11 +41,11 @@ const getCurrentUserId = (): string => {
     return user.uid;
   }
   
-  // 둘 다 없으면 잠시 대기 후 재시도 (최대 2초)
+  // 둘 다 없으면 잠시 대기 후 재시도 (최대 5초)
   console.log('사용자 정보가 없음, 잠시 대기 후 재시도...');
   
   const startTime = Date.now();
-  while (Date.now() - startTime < 2000) {
+  while (Date.now() - startTime < 5000) {
     // 스토어 재확인
     const retryAuthStore = useAuthStore.getState();
     if (retryAuthStore.user && retryAuthStore.user.uid) {
@@ -61,13 +61,16 @@ const getCurrentUserId = (): string => {
       return retryUser.uid;
     }
     
-    // 100ms 대기
+    // 200ms 대기
     const waitStart = Date.now();
-    while (Date.now() - waitStart < 100) {
+    while (Date.now() - waitStart < 200) {
       // 동기적 대기
     }
   }
   
+  console.error('사용자 정보를 찾을 수 없음');
+  console.error('스토어 상태:', useAuthStore.getState());
+  console.error('Firebase Auth 상태:', getAuth().currentUser);
   throw new Error('사용자가 로그인되지 않았습니다.');
 };
 

@@ -3,8 +3,9 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // 사용자별 데이터 접근 규칙
     match /users/{userId}/{document=**} {
-      // 로그인한 사용자만 자신의 데이터에 접근 가능
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // 인증된 사용자만 접근 가능
+      // 네이티브에서 로그인한 사용자는 웹뷰에서도 동일한 데이터에 접근 가능
+      allow read, write: if request.auth != null;
     }
     
     // 기존 컬렉션들에 대한 접근 제한 (마이그레이션 기간 동안)

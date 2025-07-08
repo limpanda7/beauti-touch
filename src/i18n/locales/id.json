@@ -289,6 +289,7 @@
     "confirmPasswordPlaceholder": "Konfirmasi kata sandi Anda",
     "namePlaceholder": "Masukkan nama Anda",
     "loggingIn": "Sedang masuk...",
+    "loggingInWithGoogle": "Sedang masuk dengan Google...",
     "signingUp": "Sedang mendaftar...",
     "noAccount": "Belum punya akun?",
     "haveAccount": "Sudah punya akun?",

@@ -325,6 +325,7 @@
     "confirmPasswordPlaceholder": "Xác nhận mật khẩu của bạn",
     "namePlaceholder": "Nhập tên của bạn",
     "loggingIn": "Đang đăng nhập...",
+    "loggingInWithGoogle": "Đang đăng nhập bằng Google...",
     "signingUp": "Đang đăng ký...",
     "noAccount": "Chưa có tài khoản?",
     "haveAccount": "Đã có tài khoản?",

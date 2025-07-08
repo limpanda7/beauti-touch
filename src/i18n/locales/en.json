@@ -324,6 +324,7 @@
     "confirmPasswordPlaceholder": "Confirm your password",
     "namePlaceholder": "Enter your name",
     "loggingIn": "Signing in...",
+    "loggingInWithGoogle": "Signing in with Google...",
     "signingUp": "Signing up...",
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have an account?",

@@ -317,6 +317,7 @@
     "confirmPasswordPlaceholder": "Confirma tu contraseña",
     "namePlaceholder": "Ingresa tu nombre",
     "loggingIn": "Iniciando sesión...",
+    "loggingInWithGoogle": "Iniciando sesión con Google...",
     "signingUp": "Registrándose...",
     "noAccount": "¿No tienes una cuenta?",
     "haveAccount": "¿Ya tienes una cuenta?",

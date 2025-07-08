@@ -81,6 +81,86 @@ const saveUserToFirestore = async (user: User) => {
   }
 };
 
+// 신규 사용자 여부를 확인하는 공통 함수
+const checkNewUserStatus = async (user: User, firebaseUser?: any) => {
+  // Firestore에서 기존 사용자 정보 확인
+  const userRef = doc(db, 'users', user.uid);
+  const userDoc = await getDoc(userRef);
+  const isNewUser = !userDoc.exists();
+  
+  // 계정 생성 시간과 현재 시간을 비교하여 신규 사용자 판단
+  const creationTime = firebaseUser 
+    ? new Date(firebaseUser.metadata.creationTime || Date.now())
+    : new Date(user.createdAt);
+  const currentTime = new Date();
+  const timeDiff = currentTime.getTime() - creationTime.getTime();
+  const isRecentlyCreated = timeDiff < 60000; // 1분 이내에 생성된 계정
+  
+  console.log('사용자 신규 여부 확인:', { 
+    uid: user.uid, 
+    isNewUser, 
+    docExists: userDoc.exists(),
+    creationTime: creationTime.toISOString(),
+    timeDiff: timeDiff / 1000 + '초',
+    isRecentlyCreated
+  });
+
+  return { isNewUser, isRecentlyCreated };
+};
+
+// 신규 사용자를 위한 초기 설정을 처리하는 공통 함수
+const handleNewUserSetup = async (user: User, context: string = 'unknown') => {
+  try {
+    // 언어 설정 저장
+    const currentLanguage = getCurrentLanguage();
+    const settingsRef = doc(db, 'users', user.uid, 'settings', 'userSettings');
+    await setDoc(settingsRef, {
+      language: currentLanguage,
+      currency: getDefaultCurrencyForLanguage(currentLanguage),
+      businessType: ''
+    });
+    console.log(`${context} - 언어 설정 저장 완료:`, currentLanguage);
+
+    // 테스트 데이터 생성
+    console.log(`=== ${context} - 신규 사용자 감지, 테스트 데이터 생성 시작 ===`);
+    console.log('사용자 UID:', user.uid);
+    console.log('현재 언어 설정:', currentLanguage);
+    
+    try {
+      const result = await createAllTestData();
+      console.log(`=== ${context} - 테스트 데이터 생성 완료 (신규 사용자) ===`);
+      console.log('생성 결과:', result);
+    } catch (testDataError) {
+      console.error(`=== ${context} - 테스트 데이터 생성 실패 (상세) ===`);
+      console.error('에러 상세:', testDataError);
+      console.error('에러 스택:', testDataError instanceof Error ? testDataError.stack : '스택 정보 없음');
+      console.warn(`${context} - 테스트 데이터 생성 실패 (무시됨):`, testDataError);
+    }
+  } catch (error) {
+    console.error(`${context} - 신규 사용자 설정 중 오류:`, error);
+  }
+};
+
+// 사용자 로그인 후 처리를 위한 공통 함수
+export const handleUserLogin = async (user: User, firebaseUser?: any, context: string = 'unknown') => {
+  try {
+    // Firestore에 사용자 정보 저장
+    await saveUserToFirestore(user);
+
+    // 신규 사용자 여부 확인
+    const { isNewUser, isRecentlyCreated } = await checkNewUserStatus(user, firebaseUser);
+
+    // 신규 사용자인 경우 초기 설정 처리
+    if (isNewUser && isRecentlyCreated) {
+      await handleNewUserSetup(user, context);
+    } else {
+      console.log(`${context} - 기존 사용자 또는 오래된 계정, 테스트 데이터 생성 건너뜀`);
+    }
+  } catch (error) {
+    console.error(`${context} - 사용자 로그인 처리 중 오류:`, error);
+  }
+};
+
 // 회원가입
 export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
   try {
@@ -115,33 +195,8 @@ export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
       lastLoginAt: new Date(firebaseUser.metadata.lastSignInTime || Date.now()),
     };
 
-    // Firestore에 사용자 정보 저장
-    await saveUserToFirestore(user);
-
-    // 회원가입 시점의 언어 설정 저장 (동기적으로 처리)
-    const currentLanguage = getCurrentLanguage();
-    const settingsRef = doc(db, 'users', user.uid, 'settings', 'userSettings');
-    await setDoc(settingsRef, {
-      language: currentLanguage,
-      currency: getDefaultCurrencyForLanguage(currentLanguage),
-      businessType: ''
-    });
-    console.log('회원가입 시 언어 설정 저장 완료:', currentLanguage);
-
-    // 테스트 데이터 생성 (비동기로 실행하되 에러는 무시)
-    try {
-      console.log('=== 회원가입 후 테스트 데이터 생성 시작 ===');
-      console.log('현재 사용자 UID:', user.uid);
-      console.log('현재 언어 설정:', getCurrentLanguage());
-      
-      await createAllTestData();
-      console.log('=== 회원가입 후 테스트 데이터 생성 완료 ===');
-    } catch (testDataError) {
-      console.error('=== 회원가입 후 테스트 데이터 생성 실패 ===');
-      console.error('에러 상세:', testDataError);
-      console.error('에러 스택:', testDataError instanceof Error ? testDataError.stack : '스택 정보 없음');
-      console.warn('테스트 데이터 생성 실패 (무시됨):', testDataError);
-    }
+    // 신규 사용자 설정 처리
+    await handleUserLogin(user, undefined, '회원가입');
 
     return user;
   } catch (error) {
@@ -205,64 +260,7 @@ export const onAuthStateChange = (callback: (user: User | null) => void) => {
 
     // 사용자가 있고 신규 사용자인 경우 테스트 데이터 생성
     if (user && firebaseUser) {
-      try {
-        // Firestore에서 기존 사용자 정보 확인
-        const userRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userRef);
-        const isNewUser = !userDoc.exists();
-        
-        // 계정 생성 시간과 현재 시간을 비교하여 신규 사용자 판단
-        const creationTime = new Date(firebaseUser.metadata.creationTime || Date.now());
-        const currentTime = new Date();
-        const timeDiff = currentTime.getTime() - creationTime.getTime();
-        const isRecentlyCreated = timeDiff < 60000; // 1분 이내에 생성된 계정
-        
-        console.log('인증 상태 변경 - 사용자 신규 여부 확인:', { 
-          uid: user.uid, 
-          isNewUser, 
-          docExists: userDoc.exists(),
-          creationTime: creationTime.toISOString(),
-          timeDiff: timeDiff / 1000 + '초',
-          isRecentlyCreated
-        });
-
-        // Firestore에 사용자 정보 저장
-        await saveUserToFirestore(user);
-
-        // 새 사용자인 경우 언어 설정 저장 (동기적으로 처리)
-        if (isNewUser && isRecentlyCreated) {
-          const currentLanguage = getCurrentLanguage();
-          const settingsRef = doc(db, 'users', user.uid, 'settings', 'userSettings');
-          await setDoc(settingsRef, {
-            language: currentLanguage,
-            currency: getDefaultCurrencyForLanguage(currentLanguage),
-            businessType: ''
-          });
-          console.log('인증 상태 변경 - 언어 설정 저장 완료:', currentLanguage);
-        }
-
-        // 새 사용자인 경우에만 테스트 데이터 생성
-        if (isNewUser && isRecentlyCreated) {
-          console.log('=== 인증 상태 변경 - 신규 사용자 감지, 테스트 데이터 생성 시작 ===');
-          console.log('사용자 UID:', user.uid);
-          console.log('현재 언어 설정:', getCurrentLanguage());
-          
-          try {
-            const result = await createAllTestData();
-            console.log('=== 인증 상태 변경 - 테스트 데이터 생성 완료 (신규 사용자) ===');
-            console.log('생성 결과:', result);
-          } catch (testDataError) {
-            console.error('=== 인증 상태 변경 - 테스트 데이터 생성 실패 (상세) ===');
-            console.error('에러 상세:', testDataError);
-            console.error('에러 스택:', testDataError instanceof Error ? testDataError.stack : '스택 정보 없음');
-            console.warn('인증 상태 변경 - 테스트 데이터 생성 실패 (무시됨):', testDataError);
-          }
-        } else {
-          console.log('인증 상태 변경 - 기존 사용자 또는 오래된 계정, 테스트 데이터 생성 건너뜀');
-        }
-      } catch (error) {
-        console.error('인증 상태 변경 - 사용자 정보 처리 중 오류:', error);
-      }
+      await handleUserLogin(user, firebaseUser, '인증 상태 변경');
     }
 
     callback(user);
@@ -357,60 +355,8 @@ export const signInWithGoogle = async (): Promise<User> => {
     const user = convertFirebaseUser(firebaseUser);
     console.log('변환된 사용자 정보:', user);
 
-    // Firestore에서 기존 사용자 정보 확인
-    const userRef = doc(db, 'users', user.uid);
-    const userDoc = await getDoc(userRef);
-    const isNewUser = !userDoc.exists();
-    
-    // 계정 생성 시간과 현재 시간을 비교하여 신규 사용자 판단
-    const creationTime = new Date(firebaseUser.metadata.creationTime || Date.now());
-    const currentTime = new Date();
-    const timeDiff = currentTime.getTime() - creationTime.getTime();
-    const isRecentlyCreated = timeDiff < 60000; // 1분 이내에 생성된 계정
-    
-    console.log('사용자 신규 여부 확인:', { 
-      uid: user.uid, 
-      isNewUser, 
-      docExists: userDoc.exists(),
-      creationTime: creationTime.toISOString(),
-      timeDiff: timeDiff / 1000 + '초',
-      isRecentlyCreated
-    });
-
-    // Firestore에 사용자 정보 저장
-    await saveUserToFirestore(user);
-
-    // 새 사용자인 경우 언어 설정 저장 (동기적으로 처리)
-    if (isNewUser && isRecentlyCreated) {
-      const currentLanguage = getCurrentLanguage();
-      const settingsRef = doc(db, 'users', user.uid, 'settings', 'userSettings');
-      await setDoc(settingsRef, {
-        language: currentLanguage,
-        currency: getDefaultCurrencyForLanguage(currentLanguage),
-        businessType: ''
-      });
-      console.log('Google 로그인 시 언어 설정 저장 완료:', currentLanguage);
-    }
-
-    // 새 사용자인 경우에만 테스트 데이터 생성
-    if (isNewUser && isRecentlyCreated) {
-      console.log('=== 인증 상태 변경 - 신규 사용자 감지, 테스트 데이터 생성 시작 ===');
-      console.log('사용자 UID:', user.uid);
-      console.log('현재 언어 설정:', getCurrentLanguage());
-      
-      try {
-        const result = await createAllTestData();
-        console.log('=== 인증 상태 변경 - 테스트 데이터 생성 완료 (신규 사용자) ===');
-        console.log('생성 결과:', result);
-      } catch (testDataError) {
-        console.error('=== 인증 상태 변경 - 테스트 데이터 생성 실패 (상세) ===');
-        console.error('에러 상세:', testDataError);
-        console.error('에러 스택:', testDataError instanceof Error ? testDataError.stack : '스택 정보 없음');
-        console.warn('인증 상태 변경 - 테스트 데이터 생성 실패 (무시됨):', testDataError);
-      }
-    } else {
-      console.log('기존 사용자 또는 오래된 계정 - 테스트 데이터 생성 건너뜀');
-    }
+    // 신규 사용자 설정 처리
+    await handleUserLogin(user, firebaseUser, 'Google 로그인');
 
     return user;
   } catch (error) {
@@ -437,60 +383,8 @@ export const handleGoogleRedirectResult = async (): Promise<User | null> => {
     const user = convertFirebaseUser(firebaseUser);
     console.log('변환된 사용자 정보:', user);
 
-    // Firestore에서 기존 사용자 정보 확인
-    const userRef = doc(db, 'users', user.uid);
-    const userDoc = await getDoc(userRef);
-    const isNewUser = !userDoc.exists();
-    
-    // 계정 생성 시간과 현재 시간을 비교하여 신규 사용자 판단
-    const creationTime = new Date(firebaseUser.metadata.creationTime || Date.now());
-    const currentTime = new Date();
-    const timeDiff = currentTime.getTime() - creationTime.getTime();
-    const isRecentlyCreated = timeDiff < 60000; // 1분 이내에 생성된 계정
-    
-    console.log('사용자 신규 여부 확인:', { 
-      uid: user.uid, 
-      isNewUser, 
-      docExists: userDoc.exists(),
-      creationTime: creationTime.toISOString(),
-      timeDiff: timeDiff / 1000 + '초',
-      isRecentlyCreated
-    });
-
-    // Firestore에 사용자 정보 저장
-    await saveUserToFirestore(user);
-
-    // 새 사용자인 경우 언어 설정 저장 (동기적으로 처리)
-    if (isNewUser && isRecentlyCreated) {
-      const currentLanguage = getCurrentLanguage();
-      const settingsRef = doc(db, 'users', user.uid, 'settings', 'userSettings');
-      await setDoc(settingsRef, {
-        language: currentLanguage,
-        currency: getDefaultCurrencyForLanguage(currentLanguage),
-        businessType: ''
-      });
-      console.log('Google 리다이렉트 로그인 시 언어 설정 저장 완료:', currentLanguage);
-    }
-
-    // 새 사용자인 경우에만 테스트 데이터 생성
-    if (isNewUser && isRecentlyCreated) {
-      console.log('=== Google 리다이렉트 로그인 - 신규 사용자 감지, 테스트 데이터 생성 시작 ===');
-      console.log('사용자 UID:', user.uid);
-      console.log('현재 언어 설정:', getCurrentLanguage());
-      
-      try {
-        const result = await createAllTestData();
-        console.log('=== Google 리다이렉트 로그인 - 테스트 데이터 생성 완료 (신규 사용자) ===');
-        console.log('생성 결과:', result);
-      } catch (testDataError) {
-        console.error('=== Google 리다이렉트 로그인 - 테스트 데이터 생성 실패 (상세) ===');
-        console.error('에러 상세:', testDataError);
-        console.error('에러 스택:', testDataError instanceof Error ? testDataError.stack : '스택 정보 없음');
-        console.warn('Google 리다이렉트 로그인 - 테스트 데이터 생성 실패 (무시됨):', testDataError);
-      }
-    } else {
-      console.log('기존 사용자 또는 오래된 계정 - 테스트 데이터 생성 건너뜀');
-    }
+    // 신규 사용자 설정 처리
+    await handleUserLogin(user, firebaseUser, 'Google 리다이렉트 로그인');
 
     return user;
   } catch (error) {
@@ -500,7 +394,7 @@ export const handleGoogleRedirectResult = async (): Promise<User | null> => {
   }
 };
 
-// 네이티브 구글 로그인 처리
+// 네이티브 구글 로그인 처리 (Firebase Auth 없이 직접 처리)
 export const signInWithNativeGoogle = async (nativeGoogleResponse: GoogleLoginResponse): Promise<User> => {
   console.log('=== 네이티브 구글 로그인 처리 시작 ===');
   console.log('네이티브 구글 로그인 응답 받음:', nativeGoogleResponse);
@@ -516,31 +410,15 @@ export const signInWithNativeGoogle = async (nativeGoogleResponse: GoogleLoginRe
     console.log('토큰 길이:', token.length);
     console.log('토큰 시작 부분:', token.substring(0, 50) + '...');
     
-    // Google Auth Provider 생성
-    const provider = new GoogleAuthProvider();
-    console.log('Google Auth Provider 생성 완료');
-    
-    // Firebase 인증 시작
-    console.log('Firebase 인증 시작...');
-    const credential = GoogleAuthProvider.credential(token);
-    console.log('Credential 생성 완료:', credential);
-    
-    // 실제 Firebase Auth에 로그인
-    const auth = getAuth();
-    const userCredential = await signInWithCredential(auth, credential);
-    const firebaseUser = userCredential.user;
-    
-    console.log('Firebase Auth 로그인 성공:', firebaseUser.uid);
-    
-    // User 객체 생성 (Firebase Auth 사용자 정보 기반)
+    // 네이티브에서 받은 정보로 User 객체 생성
     const user: User = {
-      uid: firebaseUser.uid,
-      email: firebaseUser.email || email,
-      displayName: firebaseUser.displayName || name,
-      photoURL: firebaseUser.photoURL || photo,
-      emailVerified: firebaseUser.emailVerified,
-      createdAt: firebaseUser.metadata.creationTime ? new Date(firebaseUser.metadata.creationTime) : new Date(),
-      lastLoginAt: firebaseUser.metadata.lastSignInTime ? new Date(firebaseUser.metadata.lastSignInTime) : new Date()
+      uid: id, // 네이티브에서 받은 ID 사용
+      email: email,
+      displayName: name,
+      photoURL: photo,
+      emailVerified: true, // 구글 로그인은 이메일 인증됨
+      createdAt: new Date(),
+      lastLoginAt: new Date()
     };
     
     console.log('=== 네이티브 구글 로그인 처리 성공 ===');
@@ -554,21 +432,6 @@ export const signInWithNativeGoogle = async (nativeGoogleResponse: GoogleLoginRe
     console.error('에러 객체:', error);
     console.error('에러 메시지:', error.message);
     console.error('에러 스택:', error.stack);
-    
-    // Firebase Auth 에러 코드 확인
-    if (error.code) {
-      console.error('Firebase Auth 에러 코드:', error.code);
-      console.error('Firebase Auth 에러 메시지:', error.message);
-      
-      // 특정 에러 코드에 대한 처리
-      if (error.code === 'auth/invalid-credential') {
-        throw new Error('구글 로그인 토큰이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요.');
-      } else if (error.code === 'auth/account-exists-with-different-credential') {
-        throw new Error('이미 다른 방법으로 가입된 계정입니다.');
-      } else if (error.code === 'auth/network-request-failed') {
-        throw new Error('네트워크 연결을 확인해주세요.');
-      }
-    }
     
     // 일반적인 에러 처리
     if (error.message) {

@@ -356,6 +356,7 @@
     "confirmPasswordPlaceholder": "비밀번호를 다시 입력하세요",
     "namePlaceholder": "이름을 입력하세요",
     "loggingIn": "로그인 중...",
+    "loggingInWithGoogle": "Google 로그인 중...",
     "signingUp": "회원가입 중...",
     "noAccount": "계정이 없으신가요?",
     "haveAccount": "이미 계정이 있으신가요?",

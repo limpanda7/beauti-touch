@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import type { User, LoginCredentials, SignUpCredentials } from '../types';
+import type { User, LoginCredentials, SignUpCredentials, NativeGoogleLoginSuccess } from '../types';
 import * as authService from '../services/auth';
 import { setWebViewMessageListener, isWebViewEnvironment } from '../services/webviewBridge';
 
@@ -134,18 +134,37 @@ export const useAuthStore = create<AuthStore>()(
 
       // 웹뷰 메시지 리스너 설정
       setWebViewMessageListener((message) => {
-        console.log('AuthStore에서 웹뷰 메시지 수신:', message);
+        console.log('=== AuthStore에서 웹뷰 메시지 수신 ===');
+        console.log('메시지 타입:', message.type);
+        console.log('메시지 전체:', message);
+        console.log('현재 스토어 상태 (업데이트 전):', get());
         
         switch (message.type) {
           case 'googleLoginSuccess':
+            console.log('=== 네이티브 구글 로그인 성공 처리 시작 ===');
             console.log('네이티브 구글 로그인 성공:', message.value);
-            console.log('현재 스토어 상태 (업데이트 전):', get());
-            // 네이티브에서 전달받은 유저 정보를 스토어에 설정
+            
+            // 네이티브에서 전달받은 유저 정보를 앱 User 타입으로 변환하여 스토어에 설정
             if (message.value) {
               console.log('유저 정보를 스토어에 설정 중...');
-              set({ user: message.value, isLoading: false, isInitialized: true });
+              const nativeUserInfo = message.value as NativeGoogleLoginSuccess;
+              console.log('네이티브 유저 정보:', nativeUserInfo);
+              
+              const user: User = {
+                uid: nativeUserInfo.uid,
+                email: nativeUserInfo.email,
+                displayName: nativeUserInfo.displayName,
+                photoURL: nativeUserInfo.photoURL,
+                emailVerified: nativeUserInfo.emailVerified,
+                createdAt: new Date(nativeUserInfo.createdAt),
+                lastLoginAt: new Date(nativeUserInfo.lastLoginAt),
+              };
+              
+              console.log('변환된 유저 정보:', user);
+              set({ user, isLoading: false, isInitialized: true });
               console.log('스토어 상태 업데이트 완료');
               console.log('업데이트 후 스토어 상태:', get());
+              console.log('=== 네이티브 구글 로그인 성공 처리 완료 ===');
             } else {
               console.log('message.value가 없어서 유저 정보를 설정하지 않음');
             }
