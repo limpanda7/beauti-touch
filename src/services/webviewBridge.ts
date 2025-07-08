@@ -23,11 +23,6 @@ export const setWebViewMessageListener = (listener: (message: WebViewMessage) =>
   messageListener = listener;
 };
 
-// 웹뷰 메시지 리스너 제거
-export const removeWebViewMessageListener = () => {
-  messageListener = null;
-};
-
 // 네이티브 앱으로 메시지 전송
 export const postMessageToNative = (type: string, value?: any) => {
   const message = { type, value };
@@ -232,39 +227,9 @@ export const requestGoogleLogout = () => {
   postMessageToNative('googleLogout');
 };
 
-// 네이티브 앱에 인증 상태 확인 요청
-export const requestAuthStatus = () => {
-  postMessageToNative('checkAuthStatus');
-};
-
 // 웹뷰 환경인지 확인
 export const isWebViewEnvironment = (): boolean => {
   return !!(window.ReactNativeWebView);
-};
-
-// 테스트용 함수들 (개발 환경에서만 사용)
-export const testNativeGoogleLogin = () => {
-  if (isWebViewEnvironment()) {
-    requestGoogleLogin();
-  } else {
-    console.log('웹뷰 환경이 아닙니다. 테스트를 실행할 수 없습니다.');
-  }
-};
-
-export const testNativeGoogleLogout = () => {
-  if (isWebViewEnvironment()) {
-    requestGoogleLogout();
-  } else {
-    console.log('웹뷰 환경이 아닙니다. 테스트를 실행할 수 없습니다.');
-  }
-};
-
-export const testAuthStatus = () => {
-  if (isWebViewEnvironment()) {
-    requestAuthStatus();
-  } else {
-    console.log('웹뷰 환경이 아닙니다. 테스트를 실행할 수 없습니다.');
-  }
 };
 
 // 전역 타입 선언
@@ -273,18 +238,7 @@ declare global {
     ReactNativeWebView?: {
       postMessage: (message: string) => void;
     };
-    // 테스트용 전역 함수
-    testNativeGoogleLogin?: () => void;
-    testNativeGoogleLogout?: () => void;
-    testAuthStatus?: () => void;
   }
-}
-
-// 개발 환경에서 전역 함수 등록
-if (typeof window !== 'undefined') {
-  window.testNativeGoogleLogin = testNativeGoogleLogin;
-  window.testNativeGoogleLogout = testNativeGoogleLogout;
-  window.testAuthStatus = testAuthStatus;
 }
 
 // 전역 메시지 리스너 설정

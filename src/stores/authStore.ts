@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import type { User, LoginCredentials, SignUpCredentials } from '../types';
 import * as authService from '../services/auth';
-import { setWebViewMessageListener, removeWebViewMessageListener, isWebViewEnvironment, requestAuthStatus } from '../services/webviewBridge';
+import { setWebViewMessageListener, isWebViewEnvironment } from '../services/webviewBridge';
 
 interface AuthState {
   user: User | null;
@@ -127,24 +127,18 @@ export const useAuthStore = create<AuthStore>()(
     initialize: async () => {
       set({ isLoading: true });
       
-      // 웹뷰 환경에서는 네이티브 인증 상태 확인
-      if (isWebViewEnvironment()) {
-        console.log('웹뷰 환경에서 네이티브 인증 상태 확인');
-        requestAuthStatus();
-      } else {
-        // 일반 웹 환경에서는 Firebase Auth 상태 변경 감지
-        const unsubscribe = authService.onAuthStateChange((user) => {
-          set({ user, isLoading: false, isInitialized: true });
-        });
-      }
+      // 일반 웹 환경에서는 Firebase Auth 상태 변경 감지
+      const unsubscribe = authService.onAuthStateChange((user) => {
+        set({ user, isLoading: false, isInitialized: true });
+      });
 
       // 웹뷰 메시지 리스너 설정
       setWebViewMessageListener((message) => {
         console.log('AuthStore에서 웹뷰 메시지 수신:', message);
         
         switch (message.type) {
-          case 'userLoginSuccess':
-            console.log('네이티브 유저 로그인 성공:', message.value);
+          case 'googleLoginSuccess':
+            console.log('네이티브 구글 로그인 성공:', message.value);
             console.log('현재 스토어 상태 (업데이트 전):', get());
             // 네이티브에서 전달받은 유저 정보를 스토어에 설정
             if (message.value) {
@@ -157,55 +151,18 @@ export const useAuthStore = create<AuthStore>()(
             }
             break;
             
-          case 'userLoginFail':
-            console.error('네이티브 유저 로그인 실패:', message.value);
-            set({ error: message.value, errorCode: 'auth.errors.googleLoginFailed', isLoading: false });
-            break;
-            
-          case 'userLogoutSuccess':
-            console.log('네이티브 유저 로그아웃 성공');
-            set({ user: null, isLoading: false });
-            break;
-            
-          case 'userLogoutFail':
-            console.error('네이티브 유저 로그아웃 실패:', message.value);
-            set({ error: message.value, errorCode: 'auth.errors.googleLogoutFailed', isLoading: false });
-            break;
-
-          case 'authStatusSuccess':
-            console.log('네이티브 인증 상태 확인 성공:', message.value);
-            if (message.value?.isSignedIn && message.value?.user) {
-              set({ user: message.value.user, isLoading: false, isInitialized: true });
-            } else {
-              set({ user: null, isLoading: false, isInitialized: true });
-            }
-            break;
-
-          case 'authStatusFail':
-            console.error('네이티브 인증 상태 확인 실패:', message.value);
-            set({ error: message.value, errorCode: 'auth.errors.authStatusFailed', isLoading: false, isInitialized: true });
-            break;
-
-          // 기존 메시지 타입들 (하위 호환성)
-          case 'googleLoginSuccess':
-            console.log('네이티브 구글 로그인 성공 (기존 타입):', message.value);
-            if (message.value) {
-              set({ user: message.value, isLoading: false, isInitialized: true });
-            }
-            break;
-            
           case 'googleLoginFail':
-            console.error('네이티브 구글 로그인 실패 (기존 타입):', message.value);
+            console.error('네이티브 구글 로그인 실패:', message.value);
             set({ error: message.value, errorCode: 'auth.errors.googleLoginFailed', isLoading: false });
             break;
             
           case 'googleLogoutSuccess':
-            console.log('네이티브 구글 로그아웃 성공 (기존 타입)');
+            console.log('네이티브 구글 로그아웃 성공');
             set({ user: null, isLoading: false });
             break;
             
           case 'googleLogoutFail':
-            console.error('네이티브 구글 로그아웃 실패 (기존 타입):', message.value);
+            console.error('네이티브 구글 로그아웃 실패:', message.value);
             set({ error: message.value, errorCode: 'auth.errors.googleLogoutFailed', isLoading: false });
             break;
         }
