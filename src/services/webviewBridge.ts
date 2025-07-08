@@ -15,6 +15,19 @@ interface NativeUserInfo {
   lastLoginAt: string;
 }
 
+// 웹뷰 메시지 리스너 등록
+let messageListener: ((message: WebViewMessage) => void) | null = null;
+
+// 웹뷰 메시지 리스너 설정
+export const setWebViewMessageListener = (listener: (message: WebViewMessage) => void) => {
+  messageListener = listener;
+};
+
+// 웹뷰 메시지 리스너 제거
+export const removeWebViewMessageListener = () => {
+  messageListener = null;
+};
+
 // 네이티브 앱으로 메시지 전송
 export const postMessageToNative = (type: string, value?: any) => {
   const message = { type, value };
@@ -52,6 +65,11 @@ export const handleNativeMessage = (message: WebViewMessage) => {
       console.log('알 수 없는 메시지 타입:', message.type);
       break;
   }
+
+  // 등록된 리스너가 있으면 호출
+  if (messageListener) {
+    messageListener(message);
+  }
 };
 
 // 네이티브 구글 로그인 성공 처리
@@ -77,6 +95,18 @@ export const requestGoogleLogout = () => {
 export const isWebViewEnvironment = (): boolean => {
   return !!(window.ReactNativeWebView);
 };
+
+// 전역 메시지 리스너 설정
+if (typeof window !== 'undefined') {
+  window.addEventListener('message', (event) => {
+    try {
+      const message = JSON.parse(event.data);
+      handleNativeMessage(message);
+    } catch (error) {
+      console.error('메시지 파싱 오류:', error);
+    }
+  });
+}
 
 // 전역 타입 선언
 declare global {
