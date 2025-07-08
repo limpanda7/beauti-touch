@@ -93,7 +93,7 @@ const ChartDisplay: React.FC<ChartDisplayProps> = ({ chartType, chartData }) => 
   const getFieldValue = (key: string, value: any) => {
     // 체크박스 필드들 (배열)
     const checkboxKeys = [
-      'eyelashDesign', 'waxingAftercare', 'skinPurpose', 'massagePurpose', 'pilatesPosture'
+      'eyelashDesign', 'waxingAftercare', 'skinPurpose', 'skinTrouble', 'massagePurpose', 'pilatesPosture', 'pilatesPurpose', 'pilatesPain'
     ];
 
     if (checkboxKeys.includes(key) && Array.isArray(value)) {
@@ -107,7 +107,7 @@ const ChartDisplay: React.FC<ChartDisplayProps> = ({ chartType, chartData }) => 
       'nailType', 'nailBaseTop', 'nailCondition', 'nailLength', 'nailArt',
       'skinType', 'skinSensitivity',
       'massageStrength', 'massageMuscle',
-      'pilatesPurpose', 'pilatesIntensity', 'pilatesPain'
+      'pilatesIntensity'
     ];
 
     if (optionKeys.includes(key)) {

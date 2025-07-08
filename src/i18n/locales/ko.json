@@ -569,6 +569,18 @@
         "redness": "붉어짐",
         "none": "없음"
       },
+      "skinTrouble": {
+        "acne": "여드름",
+        "pigmentation": "기미",
+        "freckles": "주근깨",
+        "wrinkles": "주름",
+        "pores": "모공",
+        "blackheads": "블랙헤드",
+        "whiteheads": "화이트헤드",
+        "redness": "붉어짐",
+        "dryness": "건조함",
+        "oiliness": "지성"
+      },
       "skinPurpose": {
         "soothing": "진정",
         "moisturizing": "보습",
@@ -631,7 +643,14 @@
     },
     "saveError": "차트 정보 저장에 실패했습니다.",
     "loadError": "차트 정보를 불러오는데 실패했습니다.",
-    "unsavedChangesConfirm": "작성 중인 차트 내용이 저장되지 않습니다. 정말로 나가시겠습니까?"
+    "unsavedChangesConfirm": "작성 중인 차트 내용이 저장되지 않습니다. 정말로 나가시겠습니까?",
+    "loadLatest": "최근 차트 불러오기",
+    "loadLatestMobile": "최근 차트",
+    "noPreviousChart": "이 고객의 이전 차트 정보가 없습니다.",
+    "loadLatestConfirm": "이 고객의 최근 차트 정보를 불러오시겠습니까?",
+    "loadLatestConfirmType": "이 고객의 최근 {type} 차트 정보를 불러오시겠습니까?",
+    "loadLatestSuccess": "최근 차트 정보를 불러왔습니다.",
+    "loadLatestError": "최근 차트 정보를 불러오는데 실패했습니다."
   },
   "shareCode": {
     "title": "공유",

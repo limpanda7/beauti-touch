@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Save, X, FileText } from 'lucide-react';
+import { ArrowLeft, Save, X, FileText, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -54,6 +54,7 @@ const ChartPage: React.FC = () => {
   const [faceFrontShapes, setFaceFrontShapes] = useState<Shape[]>([]);
   const [bodyShapes, setBodyShapes] = useState<Shape[]>([]);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [hasPreviousChart, setHasPreviousChart] = useState(false);
 
   // 브라우저 뒤로가기 및 페이지 새로고침 시 unsaved changes 확인
   useEffect(() => {
@@ -117,7 +118,7 @@ const ChartPage: React.FC = () => {
     ],
     skin: [
       { name: 'skinType', label: t('chart.fields.skinType'), type: 'select', options: ['normal', 'dry', 'oily', 'combination', 'sensitive'] },
-      { name: 'skinTrouble', label: t('chart.fields.skinTrouble') },
+      { name: 'skinTrouble', label: t('chart.fields.skinTrouble'), type: 'checkbox', options: ['acne', 'pigmentation', 'freckles', 'wrinkles', 'pores', 'blackheads', 'whiteheads', 'redness', 'dryness', 'oiliness'] },
       { name: 'skinSensitivity', label: t('chart.fields.skinSensitivity'), type: 'select', options: ['tingle', 'hot', 'redness', 'none'] },
       { name: 'skinPurpose', label: t('chart.fields.skinPurpose'), type: 'checkbox', options: ['soothing', 'moisturizing', 'whitening', 'trouble', 'elasticity', 'regeneration', 'exfoliation'] },
       { name: 'skinProduct', label: t('chart.fields.skinProduct') },
@@ -130,10 +131,10 @@ const ChartPage: React.FC = () => {
       { name: 'massageOil', label: t('chart.fields.massageOil') },
     ],
     pilates: [
-      { name: 'pilatesPurpose', label: t('chart.fields.pilatesPurpose'), type: 'select', options: ['posture_correction', 'pain_relief', 'strength', 'weight_loss', 'flexibility', 'stress_relief'] },
+      { name: 'pilatesPurpose', label: t('chart.fields.pilatesPurpose'), type: 'checkbox', options: ['posture_correction', 'pain_relief', 'strength', 'weight_loss', 'flexibility', 'stress_relief'] },
       { name: 'pilatesPosture', label: t('chart.fields.pilatesPosture'), type: 'checkbox', options: ['turtle_neck', 'pelvic_asymmetry', 'hunched_back', 'x_legs', 'o_legs', 'scoliosis', 'shoulder_imbalance'] },
       { name: 'pilatesIntensity', label: t('chart.fields.pilatesIntensity'), type: 'select', options: ['weak', 'normal', 'strong'] },
-      { name: 'pilatesPain', label: t('chart.fields.pilatesPain'), type: 'select', options: ['none', 'neck', 'shoulder', 'back', 'knee', 'ankle', 'wrist', 'hip'] },
+      { name: 'pilatesPain', label: t('chart.fields.pilatesPain'), type: 'checkbox', options: ['none', 'neck', 'shoulder', 'back', 'knee', 'ankle', 'wrist', 'hip'] },
       { name: 'pilatesFeedback', label: t('chart.fields.pilatesFeedback') },
     ],
     default: [], // 기본 타입은 빈 배열
@@ -152,7 +153,8 @@ const ChartPage: React.FC = () => {
       const reservationData = await reservationService.getById(reservationId);
       if (reservationData) {
         setReservation(reservationData);
-        setChartType(reservationData.chartType || businessType || '');
+        const currentChartType = reservationData.chartType || businessType || '';
+        setChartType(currentChartType);
         setChartData(reservationData.chartData || {});
         // 도형 정보 복원
         const drawings = (reservationData.chartData as ChartDataWithDrawings)?.drawings as any || {};
@@ -170,6 +172,13 @@ const ChartPage: React.FC = () => {
         
         // 데이터 로드 완료 후 unsaved changes 플래그 리셋
         setHasUnsavedChanges(false);
+        
+        // 이전 차트 존재 여부 확인 (현재 예약 제외)
+        // 차트 타입이 선택되지 않았으면 모든 타입의 차트를 확인
+        const selectedChartType = currentChartType || undefined;
+        const previousChart = await reservationService.getLatestChartByCustomerId(reservationData.customerId, selectedChartType, reservationId);
+        // 이전 차트가 있고, 차트 데이터가 유효한 경우에만 버튼 표시
+        setHasPreviousChart(!!(previousChart && previousChart.chartType && Object.keys(previousChart.chartData).length > 0));
       } else {
         navigate('/dashboard/reservations');
       }
@@ -182,10 +191,18 @@ const ChartPage: React.FC = () => {
   };
 
   // 차트 타입 변경 핸들러
-  const handleChartTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setChartType(e.target.value as ChartType);
+  const handleChartTypeChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newChartType = e.target.value as ChartType;
+    setChartType(newChartType);
     setChartData({}); // 업종 변경 시 세부 입력 초기화
     setHasUnsavedChanges(true);
+    
+    // 차트 타입 변경 시 이전 차트 존재 여부도 업데이트
+    if (customer) {
+      const selectedChartType = newChartType || undefined;
+      const previousChart = await reservationService.getLatestChartByCustomerId(customer.id, selectedChartType, reservationId);
+      setHasPreviousChart(!!(previousChart && previousChart.chartType && Object.keys(previousChart.chartData).length > 0));
+    }
   };
 
   // 차트 데이터 변경 핸들러
@@ -304,6 +321,46 @@ const ChartPage: React.FC = () => {
     }
   };
 
+  // 최근 차트 불러오기 핸들러
+  const handleLoadLatestChart = async () => {
+    if (!customer) return;
+    
+    try {
+      // 차트 타입이 선택되지 않았으면 타입을 전달하지 않음
+      const selectedChartType = chartType || undefined;
+      const latestChart = await reservationService.getLatestChartByCustomerId(customer.id, selectedChartType, reservationId);
+      
+      if (!latestChart) {
+        alert(t('chart.noPreviousChart'));
+        return;
+      }
+
+      // 사용자 확인
+      const confirmMessage = chartType 
+        ? `이 고객의 최근 ${t(`chart.type.${chartType}`)} 차트 정보를 불러오시겠습니까?`
+        : t('chart.loadLatestConfirm');
+        
+      if (!window.confirm(confirmMessage)) {
+        return;
+      }
+
+      // 차트 데이터 로드
+      setChartType(latestChart.chartType);
+      setChartData(latestChart.chartData);
+      
+      // 도형 정보 복원
+      const drawings = (latestChart.chartData as ChartDataWithDrawings)?.drawings as any || {};
+      setFaceSideShapes(drawings.faceSide || []);
+      setFaceFrontShapes(drawings.faceFront || []);
+      setBodyShapes(drawings.body || []);
+      
+      setHasUnsavedChanges(true);
+    } catch (error) {
+      console.error('최근 차트 로드 실패:', error);
+      alert(t('chart.loadLatestError'));
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ padding: '1.5rem' }}>
@@ -398,6 +455,21 @@ const ChartPage: React.FC = () => {
                 </option>
               ))}
             </select>
+          </div>
+          <div 
+            className="chart-page-load-latest"
+            title={!hasPreviousChart ? t('chart.noPreviousChart') : t('chart.loadLatest')}
+          >
+            <Button
+              onClick={handleLoadLatestChart}
+              variant="secondary"
+              size="sm"
+              disabled={!hasPreviousChart}
+            >
+              <RefreshCw style={{ width: '1rem', height: '1rem' }} />
+              <span className="load-latest-text-desktop">{t('chart.loadLatest')}</span>
+              <span className="load-latest-text-mobile">{t('chart.loadLatestMobile')}</span>
+            </Button>
           </div>
         </div>
 

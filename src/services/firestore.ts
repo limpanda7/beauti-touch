@@ -17,7 +17,7 @@ import {
 } from 'firebase/firestore';
 import type { QuerySnapshot, DocumentData } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { Customer, Product, Reservation, AutoCompleteData, AutoCompleteSuggestion, ChartType } from '../types';
+import type { Customer, Product, Reservation, AutoCompleteData, AutoCompleteSuggestion, ChartType, ChartData } from '../types';
 import { generateCustomerNumber, maskCustomerData, generateUniqueCustomerNumber } from '../utils/customerUtils';
 import { generateShareCode, hashPassword, verifyPassword } from '../utils/shareCodeUtils';
 import { getAuth } from 'firebase/auth';
@@ -405,6 +405,50 @@ export const reservationService = {
 
     // 클라이언트에서 날짜 최신순으로 정렬
     return reservations.sort((a, b) => b.date.getTime() - a.date.getTime());
+  },
+
+  // 고객의 최근 차트 정보 가져오기
+  async getLatestChartByCustomerId(customerId: string, chartType?: ChartType, excludeReservationId?: string): Promise<{ chartType: ChartType; chartData: ChartData } | null> {
+    try {
+      const customerReservations = await this.getByCustomerId(customerId);
+      
+      // 차트 데이터가 있는 예약들만 필터링하고, 제외할 예약 ID가 있으면 제외
+      const chartReservations = customerReservations.filter(reservation => 
+        reservation.chartType && 
+        reservation.chartData && 
+        (!excludeReservationId || reservation.id !== excludeReservationId)
+      );
+
+      if (chartReservations.length === 0) {
+        return null;
+      }
+
+      // 특정 차트 타입이 지정된 경우 해당 타입의 최근 차트 찾기
+      if (chartType) {
+        const typeSpecificReservations = chartReservations.filter(reservation => 
+          reservation.chartType === chartType
+        );
+        
+        if (typeSpecificReservations.length > 0) {
+          const latest = typeSpecificReservations[0]; // 이미 최신순으로 정렬되어 있음
+          return {
+            chartType: latest.chartType!,
+            chartData: latest.chartData!
+          };
+        }
+        return null; // 해당 타입이 없으면 null 반환
+      }
+
+      // 차트 타입이 지정되지 않은 경우에만 모든 타입 중 최근 차트 반환
+      const latest = chartReservations[0];
+      return {
+        chartType: latest.chartType!,
+        chartData: latest.chartData!
+      };
+    } catch (error) {
+      console.error('최근 차트 조회 실패:', error);
+      return null;
+    }
   },
 
   async getById(id: string): Promise<Reservation | null> {

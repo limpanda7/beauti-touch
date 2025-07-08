@@ -43,7 +43,6 @@ const SettingsPage: React.FC = () => {
       { name: 'nailFeedback', label: t('chart.fields.nailFeedback') },
     ],
     skin: [
-      { name: 'skinTrouble', label: t('chart.fields.skinTrouble') },
       { name: 'skinProduct', label: t('chart.fields.skinProduct') },
     ],
     massage: [

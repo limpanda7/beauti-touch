@@ -73,7 +73,7 @@ export interface ChartData {
   // 피부관리
   skinType?: 'normal' | 'dry' | 'oily' | 'combination' | 'sensitive' | '';
   skinTypeDetail?: string;
-  skinTrouble?: string;
+  skinTrouble?: string[];
   skinSensitivity?: string;
   skinPurpose?: string[]; // 체크박스로 변경
   skinProduct?: string;
@@ -84,10 +84,10 @@ export interface ChartData {
   massageMuscle?: string;
   massageOil?: string;
   // 필라테스
-  pilatesPurpose?: string;
+  pilatesPurpose?: string[];
   pilatesPosture?: string[];
   pilatesIntensity?: string;
-  pilatesPain?: string;
+  pilatesPain?: string[];
   pilatesFeedback?: string;
 }
 
