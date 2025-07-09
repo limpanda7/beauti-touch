@@ -14,10 +14,11 @@ import {
 import type { User as FirebaseUser, AuthError as FirebaseAuthError } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import type { User, LoginCredentials, SignUpCredentials, AuthError, GoogleLoginResponse } from '../types';
+import type { User, LoginCredentials, SignUpCredentials, AuthError, GoogleLoginResponse, NativeGoogleLoginSuccess } from '../types';
 import { createAllTestData } from '../utils/testData';
 import { getCurrentLanguage } from '../utils/languageUtils';
 import { getDefaultCurrencyForLanguage } from '../utils/currency';
+import { isWebViewEnvironment } from '../services/webviewBridge';
 
 // Firebase 에러 코드를 다국어 키로 변환하는 함수
 const getErrorTranslationKey = (errorCode: string): string => {
@@ -38,7 +39,7 @@ const getErrorTranslationKey = (errorCode: string): string => {
     'auth/account-exists-with-different-credential': 'auth.errors.accountExistsWithDifferentCredential',
     'auth/requires-recent-login': 'auth.errors.requiresRecentLogin',
   };
-  
+
   return errorKeyMap[errorCode] || 'auth.errors.unknownError';
 };
 
@@ -82,30 +83,49 @@ const saveUserToFirestore = async (user: User) => {
 };
 
 // 신규 사용자 여부를 확인하는 공통 함수
-const checkNewUserStatus = async (user: User, firebaseUser?: any) => {
+const checkNewUserStatus = async (user: User, firebaseUser?: any, context: string = 'unknown') => {
   // Firestore에서 기존 사용자 정보 확인
   const userRef = doc(db, 'users', user.uid);
   const userDoc = await getDoc(userRef);
   const isNewUser = !userDoc.exists();
-  
+
   // 계정 생성 시간과 현재 시간을 비교하여 신규 사용자 판단
-  const creationTime = firebaseUser 
+  const creationTime = firebaseUser
     ? new Date(firebaseUser.metadata.creationTime || Date.now())
     : new Date(user.createdAt);
   const currentTime = new Date();
   const timeDiff = currentTime.getTime() - creationTime.getTime();
   const isRecentlyCreated = timeDiff < 60000; // 1분 이내에 생성된 계정
-  
-  console.log('사용자 신규 여부 확인:', { 
-    uid: user.uid, 
-    isNewUser, 
-    docExists: userDoc.exists(),
-    creationTime: creationTime.toISOString(),
-    timeDiff: timeDiff / 1000 + '초',
-    isRecentlyCreated
-  });
 
-  return { isNewUser, isRecentlyCreated };
+  // 네이티브 로그인의 경우, Firestore 문서가 없거나 생성 시간이 최근인 경우 신규 사용자로 판단
+  let shouldCreateTestData = false;
+
+  if (context.includes('네이티브')) {
+    // 네이티브 로그인의 경우: 문서가 없거나 생성 시간이 5분 이내인 경우
+    shouldCreateTestData = !userDoc.exists() || timeDiff < 300000; // 5분
+    console.log(`${context} - 네이티브 로그인 신규 사용자 판단:`, {
+      uid: user.uid,
+      isNewUser,
+      docExists: userDoc.exists(),
+      creationTime: creationTime.toISOString(),
+      timeDiff: timeDiff / 1000 + '초',
+      shouldCreateTestData
+    });
+  } else {
+    // 일반 웹 로그인의 경우: 기존 로직 유지
+    shouldCreateTestData = isNewUser && isRecentlyCreated;
+    console.log(`${context} - 웹 로그인 신규 사용자 판단:`, {
+      uid: user.uid,
+      isNewUser,
+      docExists: userDoc.exists(),
+      creationTime: creationTime.toISOString(),
+      timeDiff: timeDiff / 1000 + '초',
+      isRecentlyCreated,
+      shouldCreateTestData
+    });
+  }
+
+  return { isNewUser, isRecentlyCreated, shouldCreateTestData };
 };
 
 // 신규 사용자를 위한 초기 설정을 처리하는 공통 함수
@@ -125,7 +145,7 @@ const handleNewUserSetup = async (user: User, context: string = 'unknown') => {
     console.log(`=== ${context} - 신규 사용자 감지, 테스트 데이터 생성 시작 ===`);
     console.log('사용자 UID:', user.uid);
     console.log('현재 언어 설정:', currentLanguage);
-    
+
     try {
       const result = await createAllTestData();
       console.log(`=== ${context} - 테스트 데이터 생성 완료 (신규 사용자) ===`);
@@ -148,10 +168,10 @@ export const handleUserLogin = async (user: User, firebaseUser?: any, context: s
     await saveUserToFirestore(user);
 
     // 신규 사용자 여부 확인
-    const { isNewUser, isRecentlyCreated } = await checkNewUserStatus(user, firebaseUser);
+    const { isNewUser, isRecentlyCreated, shouldCreateTestData } = await checkNewUserStatus(user, firebaseUser, context);
 
-    // 신규 사용자인 경우 초기 설정 처리
-    if (isNewUser && isRecentlyCreated) {
+    // 테스트 데이터 생성 여부 결정
+    if (shouldCreateTestData) {
       await handleNewUserSetup(user, context);
     } else {
       console.log(`${context} - 기존 사용자 또는 오래된 계정, 테스트 데이터 생성 건너뜀`);
@@ -203,7 +223,7 @@ export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
     if (error instanceof Error) {
       throw new Error(error.message);
     }
-    
+
     const firebaseError = error as FirebaseAuthError;
     throw new Error(getErrorTranslationKey(firebaseError.code));
   }
@@ -220,7 +240,7 @@ export const signIn = async (credentials: LoginCredentials): Promise<User> => {
 
     const firebaseUser = userCredential.user;
     console.log('Firebase 로그인 성공:', firebaseUser);
-    
+
     const user = convertFirebaseUser(firebaseUser);
     console.log('변환된 사용자 정보:', user);
 
@@ -238,7 +258,37 @@ export const signIn = async (credentials: LoginCredentials): Promise<User> => {
 // 로그아웃
 export const signOutUser = async (): Promise<void> => {
   try {
-    await signOut(auth);
+    // 웹뷰 환경에서는 네이티브 로그아웃 사용
+    if (isWebViewEnvironment()) {
+      console.log('웹뷰 환경에서 네이티브 로그아웃 요청');
+      return new Promise((resolve, reject) => {
+        import('./webviewBridge').then(({ postMessageToNative, setWebViewMessageListener }) => {
+          postMessageToNative('googleLogout');
+
+          // 메시지 리스너 설정
+          const handleNativeMessage = (message: any) => {
+            if (message.type === 'googleLogoutSuccess') {
+              console.log('네이티브 로그아웃 성공');
+              resolve();
+            } else if (message.type === 'googleLogoutFail') {
+              console.error('네이티브 로그아웃 실패:', message.value);
+              reject(new Error(message.value || '네이티브 로그아웃 실패'));
+            }
+          };
+
+          // 일회성 메시지 리스너 등록
+          setWebViewMessageListener(handleNativeMessage);
+
+          // 타임아웃 설정
+          setTimeout(() => {
+            reject(new Error('네이티브 로그아웃 타임아웃'));
+          }, 5000);
+        });
+      });
+    } else {
+      // 웹 환경에서는 Firebase Auth 로그아웃
+      await signOut(auth);
+    }
   } catch (error) {
     console.error('로그아웃 실패:', error);
     throw new Error('로그아웃 중 오류가 발생했습니다.');
@@ -283,7 +333,7 @@ export const updateUserProfile = async (updates: Partial<User>): Promise<void> =
     if (updates.photoURL !== undefined) {
       authUpdates.photoURL = updates.photoURL;
     }
-    
+
     if (Object.keys(authUpdates).length > 0) {
       await updateProfile(currentUser, authUpdates);
     }
@@ -291,10 +341,10 @@ export const updateUserProfile = async (updates: Partial<User>): Promise<void> =
     // Firestore 사용자 정보 업데이트
     const userRef = doc(db, 'users', currentUser.uid);
     const userDoc = await getDoc(userRef);
-    
+
     if (userDoc.exists()) {
       const userData = userDoc.data();
-      
+
       // undefined가 아닌 값들만 필터링
       const cleanUpdates: Record<string, any> = {};
       Object.entries(updates).forEach(([key, value]) => {
@@ -302,7 +352,7 @@ export const updateUserProfile = async (updates: Partial<User>): Promise<void> =
           cleanUpdates[key] = value;
         }
       });
-      
+
       await setDoc(userRef, {
         ...userData,
         ...cleanUpdates,
@@ -318,25 +368,32 @@ export const updateUserProfile = async (updates: Partial<User>): Promise<void> =
 // 브라우저 감지 함수
 const detectProblematicBrowser = (): boolean => {
   const userAgent = navigator.userAgent.toLowerCase();
-  return userAgent.includes('naver') || 
-         userAgent.includes('whale') || 
-         userAgent.includes('wv') || 
-         userAgent.includes('line') || 
+  return userAgent.includes('naver') ||
+         userAgent.includes('whale') ||
+         userAgent.includes('wv') ||
+         userAgent.includes('line') ||
          userAgent.includes('kakao');
 };
 
 // Google 로그인
 export const signInWithGoogle = async (): Promise<User> => {
   try {
+    // 웹뷰 환경에서는 네이티브 구글 로그인 사용
+    if (isWebViewEnvironment()) {
+      console.log('웹뷰 환경에서 네이티브 구글 로그인 요청');
+      return await signInWithNativeGoogle();
+    }
+
+    // 웹 환경 - 기존 로직 유지
     const provider = new GoogleAuthProvider();
     provider.addScope('email');
     provider.addScope('profile');
-    
+
     // 문제가 있는 브라우저인지 확인
     const isProblematicBrowser = detectProblematicBrowser();
-    
+
     let userCredential;
-    
+
     if (isProblematicBrowser) {
       console.log('문제가 있는 브라우저 감지, 리다이렉트 방식 사용');
       // 리다이렉트 방식 사용
@@ -347,11 +404,11 @@ export const signInWithGoogle = async (): Promise<User> => {
       // 팝업 방식 사용
       userCredential = await signInWithPopup(auth, provider);
     }
-    
+
     const firebaseUser = userCredential.user;
-    
+
     console.log('Google 로그인 성공:', firebaseUser);
-    
+
     const user = convertFirebaseUser(firebaseUser);
     console.log('변환된 사용자 정보:', user);
 
@@ -376,10 +433,10 @@ export const handleGoogleRedirectResult = async (): Promise<User | null> => {
     if (!result) {
       return null; // 리다이렉트 결과가 없음
     }
-    
+
     const firebaseUser = result.user;
     console.log('Google 리다이렉트 로그인 성공:', firebaseUser);
-    
+
     const user = convertFirebaseUser(firebaseUser);
     console.log('변환된 사용자 정보:', user);
 
@@ -394,50 +451,65 @@ export const handleGoogleRedirectResult = async (): Promise<User | null> => {
   }
 };
 
-// 네이티브 구글 로그인 처리 (Firebase Auth 없이 직접 처리)
-export const signInWithNativeGoogle = async (nativeGoogleResponse: GoogleLoginResponse): Promise<User> => {
-  console.log('=== 네이티브 구글 로그인 처리 시작 ===');
-  console.log('네이티브 구글 로그인 응답 받음:', nativeGoogleResponse);
-  
-  try {
-    const { token, email, name, photo, givenName, familyName, id } = nativeGoogleResponse;
-    
-    // 토큰 유효성 검사
-    if (!token || token.length < 100) {
-      throw new Error('유효하지 않은 구글 로그인 토큰입니다.');
-    }
-    
-    console.log('토큰 길이:', token.length);
-    console.log('토큰 시작 부분:', token.substring(0, 50) + '...');
-    
-    // 네이티브에서 받은 정보로 User 객체 생성
-    const user: User = {
-      uid: id, // 네이티브에서 받은 ID 사용
-      email: email,
-      displayName: name,
-      photoURL: photo,
-      emailVerified: true, // 구글 로그인은 이메일 인증됨
-      createdAt: new Date(),
-      lastLoginAt: new Date()
-    };
-    
-    console.log('=== 네이티브 구글 로그인 처리 성공 ===');
-    console.log('생성된 사용자 정보:', user);
-    
-    return user;
-    
-  } catch (error: any) {
-    console.error('=== 네이티브 구글 로그인 처리 실패 ===');
-    console.error('에러 타입:', typeof error);
-    console.error('에러 객체:', error);
-    console.error('에러 메시지:', error.message);
-    console.error('에러 스택:', error.stack);
-    
-    // 일반적인 에러 처리
-    if (error.message) {
-      throw new Error(error.message);
-    } else {
-      throw new Error('구글 로그인 중 오류가 발생했습니다.');
-    }
-  }
-}; 
+// 네이티브 구글 로그인 처리 (idToken만 사용)
+export const signInWithNativeGoogle = async (): Promise<User> => {
+  return new Promise((resolve, reject) => {
+    console.log('=== 네이티브 구글 로그인 처리 시작 ===');
+
+    // 네이티브 앱에 로그인 요청
+    import('./webviewBridge').then(({ postMessageToNative }) => {
+      postMessageToNative('googleLogin');
+
+      // 메시지 리스너 설정
+      const handleNativeMessage = async (message: any) => {
+        if (message.type === 'googleLoginSuccess') {
+          try {
+            const idToken = message.value;
+            if (!idToken) {
+              throw new Error('네이티브에서 idToken을 받지 못했습니다.');
+            }
+
+            console.log('idToken 추출 성공, 길이:', idToken.length);
+
+            // 1. idToken으로 Firebase Auth 로그인
+            const { signInWithCredential, GoogleAuthProvider } = await import('firebase/auth');
+            const credential = GoogleAuthProvider.credential(idToken);
+
+            const userCredential = await signInWithCredential(auth, credential);
+            const firebaseUser = userCredential.user;
+
+            console.log('Firebase Auth 로그인 성공:', firebaseUser);
+            console.log('Firebase User UID:', firebaseUser.uid);
+
+            // 2. Firebase User를 앱 User로 변환
+            const user = convertFirebaseUser(firebaseUser);
+            console.log('변환된 사용자 정보:', user);
+
+            // 3. 공통 로그인 처리 (firebaseUser 포함)
+            await handleUserLogin(user, firebaseUser, '네이티브 Google 로그인');
+
+            console.log('=== 네이티브 구글 로그인 처리 완료 ===');
+            resolve(user);
+          } catch (error) {
+            console.error('=== 네이티브 구글 로그인 처리 실패 ===');
+            console.error('에러:', error);
+            reject(new Error('네이티브 구글 로그인 중 오류가 발생했습니다.'));
+          }
+        } else if (message.type === 'googleLoginFail') {
+          console.error('네이티브 구글 로그인 실패:', message.value);
+          reject(new Error(message.value || '네이티브 구글 로그인 실패'));
+        }
+      };
+
+      // 일회성 메시지 리스너 등록
+      import('./webviewBridge').then(({ setWebViewMessageListener }) => {
+        setWebViewMessageListener(handleNativeMessage);
+
+        // 타임아웃 설정
+        setTimeout(() => {
+          reject(new Error('네이티브 구글 로그인 타임아웃'));
+        }, 10000);
+      });
+    });
+  });
+};

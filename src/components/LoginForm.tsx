@@ -3,8 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, AlertTriangle } from 'lucide-react';
 import { useAuthStore, useIsAuthenticated } from '../stores/authStore';
-import { getBrowserInfo } from '../utils/browserUtils';
-import { isWebViewEnvironment, requestGoogleLogin } from '../services/webviewBridge';
+
 import type { LoginCredentials } from '../types';
 
 interface LoginFormProps {
@@ -33,18 +32,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp }) => {
   const navigate = useNavigate();
   const { signIn, signInWithGoogle, isLoading, error, errorCode, clearError } = useAuthStore();
   const isAuthenticated = useIsAuthenticated();
-  const browserInfo = getBrowserInfo();
-  
-  // 브라우저별 경고 메시지
-  const getBrowserWarningMessage = () => {
-    if (browserInfo.isNaver) {
-      return t('auth.browserWarning.naver');
-    }
-    if (browserInfo.isInApp) {
-      return t('auth.browserWarning.inApp');
-    }
-    return '';
-  };
   
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: '',
@@ -96,34 +83,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp }) => {
 
   const handleGoogleLogin = async () => {
     try {
-      // 웹뷰 환경인지 확인
-      if (isWebViewEnvironment()) {
-        console.log('웹뷰 환경에서 네이티브 구글 로그인 요청');
-        setIsGoogleLoginLoading(true);
-        requestGoogleLogin();
-        
-        // 로그인 완료 이벤트 리스너 설정
-        const handleLoginComplete = () => {
-          console.log('Google 로그인 완료 이벤트 수신');
-          setIsGoogleLoginLoading(false);
-          window.removeEventListener('googleLoginComplete', handleLoginComplete);
-        };
-        
-        window.addEventListener('googleLoginComplete', handleLoginComplete);
-        
-        // 10초 후에도 로그인이 완료되지 않으면 로딩 상태 해제 (안전장치)
-        setTimeout(() => {
-          if (isGoogleLoginLoading) {
-            console.log('Google 로그인 타임아웃, 로딩 상태 해제');
-            setIsGoogleLoginLoading(false);
-            window.removeEventListener('googleLoginComplete', handleLoginComplete);
-          }
-        }, 10000);
-        
-        return;
-      }
-      
-      // 일반 웹 환경에서는 기존 방식 사용
       setIsGoogleLoginLoading(true);
       await signInWithGoogle();
       setIsGoogleLoginLoading(false);
@@ -146,14 +105,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp }) => {
     }
   }, [isAuthenticated, navigate]);
 
-  // 컴포넌트 언마운트 시 이벤트 리스너 정리
-  useEffect(() => {
-    return () => {
-      // googleLoginComplete 이벤트 리스너 정리
-      const handleLoginComplete = () => {};
-      window.removeEventListener('googleLoginComplete', handleLoginComplete);
-    };
-  }, []);
+
 
   return (
     <div className="auth-form-container">
@@ -237,13 +189,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp }) => {
       <div className="auth-divider">
         <span className="auth-divider-text">{t('auth.or')}</span>
       </div>
-
-      {getBrowserWarningMessage() && (
-        <div className="browser-warning">
-          <AlertTriangle size={16} />
-          <span>{getBrowserWarningMessage()}</span>
-        </div>
-      )}
 
       <div className="social-login-buttons">
         <button

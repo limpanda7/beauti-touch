@@ -71,18 +71,3 @@ const getBrowserVersion = (userAgent: string): string => {
   const match = userAgent.match(/(chrome|firefox|safari|edge|opera|ie)\/?([\d.]+)/i);
   return match ? match[2] : 'Unknown';
 };
-
-// 브라우저별 권장사항 메시지
-export const getBrowserRecommendation = (): string => {
-  const browserInfo = getBrowserInfo();
-  
-  if (browserInfo.isNaver) {
-    return '네이버 브라우저에서는 Google 로그인이 제한될 수 있습니다. Chrome, Safari, Firefox 등의 브라우저를 사용해주세요.';
-  }
-  
-  if (browserInfo.isInApp) {
-    return '인앱 브라우저에서는 Google 로그인이 제한될 수 있습니다. 외부 브라우저를 사용해주세요.';
-  }
-  
-  return '';
-}; 
