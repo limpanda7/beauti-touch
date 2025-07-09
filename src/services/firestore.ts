@@ -28,6 +28,7 @@ const getCurrentUserId = (): string => {
   // 먼저 스토어에서 사용자 정보 확인
   const authStore = useAuthStore.getState();
   if (authStore.user && authStore.user.uid) {
+    console.log('스토어에서 사용자 ID 가져옴:', authStore.user.uid);
     return authStore.user.uid;
   }
   
@@ -36,15 +37,19 @@ const getCurrentUserId = (): string => {
   const user = auth.currentUser;
   
   if (user) {
+    console.log('Firebase Auth에서 사용자 ID 가져옴:', user.uid);
     return user.uid;
   }
   
   // 둘 다 없으면 잠시 대기 후 재시도 (최대 5초)
+  console.log('사용자 정보가 없음, 잠시 대기 후 재시도...');
+  
   const startTime = Date.now();
   while (Date.now() - startTime < 5000) {
     // 스토어 재확인
     const retryAuthStore = useAuthStore.getState();
     if (retryAuthStore.user && retryAuthStore.user.uid) {
+      console.log('재시도 후 스토어에서 사용자 ID 발견:', retryAuthStore.user.uid);
       return retryAuthStore.user.uid;
     }
     
@@ -52,6 +57,7 @@ const getCurrentUserId = (): string => {
     const retryAuth = getAuth();
     const retryUser = retryAuth.currentUser;
     if (retryUser) {
+      console.log('재시도 후 Firebase Auth에서 사용자 ID 발견:', retryUser.uid);
       return retryUser.uid;
     }
     
@@ -62,6 +68,9 @@ const getCurrentUserId = (): string => {
     }
   }
   
+  console.error('사용자 정보를 찾을 수 없음');
+  console.error('스토어 상태:', useAuthStore.getState());
+  console.error('Firebase Auth 상태:', getAuth().currentUser);
   throw new Error('사용자가 로그인되지 않았습니다.');
 };
 
@@ -73,6 +82,8 @@ const getUserCollectionPath = (collectionName: string): string => {
 
 // Firestore 오류 처리를 위한 헬퍼 함수
 const handleFirestoreError = (error: any, operation: string) => {
+  console.error(`Firestore ${operation} 오류:`, error);
+  
   if (error.code === 'permission-denied') {
     throw new Error('데이터베이스 접근 권한이 없습니다.');
   } else if (error.code === 'unavailable') {

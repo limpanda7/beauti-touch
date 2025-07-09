@@ -103,9 +103,26 @@ const checkNewUserStatus = async (user: User, firebaseUser?: any, context: strin
   if (context.includes('네이티브')) {
     // 네이티브 로그인의 경우: 문서가 없거나 생성 시간이 5분 이내인 경우
     shouldCreateTestData = !userDoc.exists() || timeDiff < 300000; // 5분
+    console.log(`${context} - 네이티브 로그인 신규 사용자 판단:`, {
+      uid: user.uid,
+      isNewUser,
+      docExists: userDoc.exists(),
+      creationTime: creationTime.toISOString(),
+      timeDiff: timeDiff / 1000 + '초',
+      shouldCreateTestData
+    });
   } else {
     // 일반 웹 로그인의 경우: 기존 로직 유지
     shouldCreateTestData = isNewUser && isRecentlyCreated;
+    console.log(`${context} - 웹 로그인 신규 사용자 판단:`, {
+      uid: user.uid,
+      isNewUser,
+      docExists: userDoc.exists(),
+      creationTime: creationTime.toISOString(),
+      timeDiff: timeDiff / 1000 + '초',
+      isRecentlyCreated,
+      shouldCreateTestData
+    });
   }
 
   return { isNewUser, isRecentlyCreated, shouldCreateTestData };
@@ -122,12 +139,22 @@ const handleNewUserSetup = async (user: User, context: string = 'unknown') => {
       currency: getDefaultCurrencyForLanguage(currentLanguage),
       businessType: ''
     });
+    console.log(`${context} - 언어 설정 저장 완료:`, currentLanguage);
 
     // 테스트 데이터 생성
+    console.log(`=== ${context} - 신규 사용자 감지, 테스트 데이터 생성 시작 ===`);
+    console.log('사용자 UID:', user.uid);
+    console.log('현재 언어 설정:', currentLanguage);
+
     try {
-      await createAllTestData();
+      const result = await createAllTestData();
+      console.log(`=== ${context} - 테스트 데이터 생성 완료 (신규 사용자) ===`);
+      console.log('생성 결과:', result);
     } catch (testDataError) {
-      // 테스트 데이터 생성 실패는 무시
+      console.error(`=== ${context} - 테스트 데이터 생성 실패 (상세) ===`);
+      console.error('에러 상세:', testDataError);
+      console.error('에러 스택:', testDataError instanceof Error ? testDataError.stack : '스택 정보 없음');
+      console.warn(`${context} - 테스트 데이터 생성 실패 (무시됨):`, testDataError);
     }
   } catch (error) {
     console.error(`${context} - 신규 사용자 설정 중 오류:`, error);
@@ -146,6 +173,8 @@ export const handleUserLogin = async (user: User, firebaseUser?: any, context: s
     // 테스트 데이터 생성 여부 결정
     if (shouldCreateTestData) {
       await handleNewUserSetup(user, context);
+    } else {
+      console.log(`${context} - 기존 사용자 또는 오래된 계정, 테스트 데이터 생성 건너뜀`);
     }
   } catch (error) {
     console.error(`${context} - 사용자 로그인 처리 중 오류:`, error);
@@ -210,7 +239,10 @@ export const signIn = async (credentials: LoginCredentials): Promise<User> => {
     );
 
     const firebaseUser = userCredential.user;
+    console.log('Firebase 로그인 성공:', firebaseUser);
+
     const user = convertFirebaseUser(firebaseUser);
+    console.log('변환된 사용자 정보:', user);
 
     // Firestore에서 사용자 정보 업데이트
     await saveUserToFirestore(user);
@@ -228,6 +260,7 @@ export const signOutUser = async (): Promise<void> => {
   try {
     // 웹뷰 환경에서는 네이티브 로그아웃 사용
     if (isWebViewEnvironment()) {
+      console.log('웹뷰 환경에서 네이티브 로그아웃 요청');
       return new Promise((resolve, reject) => {
         import('./webviewBridge').then(({ postMessageToNative, setWebViewMessageListener }) => {
           postMessageToNative('googleLogout');
@@ -235,8 +268,10 @@ export const signOutUser = async (): Promise<void> => {
           // 메시지 리스너 설정
           const handleNativeMessage = (message: any) => {
             if (message.type === 'googleLogoutSuccess') {
+              console.log('네이티브 로그아웃 성공');
               resolve();
             } else if (message.type === 'googleLogoutFail') {
+              console.error('네이티브 로그아웃 실패:', message.value);
               reject(new Error(message.value || '네이티브 로그아웃 실패'));
             }
           };
