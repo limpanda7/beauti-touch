@@ -14,11 +14,12 @@ import {
 import type { User as FirebaseUser, AuthError as FirebaseAuthError } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
-import type { User, LoginCredentials, SignUpCredentials, AuthError, GoogleLoginResponse, NativeGoogleLoginSuccess } from '../types';
+import type { User, LoginCredentials, SignUpCredentials, AuthError } from '../types';
 import { createAllTestData } from '../utils/testData';
 import { getCurrentLanguage } from '../utils/languageUtils';
 import { getDefaultCurrencyForLanguage } from '../utils/currency';
 import { isWebViewEnvironment } from '../services/webviewBridge';
+import { detectProblematicBrowser } from '../utils/browserUtils';
 
 // Firebase 에러 코드를 다국어 키로 변환하는 함수
 const getErrorTranslationKey = (errorCode: string): string => {
@@ -330,15 +331,7 @@ export const updateUserProfile = async (updates: Partial<User>): Promise<void> =
   }
 };
 
-// 브라우저 감지 함수
-const detectProblematicBrowser = (): boolean => {
-  const userAgent = navigator.userAgent.toLowerCase();
-  return userAgent.includes('naver') ||
-         userAgent.includes('whale') ||
-         userAgent.includes('wv') ||
-         userAgent.includes('line') ||
-         userAgent.includes('kakao');
-};
+
 
 // Google 로그인
 export const signInWithGoogle = async (): Promise<User> => {
