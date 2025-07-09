@@ -157,4 +157,30 @@ export interface ShareCodeAccess {
   password?: string;
 }
 
- 
+// 네이티브 구글 로그인 응답 타입
+export interface GoogleLoginResponse {
+  photo: string;
+  givenName: string;
+  familyName: string;
+  email: string;
+  name: string;
+  id: string;
+  token: string;
+}
+
+// 네이티브 구글 로그인 성공 응답 타입 (실제 응답 형식)
+export interface NativeGoogleLoginSuccess {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL: string;
+  emailVerified: boolean;
+  createdAt: string;
+  lastLoginAt: string;
+  idToken: string; // Firebase Auth 로그인에 필요한 ID 토큰
+}
+
+export interface WebViewGoogleLoginMessage {
+  type: 'googleLoginSuccess';
+  value: NativeGoogleLoginSuccess;
+} 

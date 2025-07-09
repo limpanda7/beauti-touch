@@ -36,7 +36,23 @@ export const handleNativeMessage = (message: WebViewMessage) => {
   }
 };
 
+// 로그인 완료 시 로딩 상태 해제를 위한 이벤트 발생
+export const notifyGoogleLoginComplete = () => {
+  // 커스텀 이벤트 발생
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('googleLoginComplete'));
+  }
+};
 
+// 네이티브 앱에 구글 로그인 요청
+export const requestGoogleLogin = () => {
+  postMessageToNative('googleLogin');
+};
+
+// 네이티브 앱에 구글 로그아웃 요청
+export const requestGoogleLogout = () => {
+  postMessageToNative('googleLogout');
+};
 
 // 웹뷰 환경인지 확인
 export const isWebViewEnvironment = (): boolean => {
