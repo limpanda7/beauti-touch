@@ -217,20 +217,16 @@ const ReservationsPage: React.FC = () => {
   useEffect(() => {
     // 인증 상태가 초기화되고 사용자가 로그인된 경우에만 데이터 로드
     if (isInitialized && user && user.uid) {
-      console.log('인증 상태 확인됨, 데이터 로드 시작:', { user: user.uid, isInitialized });
-      
       // 약간의 지연을 두어 Firebase Auth 상태가 완전히 동기화되도록 함
       const timer = setTimeout(() => {
         loadReservations();
         loadProducts();
       }, 100);
-      
       return () => clearTimeout(timer);
     } else if (isInitialized && !user) {
-      console.log('인증 상태 확인됨, 사용자가 로그인되지 않음');
       setLoading(false);
     } else {
-      console.log('인증 상태 초기화 중...');
+      // console.log('인증 상태 초기화 중...');
     }
   }, [getDateRangeAndHeader, isInitialized, user]);
 
