@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getAuth, connectAuthEmulator, setPersistence, browserLocalPersistence, browserSessionPersistence } from "firebase/auth";
+import { isWebViewEnvironment } from "./services/webviewBridge";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -33,14 +34,27 @@ const detectBrowserAndSetPersistence = async () => {
   const userAgent = navigator.userAgent.toLowerCase();
   const isNaverBrowser = userAgent.includes('naver') || userAgent.includes('whale');
   const isInAppBrowser = userAgent.includes('wv') || userAgent.includes('line') || userAgent.includes('kakao');
+  const isWebView = isWebViewEnvironment();
   
+  // 웹뷰 환경에서는 로컬 지속성을 사용하여 로그인 상태 유지
   // 네이버 브라우저나 인앱 브라우저인 경우 세션 지속성 사용
-  const persistence = (isNaverBrowser || isInAppBrowser) ? browserSessionPersistence : browserLocalPersistence;
+  let persistence;
+  if (isWebView) {
+    persistence = browserLocalPersistence;
+    console.log('웹뷰 환경 감지: 로컬 지속성 사용 (로그인 상태 유지)');
+  } else if (isNaverBrowser || isInAppBrowser) {
+    persistence = browserSessionPersistence;
+    console.log('네이버/인앱 브라우저 감지: 세션 지속성 사용');
+  } else {
+    persistence = browserLocalPersistence;
+    console.log('일반 브라우저: 로컬 지속성 사용');
+  }
   
   try {
     await setPersistence(auth, persistence);
-    console.log(`Firebase Auth 지속성이 ${isNaverBrowser || isInAppBrowser ? 'SESSION' : 'LOCAL'}로 설정되었습니다.`);
+    console.log(`Firebase Auth 지속성이 설정되었습니다.`);
     console.log('브라우저 정보:', userAgent);
+    console.log('웹뷰 환경:', isWebView);
   } catch (error) {
     console.error('Firebase Auth 지속성 설정 실패:', error);
   }

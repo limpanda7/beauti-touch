@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import type { User, LoginCredentials, SignUpCredentials } from '../types';
 import * as authService from '../services/auth';
+import { isWebViewEnvironment } from '../services/webviewBridge';
 
 interface AuthState {
   user: User | null;
@@ -25,6 +26,40 @@ interface AuthActions {
 
 type AuthStore = AuthState & AuthActions;
 
+// 웹뷰 환경에서 사용자 정보를 로컬 스토리지에 저장
+const saveUserToStorage = (user: User | null) => {
+  if (isWebViewEnvironment()) {
+    try {
+      if (user) {
+        localStorage.setItem('beauti-touch-user', JSON.stringify(user));
+        console.log('웹뷰: 사용자 정보를 로컬 스토리지에 저장');
+      } else {
+        localStorage.removeItem('beauti-touch-user');
+        console.log('웹뷰: 사용자 정보를 로컬 스토리지에서 제거');
+      }
+    } catch (error) {
+      console.error('웹뷰: 로컬 스토리지 저장 실패:', error);
+    }
+  }
+};
+
+// 웹뷰 환경에서 로컬 스토리지에서 사용자 정보 복원
+const loadUserFromStorage = (): User | null => {
+  if (isWebViewEnvironment()) {
+    try {
+      const storedUser = localStorage.getItem('beauti-touch-user');
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        console.log('웹뷰: 로컬 스토리지에서 사용자 정보 복원');
+        return user;
+      }
+    } catch (error) {
+      console.error('웹뷰: 로컬 스토리지에서 사용자 정보 복원 실패:', error);
+    }
+  }
+  return null;
+};
+
 export const useAuthStore = create<AuthStore>()(
   subscribeWithSelector((set, get) => ({
     // State
@@ -40,6 +75,7 @@ export const useAuthStore = create<AuthStore>()(
       try {
         const user = await authService.signUp(credentials);
         set({ user, isLoading: false });
+        saveUserToStorage(user);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '회원가입 중 오류가 발생했습니다.';
         set({ error: errorMessage, errorCode: errorMessage, isLoading: false });
@@ -53,6 +89,7 @@ export const useAuthStore = create<AuthStore>()(
         const user = await authService.signIn(credentials);
         console.log('AuthStore - 로그인 성공, 사용자 설정:', user);
         set({ user, isLoading: false, isInitialized: true });
+        saveUserToStorage(user);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '로그인 중 오류가 발생했습니다.';
         console.error('AuthStore - 로그인 실패:', errorMessage);
@@ -68,6 +105,7 @@ export const useAuthStore = create<AuthStore>()(
         const user = await authService.signInWithGoogle();
         console.log('AuthStore - Google 로그인 성공, 사용자 설정:', user);
         set({ user, isLoading: false, isInitialized: true });
+        saveUserToStorage(user);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Google 로그인 중 오류가 발생했습니다.';
         console.error('AuthStore - Google 로그인 실패:', errorMessage);
@@ -82,6 +120,7 @@ export const useAuthStore = create<AuthStore>()(
         // AuthService에서 환경 분기 처리
         await authService.signOutUser();
         set({ user: null, isLoading: false });
+        saveUserToStorage(null);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '로그아웃 중 오류가 발생했습니다.';
         set({ error: errorMessage, errorCode: errorMessage, isLoading: false });
@@ -91,6 +130,7 @@ export const useAuthStore = create<AuthStore>()(
 
     setUser: (user: User | null) => {
       set({ user });
+      saveUserToStorage(user);
     },
 
     setLoading: (loading: boolean) => {
@@ -108,9 +148,20 @@ export const useAuthStore = create<AuthStore>()(
     initialize: async () => {
       set({ isLoading: true });
       
+      // 웹뷰 환경에서 로컬 스토리지에서 사용자 정보 복원 시도
+      if (isWebViewEnvironment()) {
+        const storedUser = loadUserFromStorage();
+        if (storedUser) {
+          console.log('웹뷰: 로컬 스토리지에서 사용자 정보 복원됨, 임시로 설정');
+          set({ user: storedUser, isLoading: false, isInitialized: true });
+        }
+      }
+      
       // Firebase Auth 상태 변경 감지
       const unsubscribe = authService.onAuthStateChange((user) => {
+        console.log('Firebase Auth 상태 변경:', user ? '로그인됨' : '로그아웃됨');
         set({ user, isLoading: false, isInitialized: true });
+        saveUserToStorage(user);
       });
 
       // 초기화 완료를 기다림

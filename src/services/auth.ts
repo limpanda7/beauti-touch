@@ -10,6 +10,7 @@ import {
   getRedirectResult,
   signInWithCredential,
   getAuth,
+  getIdToken,
 } from 'firebase/auth';
 import type { User as FirebaseUser, AuthError as FirebaseAuthError } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
@@ -97,33 +98,17 @@ const checkNewUserStatus = async (user: User, firebaseUser?: any, context: strin
   const timeDiff = currentTime.getTime() - creationTime.getTime();
   const isRecentlyCreated = timeDiff < 60000; // 1분 이내에 생성된 계정
 
-  // 네이티브 로그인의 경우, Firestore 문서가 없거나 생성 시간이 최근인 경우 신규 사용자로 판단
-  let shouldCreateTestData = false;
-
-  if (context.includes('네이티브')) {
-    // 네이티브 로그인의 경우: 문서가 없거나 생성 시간이 5분 이내인 경우
-    shouldCreateTestData = !userDoc.exists() || timeDiff < 300000; // 5분
-    console.log(`${context} - 네이티브 로그인 신규 사용자 판단:`, {
-      uid: user.uid,
-      isNewUser,
-      docExists: userDoc.exists(),
-      creationTime: creationTime.toISOString(),
-      timeDiff: timeDiff / 1000 + '초',
-      shouldCreateTestData
-    });
-  } else {
-    // 일반 웹 로그인의 경우: 기존 로직 유지
-    shouldCreateTestData = isNewUser && isRecentlyCreated;
-    console.log(`${context} - 웹 로그인 신규 사용자 판단:`, {
-      uid: user.uid,
-      isNewUser,
-      docExists: userDoc.exists(),
-      creationTime: creationTime.toISOString(),
-      timeDiff: timeDiff / 1000 + '초',
-      isRecentlyCreated,
-      shouldCreateTestData
-    });
-  }
+  // 신규 사용자 판단: 문서가 없거나 생성 시간이 1분 이내인 경우
+  const shouldCreateTestData = !userDoc.exists() || timeDiff < 60000; // 1분
+  
+  console.log(`${context} - 신규 사용자 판단:`, {
+    uid: user.uid,
+    isNewUser,
+    docExists: userDoc.exists(),
+    creationTime: creationTime.toISOString(),
+    timeDiff: timeDiff / 1000 + '초',
+    shouldCreateTestData
+  });
 
   return { isNewUser, isRecentlyCreated, shouldCreateTestData };
 };
@@ -164,11 +149,11 @@ const handleNewUserSetup = async (user: User, context: string = 'unknown') => {
 // 사용자 로그인 후 처리를 위한 공통 함수
 export const handleUserLogin = async (user: User, firebaseUser?: any, context: string = 'unknown') => {
   try {
+    // 신규 사용자 여부를 먼저 확인 (Firestore 저장 전)
+    const { isNewUser, isRecentlyCreated, shouldCreateTestData } = await checkNewUserStatus(user, firebaseUser, context);
+
     // Firestore에 사용자 정보 저장
     await saveUserToFirestore(user);
-
-    // 신규 사용자 여부 확인
-    const { isNewUser, isRecentlyCreated, shouldCreateTestData } = await checkNewUserStatus(user, firebaseUser, context);
 
     // 테스트 데이터 생성 여부 결정
     if (shouldCreateTestData) {
@@ -301,19 +286,51 @@ export const getCurrentUser = (): User | null => {
   return firebaseUser ? convertFirebaseUser(firebaseUser) : null;
 };
 
+// 웹뷰 환경에서 Firebase Auth 토큰 유효성 검증
+const validateAuthToken = async (): Promise<boolean> => {
+  if (!isWebViewEnvironment()) {
+    return true; // 웹뷰가 아닌 경우 검증 건너뜀
+  }
+
+  try {
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      console.log('웹뷰: 현재 사용자가 없음');
+      return false;
+    }
+
+    // 토큰 갱신 시도
+    const token = await getIdToken(currentUser, true);
+    console.log('웹뷰: 토큰 유효성 검증 성공');
+    return !!token;
+  } catch (error) {
+    console.error('웹뷰: 토큰 유효성 검증 실패:', error);
+    return false;
+  }
+};
+
 // 인증 상태 변경 감지
 export const onAuthStateChange = (callback: (user: User | null) => void) => {
   return onAuthStateChanged(auth, async (firebaseUser) => {
-    console.log('인증 상태 변경 감지:', firebaseUser);
-    const user = firebaseUser ? convertFirebaseUser(firebaseUser) : null;
-    console.log('변환된 사용자 정보 (상태 변경):', user);
+    if (firebaseUser) {
+      // 웹뷰 환경에서 토큰 유효성 검증
+      if (isWebViewEnvironment()) {
+        const isValid = await validateAuthToken();
+        if (!isValid) {
+          console.log('웹뷰: 토큰이 유효하지 않음, 로그아웃 처리');
+          await signOutUser();
+          callback(null);
+          return;
+        }
+      }
 
-    // 사용자가 있고 신규 사용자인 경우 테스트 데이터 생성
-    if (user && firebaseUser) {
-      await handleUserLogin(user, firebaseUser, '인증 상태 변경');
+      const user = convertFirebaseUser(firebaseUser);
+      console.log('Firebase Auth 상태 변경 - 로그인:', user);
+      callback(user);
+    } else {
+      console.log('Firebase Auth 상태 변경 - 로그아웃');
+      callback(null);
     }
-
-    callback(user);
   });
 };
 
