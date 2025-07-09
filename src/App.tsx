@@ -16,7 +16,7 @@ import SettingsPage from './pages/SettingsPage';
 import ChartPage from './pages/ChartPage';
 import SharePage from './pages/SharePage';
 import ShareChartPage from './pages/ShareChartPage';
-import DebugPanel from './components/DebugPanel';
+
 import { useAuthStore } from './stores/authStore';
 import { useSettingsStore } from './stores/settingsStore';
 import './services/webviewBridge'; // 웹뷰 브리지 초기화
@@ -29,15 +29,8 @@ function App() {
   // 앱 초기화
   useEffect(() => {
     const initializeApp = async () => {
-      console.log('=== 앱 초기화 시작 ===');
-      
       try {
-        // 인증 스토어 초기화 (웹뷰 메시지 리스너 설정 포함)
-        console.log('인증 스토어 초기화 시작...');
         await initializeAuth();
-        console.log('인증 스토어 초기화 완료');
-        
-        console.log('=== 앱 초기화 완료 ===');
       } catch (error) {
         console.error('앱 초기화 실패:', error);
       }
@@ -51,7 +44,6 @@ function App() {
     // 1. 사용자가 로그인되어 있고 계정 언어 설정이 있는 경우
     if (user && language && !settingsLoading) {
       if (language !== i18n.language) {
-        console.log('계정 언어 설정 적용:', language);
         i18n.changeLanguage(language);
         saveLanguageToStorage(language as any);
       }
@@ -60,7 +52,6 @@ function App() {
     else if (user && !language && !settingsLoading) {
       const storedLanguage = getLanguageFromStorage();
       if (storedLanguage && storedLanguage !== i18n.language) {
-        console.log('localStorage 언어 설정 적용:', storedLanguage);
         i18n.changeLanguage(storedLanguage);
       }
     }
@@ -68,12 +59,10 @@ function App() {
     else if (!user) {
       const storedLanguage = getLanguageFromStorage();
       if (storedLanguage && storedLanguage !== i18n.language) {
-        console.log('localStorage 언어 설정 적용:', storedLanguage);
         i18n.changeLanguage(storedLanguage);
       } else if (!storedLanguage) {
         const browserLang = getBrowserLanguage();
         if (browserLang !== i18n.language) {
-          console.log('브라우저 언어 설정 적용:', browserLang);
           i18n.changeLanguage(browserLang);
           saveLanguageToStorage(browserLang);
         }
@@ -116,7 +105,6 @@ function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Router>
-          <DebugPanel />
         </div>
       </I18nextProvider>
     </HelmetProvider>
