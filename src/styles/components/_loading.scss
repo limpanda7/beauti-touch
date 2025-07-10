@@ -12,8 +12,8 @@
   }
 }
 
-// 버튼 내부 로딩 스피너
-.loading-spinner {
+// 버튼 내부 로딩 스피너 (인라인 스타일)
+.btn-loading-spinner {
   width: 16px;
   height: 16px;
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -21,6 +21,7 @@
   border-radius: 50%;
   margin-right: 8px;
   display: inline-block;
+  animation: spin 1s linear infinite;
 }
 
 .spinner {

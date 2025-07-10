@@ -134,11 +134,11 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: transparent;
+    background-color: rgba(255, 248, 243, 0.95); // 브랜드 색상과 일치
     justify-content: center;
     align-items: center;
-    z-index: 9999;
-    backdrop-filter: blur(1px);
+    z-index: 999999; // 모달보다 높게 설정
+    backdrop-filter: blur(2px);
     transition: opacity 0.3s ease-in-out;
     
     .spinner {
@@ -146,6 +146,8 @@
       border-radius: 50%;
       padding: 1rem;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border: 2px solid $gray-200;
+      border-top: 2px solid $primary-color;
     }
     
     .spinner-text {
@@ -153,6 +155,8 @@
       padding: 0.5rem 1rem;
       border-radius: 0.5rem;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      color: $gray-700;
+      font-weight: 500;
     }
   }
 }

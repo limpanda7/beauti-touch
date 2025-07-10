@@ -199,7 +199,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignUp }) => {
         >
           {isGoogleLoginLoading ? (
             <>
-              <div className="loading-spinner"></div>
+              <div className="btn-loading-spinner"></div>
               {t('auth.loggingInWithGoogle')}
             </>
           ) : (

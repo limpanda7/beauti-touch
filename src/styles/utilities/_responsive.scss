@@ -69,6 +69,11 @@
     }
   }
 
+  // PC에서만 calendar-week-mobile-event에 네 방향 margin 적용
+  .calendar-week-mobile-event {
+    margin: 0.25rem !important; // 네 방향 모두 0.25rem margin
+  }
+
   .card {
     height: calc(100vh - 8rem); // 데스크탑에서는 사이드바를 고려한 높이 (여유 공간 추가)
     display: flex;

@@ -84,7 +84,7 @@ const Button: React.FC<ButtonProps> = ({
     >
       {loading ? (
         <div className="flex items-center gap-2">
-          <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent"></div>
+          <div className="btn-loading-spinner"></div>
           {children}
         </div>
       ) : (
