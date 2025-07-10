@@ -12,6 +12,11 @@ export interface Customer {
   updatedAt: Date;
 }
 
+export interface CustomerWithVisitDate extends Customer {
+  lastVisit?: Date | null;
+  nextVisit?: Date | null;
+}
+
 export interface Product {
   id: string;
   name: string;

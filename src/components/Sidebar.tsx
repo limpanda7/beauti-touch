@@ -39,7 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose, isMobile = false, className 
         <ul>
           {menuItems.map((item) => (
             <li key={item.id}>
-              <NavLink to={item.path} onClick={handleNavClick}>
+              <NavLink to={item.path} onClick={handleNavClick} replace>
                 <item.icon />
                 <span>{item.label}</span>
               </NavLink>

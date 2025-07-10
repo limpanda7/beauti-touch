@@ -29,12 +29,12 @@ const SEO: React.FC<SEOProps> = ({
     return null;
   }
   
-  const defaultTitle = t('navigation.pageTitle');
   const defaultDescription = t('navigation.seoDescription');
   const currentLang = lang || i18n.language;
   const currentUrl = url || window.location.href;
   
-  const seoTitle = title || defaultTitle;
+  // 타이틀을 항상 "Beauti-Touch"로 고정
+  const seoTitle = 'Beauti-Touch';
   const seoDescription = description || defaultDescription;
   const seoKeywords = keywords || t('navigation.seoKeywords.default');
 

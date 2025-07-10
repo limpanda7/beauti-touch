@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
 import type { Product } from '../types';
 import { productService } from '../services/firestore';
 import ProductModal from '../components/ProductModal';
@@ -9,11 +8,12 @@ import LoadingSpinner from '../components/LoadingSpinner';
 
 import { useCurrencyFormat } from '../utils/currency';
 import { formatDuration } from '../utils/timeUtils';
+import { useUIStore } from '../stores/uiStore';
 
 const ProductsPage: React.FC = () => {
   const { t } = useTranslation();
   const { formatCurrency } = useCurrencyFormat();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { shouldOpenProductModal, resetProductModal } = useUIStore();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,15 +31,13 @@ const ProductsPage: React.FC = () => {
     return () => window.removeEventListener('resize', checkMobileView);
   }, []);
 
-  // URL 파라미터 처리
+  // 플로팅 버튼 클릭 감지
   useEffect(() => {
-    const action = searchParams.get('action');
-    if (action === 'new') {
+    if (shouldOpenProductModal) {
       handleOpenModal(null);
-      // URL에서 action 파라미터 제거
-      setSearchParams({}, { replace: true });
+      resetProductModal();
     }
-  }, [searchParams]);
+  }, [shouldOpenProductModal, resetProductModal]);
 
   const checkMobileView = () => {
     setIsMobile(window.innerWidth <= 900);

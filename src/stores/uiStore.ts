@@ -5,16 +5,28 @@ interface UIState {
   isSidebarOpen: boolean;
   isClosing: boolean;
   isModalOpen: boolean;
+  // 모달 상태들
+  shouldOpenReservationModal: boolean;
+  shouldOpenCustomerModal: boolean;
+  shouldOpenProductModal: boolean;
 }
 
 interface UIActions {
   setIsMobile: (isMobile: boolean) => void;
-  setIsSidebarOpen: (isOpen: boolean) => void;
+  setIsSidebarOpen: (isSidebarOpen: boolean) => void;
   setIsClosing: (isClosing: boolean) => void;
-  setIsModalOpen: (isOpen: boolean) => void;
+  setIsModalOpen: (isModalOpen: boolean) => void;
   toggleSidebar: () => void;
   closeSidebar: () => void;
   checkScreenSize: () => void;
+  // 모달 열기 함수들
+  openReservationModal: () => void;
+  openCustomerModal: () => void;
+  openProductModal: () => void;
+  // 모달 상태 리셋 함수들
+  resetReservationModal: () => void;
+  resetCustomerModal: () => void;
+  resetProductModal: () => void;
 }
 
 type UIStore = UIState & UIActions;
@@ -25,6 +37,9 @@ export const useUIStore = create<UIStore>((set, get) => ({
   isSidebarOpen: false,
   isClosing: false,
   isModalOpen: false,
+  shouldOpenReservationModal: false,
+  shouldOpenCustomerModal: false,
+  shouldOpenProductModal: false,
 
   // 액션들
   setIsMobile: (isMobile) => set({ isMobile }),
@@ -68,5 +83,31 @@ export const useUIStore = create<UIStore>((set, get) => ({
     if (!isMobile && isSidebarOpen) {
       set({ isSidebarOpen: false, isClosing: false });
     }
+  },
+
+  // 모달 열기 함수들
+  openReservationModal: () => {
+    set({ shouldOpenReservationModal: true });
+  },
+
+  openCustomerModal: () => {
+    set({ shouldOpenCustomerModal: true });
+  },
+
+  openProductModal: () => {
+    set({ shouldOpenProductModal: true });
+  },
+
+  // 모달 상태 리셋 함수들
+  resetReservationModal: () => {
+    set({ shouldOpenReservationModal: false });
+  },
+
+  resetCustomerModal: () => {
+    set({ shouldOpenCustomerModal: false });
+  },
+
+  resetProductModal: () => {
+    set({ shouldOpenProductModal: false });
   }
 })); 

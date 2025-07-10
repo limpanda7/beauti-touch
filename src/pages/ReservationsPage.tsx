@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
 import {
   format,
   startOfWeek,
@@ -36,7 +35,7 @@ type ViewType = 'month' | 'week' | 'day';
 const ReservationsPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { formatCurrency } = useCurrencyFormat();
-  const { isMobile } = useUIStore();
+  const { isMobile, shouldOpenReservationModal, resetReservationModal } = useUIStore();
   const { user, isInitialized } = useAuthStore();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -49,7 +48,6 @@ const ReservationsPage: React.FC = () => {
   const [initialCustomerIdForModal, setInitialCustomerIdForModal] = useState<string | undefined>(undefined);
   const [showSwipeHint, setShowSwipeHint] = useState(false);
   const [selectedDay, setSelectedDay] = useState(new Date());
-  const [searchParams, setSearchParams] = useSearchParams();
 
   // 스와이프 제스처를 위한 터치 이벤트 처리
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -74,6 +72,14 @@ const ReservationsPage: React.FC = () => {
     // 모바일 일간 뷰에서는 항상 오늘 날짜를 기본으로 설정
     setSelectedDay(new Date());
   }, []);
+
+  // 플로팅 버튼 클릭 감지
+  useEffect(() => {
+    if (shouldOpenReservationModal) {
+      handleOpenModal(null);
+      resetReservationModal();
+    }
+  }, [shouldOpenReservationModal, resetReservationModal]);
 
   // 뷰가 변경될 때마다 localStorage에 저장 (날짜 제외)
   useEffect(() => {
@@ -494,16 +500,6 @@ const ReservationsPage: React.FC = () => {
       </div>
     );
   };
-
-  // URL 파라미터 처리
-  useEffect(() => {
-    const action = searchParams.get('action');
-    if (action === 'new') {
-      handleOpenModal(null);
-      // URL에서 action 파라미터 제거
-      setSearchParams({}, { replace: true });
-    }
-  }, [searchParams]);
 
   // 현재 날짜가 변경되면 선택된 날짜도 업데이트
   useEffect(() => {

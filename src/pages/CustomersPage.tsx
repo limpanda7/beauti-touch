@@ -1,28 +1,24 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Search, Edit, Trash2, Phone, Calendar, User } from 'lucide-react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import type { Customer } from '../types';
+import type { Customer, CustomerWithVisitDate } from '../types';
 import { customerService, reservationService } from '../services/firestore';
 import CustomerModal from '../components/CustomerModal';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { useUIStore } from '../stores/uiStore';
 
 import { formatDate } from '../utils/dateUtils';
 
-interface CustomerWithVisitDate extends Customer {
-  lastVisit?: Date | null;
-  nextVisit?: Date | null;
-}
-
 const CustomersPage: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const { shouldOpenCustomerModal, resetCustomerModal } = useUIStore();
   const [customers, setCustomers] = useState<CustomerWithVisitDate[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     loadCustomers();
@@ -32,13 +28,13 @@ const CustomersPage: React.FC = () => {
     return () => window.removeEventListener('resize', checkMobileView);
   }, []);
 
+  // 플로팅 버튼 클릭 감지
   useEffect(() => {
-    const action = searchParams.get('action');
-    if (action === 'new') {
+    if (shouldOpenCustomerModal) {
       handleOpenModal();
-      setSearchParams({}, { replace: true });
+      resetCustomerModal();
     }
-  }, [searchParams]);
+  }, [shouldOpenCustomerModal, resetCustomerModal]);
 
   const checkMobileView = () => {
     setIsMobile(window.innerWidth <= 900);

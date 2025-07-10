@@ -23,7 +23,10 @@ const Layout: React.FC = () => {
     setIsModalOpen,
     toggleSidebar,
     closeSidebar,
-    checkScreenSize
+    checkScreenSize,
+    openReservationModal,
+    openCustomerModal,
+    openProductModal
   } = useUIStore();
 
   // 사용자 설정 초기화
@@ -77,13 +80,13 @@ const Layout: React.FC = () => {
     
     switch (currentPath) {
       case '/dashboard/reservations':
-        navigate('/dashboard/reservations?action=new');
+        openReservationModal();
         break;
       case '/dashboard/customers':
-        navigate('/dashboard/customers?action=new');
+        openCustomerModal();
         break;
       case '/dashboard/products':
-        navigate('/dashboard/products?action=new');
+        openProductModal();
         break;
       default:
         break;
@@ -138,6 +141,7 @@ const Layout: React.FC = () => {
               key={item.path}
               to={item.path}
               className={`mobile-nav-item ${isActive(item.path) ? 'active' : ''}`}
+              replace
             >
               <item.icon size={20} />
               <span>{item.label}</span>

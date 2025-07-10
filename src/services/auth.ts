@@ -229,8 +229,8 @@ export const signIn = async (credentials: LoginCredentials): Promise<User> => {
     const user = convertFirebaseUser(firebaseUser);
     console.log('변환된 사용자 정보:', user);
 
-    // Firestore에서 사용자 정보 업데이트
-    await saveUserToFirestore(user);
+    // 신규 사용자 설정 처리 (기존 사용자 로그인의 경우 테스트 데이터 생성되지 않음)
+    await handleUserLogin(user, firebaseUser, '로그인');
 
     return user;
   } catch (error) {
