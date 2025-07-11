@@ -28,7 +28,8 @@ type Shape = {
 // ChartData 타입 확장: drawings 필드 추가
 interface ChartDataWithDrawings extends ChartData {
   drawings?: {
-    faceSide: Shape[];
+    faceSideRight: Shape[];
+    faceSideLeft: Shape[];
     faceFront: Shape[];
     body: Shape[];
   };
@@ -40,17 +41,18 @@ const ChartPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { businessType } = useSettingsStore();
-  
+
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [reservation, setReservation] = useState<Reservation | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  
+
   // 차트 관련 상태
   const [chartType, setChartType] = useState<ChartType>('');
   const [chartData, setChartData] = useState<ChartDataWithDrawings>({});
-  const [faceSideShapes, setFaceSideShapes] = useState<Shape[]>([]);
+  const [faceSideRightShapes, setFaceSideRightShapes] = useState<Shape[]>([]);
+  const [faceSideLeftShapes, setFaceSideLeftShapes] = useState<Shape[]>([]);
   const [faceFrontShapes, setFaceFrontShapes] = useState<Shape[]>([]);
   const [bodyShapes, setBodyShapes] = useState<Shape[]>([]);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -147,7 +149,7 @@ const ChartPage: React.FC = () => {
 
   const loadData = async () => {
     if (!reservationId) return;
-    
+
     try {
       setLoading(true);
       const reservationData = await reservationService.getById(reservationId);
@@ -158,21 +160,22 @@ const ChartPage: React.FC = () => {
         setChartData(reservationData.chartData || {});
         // 도형 정보 복원
         const drawings = (reservationData.chartData as ChartDataWithDrawings)?.drawings as any || {};
-        setFaceSideShapes(drawings.faceSide || []);
+        setFaceSideRightShapes(drawings.faceSideRight || []);
+        setFaceSideLeftShapes(drawings.faceSideLeft || []);
         setFaceFrontShapes(drawings.faceFront || []);
         setBodyShapes(drawings.body || []);
-        
+
         // 고객 정보도 로드
         const customerData = await customerService.getById(reservationData.customerId);
         setCustomer(customerData);
-        
+
         // 상품 정보도 로드
         const productData = await productService.getById(reservationData.productId);
         setProduct(productData);
-        
+
         // 데이터 로드 완료 후 unsaved changes 플래그 리셋
         setHasUnsavedChanges(false);
-        
+
         // 이전 차트 존재 여부 확인 (현재 예약 제외)
         // 차트 타입이 선택되지 않았으면 모든 타입의 차트를 확인
         const selectedChartType = currentChartType || undefined;
@@ -196,7 +199,7 @@ const ChartPage: React.FC = () => {
     setChartType(newChartType);
     setChartData({}); // 업종 변경 시 세부 입력 초기화
     setHasUnsavedChanges(true);
-    
+
     // 차트 타입 변경 시 이전 차트 존재 여부도 업데이트
     if (customer) {
       const selectedChartType = newChartType || undefined;
@@ -208,14 +211,14 @@ const ChartPage: React.FC = () => {
   // 차트 데이터 변경 핸들러
   const handleChartDataChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
+
     // 공통 필드들 (업종과 관계없이 항상 처리)
     if (commonFields.some(field => field.name === name)) {
       setChartData(prev => ({ ...prev, [name]: value }));
       setHasUnsavedChanges(true);
       return;
     }
-    
+
     // 차트 데이터 필드들
     if (chartType && chartFieldDefs[chartType]?.some(field => field.name === name)) {
       setChartData(prev => ({ ...prev, [name]: value }));
@@ -226,26 +229,31 @@ const ChartPage: React.FC = () => {
   // 체크박스 변경 핸들러
   const handleCheckboxChange = (fieldName: string, optionValue: string, checked: boolean) => {
     const currentValues = (chartData[fieldName as keyof ChartData] as string[]) || [];
-    
+
     if (checked) {
       // 체크된 경우 배열에 추가
-      setChartData(prev => ({ 
-        ...prev, 
-        [fieldName]: [...currentValues, optionValue] 
+      setChartData(prev => ({
+        ...prev,
+        [fieldName]: [...currentValues, optionValue]
       }));
     } else {
       // 체크 해제된 경우 배열에서 제거
-      setChartData(prev => ({ 
-        ...prev, 
-        [fieldName]: currentValues.filter(value => value !== optionValue) 
+      setChartData(prev => ({
+        ...prev,
+        [fieldName]: currentValues.filter(value => value !== optionValue)
       }));
     }
     setHasUnsavedChanges(true);
   };
 
   // 도형 변경 시 unsaved changes 플래그 설정
-  const handleFaceSideShapesChange: React.Dispatch<React.SetStateAction<Shape[]>> = (shapes) => {
-    setFaceSideShapes(shapes);
+  const handleFaceSideRightShapesChange: React.Dispatch<React.SetStateAction<Shape[]>> = (shapes) => {
+    setFaceSideRightShapes(shapes);
+    setHasUnsavedChanges(true);
+  };
+
+  const handleFaceSideLeftShapesChange: React.Dispatch<React.SetStateAction<Shape[]>> = (shapes) => {
+    setFaceSideLeftShapes(shapes);
     setHasUnsavedChanges(true);
   };
 
@@ -261,12 +269,12 @@ const ChartPage: React.FC = () => {
 
   const handleSave = async () => {
     if (!reservation) return;
-    
+
     setSaving(true);
     try {
       if (chartType) {
         const savePromises: Promise<void>[] = [];
-        
+
         Object.entries(chartData).forEach(([fieldName, fieldValue]) => {
           if (typeof fieldValue === 'string' && fieldValue.trim()) {
             savePromises.push(
@@ -283,14 +291,15 @@ const ChartPage: React.FC = () => {
             });
           }
         });
-        
+
         await Promise.all(savePromises);
       }
       // 도형 정보 포함
       const newChartData = {
         ...chartData,
         drawings: {
-          faceSide: faceSideShapes,
+          faceSideRight: faceSideRightShapes,
+          faceSideLeft: faceSideLeftShapes,
           faceFront: faceFrontShapes,
           body: bodyShapes,
         },
@@ -324,22 +333,22 @@ const ChartPage: React.FC = () => {
   // 최근 차트 불러오기 핸들러
   const handleLoadLatestChart = async () => {
     if (!customer) return;
-    
+
     try {
       // 차트 타입이 선택되지 않았으면 타입을 전달하지 않음
       const selectedChartType = chartType || undefined;
       const latestChart = await reservationService.getLatestChartByCustomerId(customer.id, selectedChartType, reservationId);
-      
+
       if (!latestChart) {
         alert(t('chart.noPreviousChart'));
         return;
       }
 
       // 사용자 확인
-      const confirmMessage = chartType 
+      const confirmMessage = chartType
         ? `이 고객의 최근 ${t(`chart.type.${chartType}`)} 차트 정보를 불러오시겠습니까?`
         : t('chart.loadLatestConfirm');
-        
+
       if (!window.confirm(confirmMessage)) {
         return;
       }
@@ -347,13 +356,14 @@ const ChartPage: React.FC = () => {
       // 차트 데이터 로드
       setChartType(latestChart.chartType);
       setChartData(latestChart.chartData);
-      
+
       // 도형 정보 복원
       const drawings = (latestChart.chartData as ChartDataWithDrawings)?.drawings as any || {};
-      setFaceSideShapes(drawings.faceSide || []);
+      setFaceSideRightShapes(drawings.faceSideRight || []);
+      setFaceSideLeftShapes(drawings.faceSideLeft || []);
       setFaceFrontShapes(drawings.faceFront || []);
       setBodyShapes(drawings.body || []);
-      
+
       setHasUnsavedChanges(true);
     } catch (error) {
       console.error('최근 차트 로드 실패:', error);
@@ -381,13 +391,13 @@ const ChartPage: React.FC = () => {
     <div className="chart-page">
       {/* SEO 메타 태그 */}
       {/*
-      <SEO 
+      <SEO
         title={`${t('chart.title')} - ${t('navigation.pageTitle')}`}
         description={t('chart.createChart')}
         keywords={t('navigation.seoKeywords.chart')}
       />
       */}
-      
+
       <div className="chart-page-header">
         <div className="chart-page-header-left">
           <Button
@@ -456,7 +466,7 @@ const ChartPage: React.FC = () => {
               ))}
             </select>
           </div>
-          <div 
+          <div
             className="chart-page-load-latest"
             title={!hasPreviousChart ? t('chart.noPreviousChart') : t('chart.loadLatest')}
           >
@@ -561,7 +571,10 @@ const ChartPage: React.FC = () => {
       {/* 차트 드로잉 도구 (SVG 기반) */}
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
         <div>
-          <ChartDrawingTool imageUrl="/chart-templates/face-side.png" width={300} height={300} shapes={faceSideShapes} setShapes={handleFaceSideShapesChange} />
+          <ChartDrawingTool imageUrl="/chart-templates/face-side-left.png" width={300} height={300} shapes={faceSideLeftShapes} setShapes={handleFaceSideLeftShapesChange} />
+        </div>
+        <div>
+          <ChartDrawingTool imageUrl="/chart-templates/face-side-right.png" width={300} height={300} shapes={faceSideRightShapes} setShapes={handleFaceSideRightShapesChange} />
         </div>
         <div>
           <ChartDrawingTool imageUrl="/chart-templates/face-front.png" width={300} height={300} shapes={faceFrontShapes} setShapes={handleFaceFrontShapesChange} />
@@ -574,4 +587,4 @@ const ChartPage: React.FC = () => {
   );
 };
 
-export default ChartPage; 
+export default ChartPage;

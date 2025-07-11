@@ -21,7 +21,8 @@ type Shape = {
 interface ChartDataWithDrawings {
   memo?: string;
   drawings?: {
-    faceSide: Shape[];
+    faceSideRight: Shape[];
+    faceSideLeft: Shape[];
     faceFront: Shape[];
     body: Shape[];
   };
@@ -229,11 +230,18 @@ const ShareChartPage: React.FC = () => {
                 marginBottom: '2rem'
               }}>
                 <ChartDrawingDisplay 
-                  imageUrl="/chart-templates/face-side.png" 
+                  imageUrl="/chart-templates/face-side-right.png" 
                   width={300} 
                   height={300} 
-                  shapes={(reservation.chartData as ChartDataWithDrawings)?.drawings?.faceSide || []}
-                  title={t('chart.faceSide')}
+                  shapes={(reservation.chartData as ChartDataWithDrawings)?.drawings?.faceSideRight || []}
+                  title={t('chart.faceSideRight')}
+                />
+                <ChartDrawingDisplay 
+                  imageUrl="/chart-templates/face-side-left.png" 
+                  width={300} 
+                  height={300} 
+                  shapes={(reservation.chartData as ChartDataWithDrawings)?.drawings?.faceSideLeft || []}
+                  title={t('chart.faceSideLeft')}
                 />
                 <ChartDrawingDisplay 
                   imageUrl="/chart-templates/face-front.png" 

@@ -49,7 +49,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
 
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
-    
+
     // 모바일에서 키보드가 올라올 때 뷰포트 높이 조정
     const handleViewportChange = () => {
       if (isMobile) {
@@ -62,7 +62,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
       window.addEventListener('resize', handleViewportChange);
       handleViewportChange();
     }
-    
+
     return () => {
       window.removeEventListener('resize', checkScreenSize);
       if (isMobile) {
@@ -100,7 +100,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
       ]);
       setCustomers(customerData);
       setProducts(productData);
-      
+
       // 기존 예약의 상품 정보 설정
       if (reservation?.productId) {
         const product = productData.find(p => p.id === reservation.productId);
@@ -126,7 +126,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
         memo: reservation.memo || '',
         price: reservation.price || 0,
       });
-      
+
       // 기존 예약의 상품 정보 설정
       if (reservation.productId && products.length > 0) {
         const product = products.find(p => p.id === reservation.productId);
@@ -149,18 +149,18 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
       const now = new Date();
       const hours = now.getHours();
       const minutes = now.getMinutes();
-      
+
       // 10분 단위로 올림
       const roundedMinutes = Math.ceil(minutes / 10) * 10;
       let finalHours = hours;
       let finalMinutes = roundedMinutes;
-      
+
       // 60분이 되면 다음 시간으로
       if (finalMinutes === 60) {
         finalMinutes = 0;
         finalHours = (finalHours + 1) % 24;
       }
-      
+
       const timeString = `${finalHours.toString().padStart(2, '0')}:${finalMinutes.toString().padStart(2, '0')}`;
       setSelectedTime(timeString);
     }
@@ -168,7 +168,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
+
     if (name === 'price') {
       // 가격 필드는 숫자만 허용하고 number 타입으로 변환
       const numericValue = value.replace(/[^0-9]/g, '');
@@ -198,9 +198,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
   const handleInputFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     if (isMobile) {
       setTimeout(() => {
-        e.target.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'center' 
+        e.target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
         });
       }, 300);
     }
@@ -302,15 +302,15 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
   };
 
   return (
-    <div 
-      className={`modal-overlay ${isMobile ? 'reservation-modal-page' : ''}`} 
+    <div
+      className={`modal-overlay ${isMobile ? 'reservation-modal-page' : ''}`}
       onClick={onClose}
-      style={{ 
+      style={{
         touchAction: isMobile ? 'pan-y' : 'auto' // 모바일에서 수직 스크롤만 허용
       }}
     >
-      <div 
-        className="modal-content" 
+      <div
+        className="modal-content"
         onClick={e => e.stopPropagation()}
         style={{
           touchAction: isMobile ? 'pan-y' : 'auto'
@@ -344,9 +344,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                   </option>
                 ))}
               </select>
-              <button 
-                type="button" 
-                onClick={() => setIsCustomerModalOpen(true)} 
+              <button
+                type="button"
+                onClick={() => setIsCustomerModalOpen(true)}
                 className="btn btn-secondary reservation-modal-add-customer-btn"
               >
                 <UserPlus style={{ width: '1rem', height: '1rem' }} />
@@ -399,9 +399,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                 </div>
                 <div style={{ flex: 1 }}>
                   <label htmlFor="time">{t('reservations.time')}</label>
-                  <select 
-                    value={selectedTime} 
-                    onChange={e => setSelectedTime(e.target.value)} 
+                  <select
+                    value={selectedTime}
+                    onChange={e => setSelectedTime(e.target.value)}
                     onFocus={handleInputFocus}
                     required
                   >
@@ -431,9 +431,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                 </div>
                 <div style={{ flex: 1 }}>
                   <label htmlFor="time">{t('reservations.time')}</label>
-                  <select 
-                    value={selectedTime} 
-                    onChange={e => setSelectedTime(e.target.value)} 
+                  <select
+                    value={selectedTime}
+                    onChange={e => setSelectedTime(e.target.value)}
                     onFocus={handleInputFocus}
                     required
                   >
@@ -499,8 +499,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
 
           <div className="reservation-modal-btn-group">
             {reservation && (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={handleChartClick}
                 className="btn btn-chart"
               >
@@ -509,9 +509,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
               </button>
             )}
             {reservation && onDelete && (
-              <button 
-                type="button" 
-                onClick={handleDelete} 
+              <button
+                type="button"
+                onClick={handleDelete}
                 disabled={loading}
                 className="btn btn-danger"
               >
@@ -519,9 +519,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
                 {loading ? t('common.deleting') : t('common.delete')}
               </button>
             )}
-            <button type="button" onClick={onClose} className="btn btn-secondary">
-              {t('common.cancel')}
-            </button>
             <button type="submit" disabled={loading} className="btn btn-primary">
               {loading ? t('common.saving') : t('common.save')}
             </button>
@@ -540,4 +537,4 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ reservation, initia
   );
 };
 
-export default ReservationModal; 
+export default ReservationModal;

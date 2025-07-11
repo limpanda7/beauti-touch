@@ -343,6 +343,12 @@
   "chart": {
     "title": "Chart",
     "createChart": "Chart",
+    "viewChart": "Lihat Chart",
+    "drawingTitle": "Gambar Chart",
+    "faceSideRight": "Sisi Wajah (Kanan)",
+    "faceSideLeft": "Sisi Wajah (Kiri)",
+    "faceFront": "Depan Wajah",
+    "body": "Tubuh",
     "commonFields": "Field Umum",
     "typeFields": "Field Khusus Tipe",
     "type": {
