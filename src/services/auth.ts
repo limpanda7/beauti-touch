@@ -210,7 +210,9 @@ export const signUp = async (credentials: SignUpCredentials): Promise<User> => {
     }
 
     const firebaseError = error as FirebaseAuthError;
-    throw new Error(getErrorTranslationKey(firebaseError.code));
+    // 개발자를 위해 raw error message 전달
+    const rawErrorMessage = `회원가입 실패 - Code: ${firebaseError.code}, Message: ${firebaseError.message}`;
+    throw new Error(rawErrorMessage);
   }
 };
 
@@ -236,7 +238,9 @@ export const signIn = async (credentials: LoginCredentials): Promise<User> => {
   } catch (error) {
     console.error('로그인 실패:', error);
     const firebaseError = error as FirebaseAuthError;
-    throw new Error(getErrorTranslationKey(firebaseError.code));
+    // 개발자를 위해 raw error message 전달
+    const rawErrorMessage = `로그인 실패 - Code: ${firebaseError.code}, Message: ${firebaseError.message}`;
+    throw new Error(rawErrorMessage);
   }
 };
 
@@ -257,7 +261,9 @@ export const signOutUser = async (): Promise<void> => {
               resolve();
             } else if (message.type === 'googleLogoutFail') {
               console.error('네이티브 로그아웃 실패:', message.value);
-              reject(new Error(message.value || '네이티브 로그아웃 실패'));
+              // 개발자를 위해 raw error message 전달
+              const rawErrorMessage = `네이티브 로그아웃 실패 - ${message.value || '알 수 없는 오류'}`;
+              reject(new Error(rawErrorMessage));
             }
           };
 
@@ -266,7 +272,7 @@ export const signOutUser = async (): Promise<void> => {
 
           // 타임아웃 설정
           setTimeout(() => {
-            reject(new Error('네이티브 로그아웃 타임아웃'));
+            reject(new Error('네이티브 로그아웃 타임아웃 - 5초 후 응답 없음'));
           }, 5000);
         });
       });
@@ -276,7 +282,9 @@ export const signOutUser = async (): Promise<void> => {
     }
   } catch (error) {
     console.error('로그아웃 실패:', error);
-    throw new Error('로그아웃 중 오류가 발생했습니다.');
+    // 개발자를 위해 raw error message 전달
+    const rawErrorMessage = `로그아웃 실패 - ${error instanceof Error ? error.message : String(error)}`;
+    throw new Error(rawErrorMessage);
   }
 };
 
@@ -395,6 +403,11 @@ const detectProblematicBrowser = (): boolean => {
 // Google 로그인
 export const signInWithGoogle = async (): Promise<User> => {
   try {
+    console.log('=== Google 로그인 시작 ===');
+    console.log('User Agent:', navigator.userAgent);
+    console.log('웹뷰 환경:', isWebViewEnvironment());
+    console.log('문제가 있는 브라우저:', detectProblematicBrowser());
+    
     // 웹뷰 환경에서는 네이티브 구글 로그인 사용
     if (isWebViewEnvironment()) {
       console.log('웹뷰 환경에서 네이티브 구글 로그인 요청');
@@ -418,6 +431,7 @@ export const signInWithGoogle = async (): Promise<User> => {
       // 리다이렉트 후 결과를 가져오는 것은 별도 함수에서 처리
       throw new Error('REDIRECT_INITIATED');
     } else {
+      console.log('일반 브라우저, 팝업 방식 사용');
       // 팝업 방식 사용
       userCredential = await signInWithPopup(auth, provider);
     }
@@ -438,8 +452,13 @@ export const signInWithGoogle = async (): Promise<User> => {
       throw error; // 리다이렉트가 시작된 경우는 특별 처리
     }
     console.error('Google 로그인 실패:', error);
+    console.error('오류 타입:', typeof error);
+    console.error('오류 객체:', error);
+    
     const firebaseError = error as FirebaseAuthError;
-    throw new Error(getErrorTranslationKey(firebaseError.code));
+    // 개발자를 위해 raw error message 전달
+    const rawErrorMessage = `Google 로그인 실패 - Code: ${firebaseError.code || 'UNKNOWN'}, Message: ${firebaseError.message || '알 수 없는 오류'}, Type: ${typeof error}`;
+    throw new Error(rawErrorMessage);
   }
 };
 
@@ -463,8 +482,13 @@ export const handleGoogleRedirectResult = async (): Promise<User | null> => {
     return user;
   } catch (error) {
     console.error('Google 리다이렉트 결과 처리 실패:', error);
+    console.error('오류 타입:', typeof error);
+    console.error('오류 객체:', error);
+    
     const firebaseError = error as FirebaseAuthError;
-    throw new Error(getErrorTranslationKey(firebaseError.code));
+    // 개발자를 위해 raw error message 전달
+    const rawErrorMessage = `Google 리다이렉트 로그인 실패 - Code: ${firebaseError.code || 'UNKNOWN'}, Message: ${firebaseError.message || '알 수 없는 오류'}, Type: ${typeof error}`;
+    throw new Error(rawErrorMessage);
   }
 };
 
@@ -510,11 +534,15 @@ export const signInWithNativeGoogle = async (): Promise<User> => {
           } catch (error) {
             console.error('=== 네이티브 구글 로그인 처리 실패 ===');
             console.error('에러:', error);
-            reject(new Error('네이티브 구글 로그인 중 오류가 발생했습니다.'));
+            // 개발자를 위해 raw error message 전달
+            const rawErrorMessage = `네이티브 구글 로그인 실패 - ${error instanceof Error ? error.message : String(error)}`;
+            reject(new Error(rawErrorMessage));
           }
         } else if (message.type === 'googleLoginFail') {
           console.error('네이티브 구글 로그인 실패:', message.value);
-          reject(new Error(message.value || '네이티브 구글 로그인 실패'));
+          // 개발자를 위해 raw error message 전달
+          const rawErrorMessage = `네이티브 구글 로그인 실패 - ${message.value || '알 수 없는 오류'}`;
+          reject(new Error(rawErrorMessage));
         }
       };
 
@@ -524,7 +552,7 @@ export const signInWithNativeGoogle = async (): Promise<User> => {
 
         // 타임아웃 설정
         setTimeout(() => {
-          reject(new Error('네이티브 구글 로그인 타임아웃'));
+          reject(new Error('네이티브 구글 로그인 타임아웃 - 10초 후 응답 없음'));
         }, 10000);
       });
     });
