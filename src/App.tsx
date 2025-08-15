@@ -21,6 +21,7 @@ import ShareChartPage from './pages/ShareChartPage';
 import { useAuthStore } from './stores/authStore';
 import { useSettingsStore } from './stores/settingsStore';
 import { isWebViewEnvironment } from './services/webviewBridge';
+import { migrateAllExistingUsers } from './services/auth';
 import './services/webviewBridge'; // 웹뷰 브리지 초기화
 import './styles/main.scss';
 
@@ -107,6 +108,23 @@ function App() {
 
     initializeApp();
   }, [initializeAuth]);
+
+  // 사용자 마이그레이션 (로그인된 사용자가 있을 때 자동 실행)
+  useEffect(() => {
+    const runMigration = async () => {
+      if (user && isInitialized) {
+        try {
+          console.log('=== 앱 시작 시 사용자 마이그레이션 시작 ===');
+          await migrateAllExistingUsers();
+          console.log('=== 앱 시작 시 사용자 마이그레이션 완료 ===');
+        } catch (error) {
+          console.error('앱 시작 시 사용자 마이그레이션 실패:', error);
+        }
+      }
+    };
+
+    runMigration();
+  }, [user, isInitialized]);
 
   // 언어 설정 우선순위: 계정 언어 > localStorage > 브라우저 언어
   useEffect(() => {

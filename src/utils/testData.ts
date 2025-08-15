@@ -244,18 +244,24 @@ const createAutoCompleteTestData = async () => {
 // 테스트 고객 데이터 생성 (마스킹 없이)
 export const createTestCustomer = async (): Promise<string> => {
   try {
+    console.log('=== createTestCustomer 시작 ===');
     const auth = getAuth();
     const user = auth.currentUser;
     if (!user) {
       throw new Error('사용자가 로그인되지 않았습니다.');
     }
+    console.log('현재 사용자 UID:', user.uid);
 
     // 기존 테스트 고객이 있는지 확인
+    console.log('기존 테스트 고객 확인 중...');
     const existingCustomers = await customerService.getAll();
+    console.log('기존 고객 수:', existingCustomers.length);
+    
     const testCustomerExists = existingCustomers.some(customer => 
       customer.id === '0000' ||
       customer.memo === i18n.t('settings.testData.customerMemo')
     );
+    console.log('테스트 고객 존재 여부:', testCustomerExists);
 
     if (testCustomerExists) {
       console.log('테스트 고객이 이미 존재합니다. 기존 ID를 반환합니다.');
@@ -263,7 +269,9 @@ export const createTestCustomer = async (): Promise<string> => {
         customer.id === '0000' ||
         customer.memo === i18n.t('settings.testData.customerMemo')
       );
-      return existingTestCustomer?.id || '0000';
+      const existingId = existingTestCustomer?.id || '0000';
+      console.log('기존 테스트 고객 ID 반환:', existingId);
+      return existingId;
     }
 
     const now = new Date();
@@ -282,14 +290,18 @@ export const createTestCustomer = async (): Promise<string> => {
     };
 
     console.log('createTestCustomer - 생성할 고객 데이터:', testCustomer);
+    console.log('customerService.create 호출 시작...');
 
     // 회원가입 고객으로 생성 (0000번)
     const customerNumber = await customerService.create(testCustomer, true);
     
-    console.log('테스트 고객 생성 완료:', customerNumber);
+    console.log('=== createTestCustomer 완료 ===');
+    console.log('생성된 고객 번호:', customerNumber);
     return customerNumber;
   } catch (error) {
-    console.error('테스트 고객 생성 실패:', error);
+    console.error('=== createTestCustomer 실패 ===');
+    console.error('에러 상세:', error);
+    console.error('에러 스택:', error instanceof Error ? error.stack : '스택 정보 없음');
     throw new Error('테스트 고객 생성에 실패했습니다.');
   }
 };
@@ -297,18 +309,24 @@ export const createTestCustomer = async (): Promise<string> => {
 // 테스트 상품 데이터 생성
 export const createTestProduct = async (): Promise<string> => {
   try {
+    console.log('=== createTestProduct 시작 ===');
     const auth = getAuth();
     const user = auth.currentUser;
     if (!user) {
       throw new Error('사용자가 로그인되지 않았습니다.');
     }
+    console.log('현재 사용자 UID:', user.uid);
 
     // 기존 테스트 상품이 있는지 확인
+    console.log('기존 테스트 상품 확인 중...');
     const existingProducts = await productService.getAll();
+    console.log('기존 상품 수:', existingProducts.length);
+    
     const testProductExists = existingProducts.some(product => 
       product.id === 'test-product-001' ||
       product.description === i18n.t('settings.testData.productDescription')
     );
+    console.log('테스트 상품 존재 여부:', testProductExists);
 
     if (testProductExists) {
       console.log('테스트 상품이 이미 존재합니다. 기존 ID를 반환합니다.');
@@ -316,7 +334,9 @@ export const createTestProduct = async (): Promise<string> => {
         product.id === 'test-product-001' ||
         product.description === i18n.t('settings.testData.productDescription')
       );
-      return existingTestProduct?.id || 'test-product-001';
+      const existingId = existingTestProduct?.id || 'test-product-001';
+      console.log('기존 테스트 상품 ID 반환:', existingId);
+      return existingId;
     }
 
     const now = new Date();
@@ -342,16 +362,20 @@ export const createTestProduct = async (): Promise<string> => {
     };
 
     console.log('createTestProduct - 생성할 상품 데이터:', testProduct);
+    console.log('직접 Firestore에 저장 시작...');
 
     // 직접 Firestore에 저장
     const collectionPath = `users/${user.uid}/products`;
     const docRef = doc(db, collectionPath, productId);
     await setDoc(docRef, testProduct);
     
-    console.log('테스트 상품 생성 완료:', productId);
+    console.log('=== createTestProduct 완료 ===');
+    console.log('생성된 상품 ID:', productId);
     return productId;
   } catch (error) {
-    console.error('테스트 상품 생성 실패:', error);
+    console.error('=== createTestProduct 실패 ===');
+    console.error('에러 상세:', error);
+    console.error('에러 스택:', error instanceof Error ? error.stack : '스택 정보 없음');
     throw new Error('테스트 상품 생성에 실패했습니다.');
   }
 };
@@ -359,65 +383,70 @@ export const createTestProduct = async (): Promise<string> => {
 // 테스트 예약 데이터 생성
 export const createTestReservation = async (customerId: string, productId: string): Promise<string> => {
   try {
+    console.log('=== createTestReservation 시작 ===');
+    console.log('고객 ID:', customerId);
+    console.log('상품 ID:', productId);
+    
     const auth = getAuth();
     const user = auth.currentUser;
     if (!user) {
       throw new Error('사용자가 로그인되지 않았습니다.');
     }
+    console.log('현재 사용자 UID:', user.uid);
 
     // 기존 테스트 예약이 있는지 확인
+    console.log('기존 테스트 예약 확인 중...');
     const existingReservations = await reservationService.getAll();
+    console.log('기존 예약 수:', existingReservations.length);
+    
     const testReservationExists = existingReservations.some(reservation => 
       reservation.memo === i18n.t('settings.testData.reservationMemo')
     );
+    console.log('테스트 예약 존재 여부:', testReservationExists);
 
     if (testReservationExists) {
-      console.log('테스트 예약이 이미 존재합니다. 건너뜁니다.');
-      return '';
+      console.log('테스트 예약이 이미 존재합니다. 기존 ID를 반환합니다.');
+      const existingTestReservation = existingReservations.find(reservation => 
+        reservation.memo === i18n.t('settings.testData.reservationMemo')
+      );
+      const existingId = existingTestReservation?.id || 'test-reservation-001';
+      console.log('기존 테스트 예약 ID 반환:', existingId);
+      return existingId;
     }
 
     const now = new Date();
-    
-    // 현재 시간을 10분 올림 처리
-    const currentMinutes = now.getMinutes();
-    const roundedMinutes = Math.ceil(currentMinutes / 10) * 10;
-    const reservationTime = new Date(now);
-    reservationTime.setMinutes(roundedMinutes, 0, 0);
-    
-    // 시간이 60분을 넘어가면 다음 시간으로 조정
-    if (roundedMinutes >= 60) {
-      reservationTime.setHours(reservationTime.getHours() + 1);
-      reservationTime.setMinutes(0);
-    }
-    
-    // 시간을 HH:mm 형식으로 포맷팅
-    const timeString = reservationTime.toTimeString().slice(0, 5);
-    
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(14, 0, 0, 0); // 오후 2시
+
     // 현재 언어에 맞는 테스트 데이터 가져오기
     const currentLanguage = i18n.language || 'en';
     const languageData = getTestDataByLanguage(currentLanguage);
-    
-    const testReservation = {
-      customerId: customerId,
+
+    const reservationData = {
+      customerId,
       customerName: languageData.testCustomer.name,
-      productId: productId,
+      productId,
       productName: languageData.testProduct.name,
-      date: reservationTime,
-      time: timeString,
+      date: tomorrow,
+      time: '14:00',
       status: 'confirmed' as const,
       price: languageData.testProduct.price,
       memo: i18n.t('settings.testData.reservationMemo')
     };
 
-    console.log('createTestReservation - 생성할 예약 데이터:', testReservation);
+    console.log('createTestReservation - 생성할 예약 데이터:', reservationData);
+    console.log('reservationService.create 호출 시작...');
 
-    // 예약 서비스를 통해 저장
-    const reservationId = await reservationService.create(testReservation);
+    const reservationId = await reservationService.create(reservationData);
     
-    console.log('테스트 예약 생성 완료:', reservationId);
+    console.log('=== createTestReservation 완료 ===');
+    console.log('생성된 예약 ID:', reservationId);
     return reservationId;
   } catch (error) {
-    console.error('테스트 예약 생성 실패:', error);
+    console.error('=== createTestReservation 실패 ===');
+    console.error('에러 상세:', error);
+    console.error('에러 스택:', error instanceof Error ? error.stack : '스택 정보 없음');
     throw new Error('테스트 예약 생성에 실패했습니다.');
   }
 };
@@ -463,16 +492,34 @@ export const createAllTestData = async (): Promise<{
       testProduct: languageData.testProduct
     });
     
-    // 테스트 고객과 상품을 병렬로 생성
+    // 테스트 고객과 상품을 순차적으로 생성 (앱 환경에서 안정성을 위해)
     console.log('테스트 고객과 상품 생성 시작...');
-    const [customerId, productId] = await Promise.all([
-      createTestCustomer(),
-      createTestProduct()
-    ]);
+    
+    console.log('createTestCustomer 함수 호출...');
+    const customerId = await createTestCustomer();
+    console.log('createTestCustomer 완료, 고객 ID:', customerId);
+    
+    // 고객 생성 후 잠시 대기 (앱 환경에서 안정성을 위해)
+    if (typeof window !== 'undefined' && (window as any).ReactNativeWebView) {
+      console.log('앱 환경 감지, 고객 생성 후 1초 대기...');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+    
+    console.log('createTestProduct 함수 호출...');
+    const productId = await createTestProduct();
+    console.log('createTestProduct 완료, 상품 ID:', productId);
+    
+    // 상품 생성 후 잠시 대기 (앱 환경에서 안정성을 위해)
+    if (typeof window !== 'undefined' && (window as any).ReactNativeWebView) {
+      console.log('앱 환경 감지, 상품 생성 후 1초 대기...');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
 
     // 테스트 예약 생성
     console.log('테스트 예약 생성 시작...');
+    console.log('createTestReservation 함수 호출...');
     const reservationId = await createTestReservation(customerId, productId);
+    console.log('createTestReservation 완료, 예약 ID:', reservationId);
 
     console.log('=== 모든 테스트 데이터 생성 완료 ===');
     console.log('생성된 데이터:', { customerId, productId, reservationId });
@@ -482,8 +529,9 @@ export const createAllTestData = async (): Promise<{
     console.error('=== 테스트 데이터 생성 실패 ===');
     console.error('에러 상세:', error);
     console.error('에러 스택:', error instanceof Error ? error.stack : '스택 정보 없음');
-    throw new Error('테스트 데이터 생성에 실패했습니다.');
+    throw error;
   } finally {
     isCreatingTestData = false;
+    console.log('=== 테스트 데이터 생성 플래그 해제 ===');
   }
 }; 

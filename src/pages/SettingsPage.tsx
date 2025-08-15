@@ -94,6 +94,8 @@ const SettingsPage: React.FC = () => {
     }
   };
 
+
+
   // 필드 선택 시 자동완성 데이터 로드
   useEffect(() => {
     if (selectedChartType && selectedField) {
@@ -101,12 +103,20 @@ const SettingsPage: React.FC = () => {
     }
   }, [selectedChartType, selectedField]);
 
-  const handleSettingChange = async (key: keyof { language: string; currency: string; businessType: string }, value: string) => {
+    const handleSettingChange = async (key: keyof { language: string; currency: string; businessType: string }, value: string) => {
+    if (!user) {
+      console.error('사용자가 로그인되지 않았습니다.');
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    console.log('설정 변경 시도:', { key, value, user, uid: user.uid });
+
     try {
       if (key === 'businessType') {
-        await updateSettings({ [key]: value as ChartType });
+        await updateSettings({ [key]: value as ChartType }, user);
       } else {
-        await updateSettings({ [key]: value });
+        await updateSettings({ [key]: value }, user);
       }
       
       if (key === 'language') {

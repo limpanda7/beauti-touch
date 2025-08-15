@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Globe } from 'lucide-react';
+import { useSettingsStore } from '../stores/settingsStore';
+import { useAuthStore } from '../stores/authStore';
 import { 
   SUPPORTED_LANGUAGES, 
   LANGUAGE_NAMES,
@@ -10,6 +12,8 @@ import {
 
 const LanguageSelector: React.FC = () => {
   const { i18n } = useTranslation();
+  const { updateSettings } = useSettingsStore();
+  const { user } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -27,10 +31,30 @@ const LanguageSelector: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLanguageChange = (language: SupportedLanguage) => {
-    i18n.changeLanguage(language);
-    saveLanguageToStorage(language);
-    setIsOpen(false);
+  const handleLanguageChange = async (language: SupportedLanguage) => {
+    try {
+      console.log('언어 변경 시도:', language);
+      
+      // i18n 언어 변경
+      i18n.changeLanguage(language);
+      
+      // 로컬 스토리지에 저장
+      saveLanguageToStorage(language);
+      
+      // 파이어스토어에 저장
+      if (user) {
+        await updateSettings({ language }, user);
+      }
+      
+      console.log('언어 변경 성공:', language);
+      setIsOpen(false);
+    } catch (error) {
+      console.error('언어 변경 실패:', error);
+      // 에러 발생 시 원래 언어로 되돌리기
+      i18n.changeLanguage(currentLanguage);
+      // 사용자에게 에러 알림
+      alert(`언어 변경에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+    }
   };
 
   return (

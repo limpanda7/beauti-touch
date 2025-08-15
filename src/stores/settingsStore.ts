@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot, collection } from 'firebase/firestore';
 import type { Unsubscribe } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import type { ChartType } from '../types';
 import { getDefaultCurrencyForLanguage } from '../utils/currency';
 import { getBrowserLanguage, SUPPORTED_LANGUAGES, type SupportedLanguage } from '../utils/languageUtils';
+import type { User } from '../types';
 
 export interface Settings {
   language: string;
@@ -15,8 +16,8 @@ export interface Settings {
 
 interface SettingsStore extends Settings {
   isLoading: boolean;
-  updateSettings: (newSettings: Partial<Settings>) => Promise<void>;
-  resetSettings: () => Promise<void>;
+  updateSettings: (newSettings: Partial<Settings>, user: User) => Promise<void>;
+  resetSettings: (user: User) => Promise<void>;
   initializeSettings: (userId: string) => Promise<Unsubscribe | undefined>;
 }
 
@@ -58,19 +59,20 @@ export const useSettingsStore = create<SettingsStore>()(
       set({ isLoading: true });
       
       try {
-        const settingsRef = doc(db, 'users', userId, 'settings', 'userSettings');
+        const userRef = doc(db, 'users', userId);
         
         // 실시간 리스너 설정
-        const unsubscribe = onSnapshot(settingsRef, (doc) => {
+        const unsubscribe = onSnapshot(userRef, (doc) => {
           if (doc.exists()) {
-            const data = doc.data() as Settings;
+            const userData = doc.data();
+            const settings = userData.settings || {};
             set({
-              language: data.language || defaultSettings.language,
-              currency: data.currency || defaultSettings.currency,
-              businessType: data.businessType || defaultSettings.businessType,
+              language: settings.language || defaultSettings.language,
+              currency: settings.currency || defaultSettings.currency,
+              businessType: settings.businessType || defaultSettings.businessType,
               isLoading: false
             });
-            console.log('사용자 설정 로드 완료:', data);
+            console.log('사용자 설정 로드 완료:', settings);
           } else {
             // 설정이 없으면 브라우저 언어에 따른 기본값으로 초기화
             const dynamicDefaults = getDefaultSettings();
@@ -92,18 +94,24 @@ export const useSettingsStore = create<SettingsStore>()(
       }
     },
     
-    updateSettings: async (newSettings: Partial<Settings>) => {
-      const currentUser = auth.currentUser;
+    updateSettings: async (newSettings: Partial<Settings>, user: User) => {
+      console.log('updateSettings 호출:', { newSettings, user, uid: user?.uid });
       
-      if (!currentUser?.uid) {
+      if (!user?.uid) {
         console.error('사용자가 로그인되지 않았습니다.');
         throw new Error('사용자가 로그인되지 않았습니다.');
+      }
+      
+      if (typeof user.uid !== 'string' || user.uid.trim() === '') {
+        console.error('유효하지 않은 uid:', user.uid);
+        throw new Error('유효하지 않은 사용자 ID입니다.');
       }
       
       set({ isLoading: true });
       
       try {
-        const settingsRef = doc(db, 'users', currentUser.uid, 'settings', 'userSettings');
+        console.log('Firestore 경로 생성:', ['users', user.uid]);
+        const userRef = doc(db, 'users', user.uid);
         const currentSettings = get();
         
         // 언어가 변경되는 경우 해당 언어의 기본 통화로 자동 설정
@@ -125,7 +133,9 @@ export const useSettingsStore = create<SettingsStore>()(
         
         // Settings 필드만 저장
         const settingsToSave = pickSettingsOnly(updatedSettings);
-        await setDoc(settingsRef, settingsToSave);
+        console.log('설정 저장 시도:', { uid: user.uid, settingsToSave });
+        await setDoc(userRef, { settings: settingsToSave }, { merge: true });
+        console.log('설정 저장 성공');
         set({ isLoading: false });
       } catch (error) {
         console.error('설정 업데이트 실패:', error);
@@ -134,9 +144,7 @@ export const useSettingsStore = create<SettingsStore>()(
       }
     },
     
-    resetSettings: async () => {
-      const { user } = await import('../stores/authStore').then(m => m.useAuthStore.getState());
-      
+    resetSettings: async (user: User) => {
       if (!user?.uid) {
         console.error('사용자가 로그인되지 않았습니다.');
         return;
@@ -145,8 +153,8 @@ export const useSettingsStore = create<SettingsStore>()(
       set({ isLoading: true });
       
       try {
-        const settingsRef = doc(db, 'users', user.uid, 'settings', 'userSettings');
-        await setDoc(settingsRef, defaultSettings);
+        const userRef = doc(db, 'users', user.uid);
+        await setDoc(userRef, { settings: defaultSettings }, { merge: true });
         set({ isLoading: false });
       } catch (error) {
         console.error('설정 초기화 실패:', error);
