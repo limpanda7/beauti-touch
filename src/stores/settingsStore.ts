@@ -63,7 +63,10 @@ export const useSettingsStore = create<SettingsStore>()(
           if (doc.exists()) {
             const userData = doc.data();
             const settings = userData.settings || {};
-            const newLanguage = settings.language || defaultSettings.language;
+            
+            // localStorage의 언어를 우선 사용하고, 없으면 Firestore 설정, 마지막으로 기본값 사용
+            const storedLanguage = getLanguageFromStorage();
+            const newLanguage = storedLanguage || settings.language || defaultSettings.language;
             const newCurrency = settings.currency || defaultSettings.currency;
             
             set({
@@ -72,7 +75,7 @@ export const useSettingsStore = create<SettingsStore>()(
               isLoading: false
             });
             
-            console.log('사용자 설정 로드 완료:', settings);
+            console.log('사용자 설정 로드 완료:', { settings, storedLanguage, finalLanguage: newLanguage });
             
             // 언어 설정이 로드된 후 languageStore에 알림
             const { updateLanguageFromSettings } = useLanguageStore.getState();

@@ -20,6 +20,7 @@ import { createAllTestData } from '../utils/testData';
 import { getCurrentLanguage } from '../utils/languageUtils';
 import { getDefaultCurrencyForLanguage } from '../utils/currency';
 import { isWebViewEnvironment, postMessageToNative, setWebViewMessageListener } from '../services/webviewBridge';
+import { useLanguageStore } from '../stores/languageStore';
 
 // Firebase 에러 코드를 다국어 키로 변환하는 함수
 const getErrorTranslationKey = (errorCode: string): string => {
@@ -174,8 +175,17 @@ const handleNewUserSetup = async (user: User, context: string = 'unknown') => {
 
     await setDoc(userRef, userData, { merge: true });
 
-    // 언어 설정 저장
-    const currentLanguage = getCurrentLanguage();
+    // 언어 설정 저장 - 언어 스토어에서 현재 언어 가져오기
+    let currentLanguage: string;
+    try {
+      // 언어 스토어에서 현재 언어 가져오기 시도
+      const languageStore = useLanguageStore.getState();
+      currentLanguage = languageStore.currentLanguage;
+    } catch (error) {
+      // 언어 스토어 접근 실패 시 fallback으로 getCurrentLanguage 사용
+      console.warn('언어 스토어 접근 실패, fallback 사용:', error);
+      currentLanguage = getCurrentLanguage();
+    }
 
     const settingsData = {
       language: currentLanguage,
