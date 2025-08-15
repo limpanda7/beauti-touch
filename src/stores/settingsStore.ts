@@ -5,8 +5,9 @@ import type { Unsubscribe } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import type { ChartType } from '../types';
 import { getDefaultCurrencyForLanguage } from '../utils/currency';
-import { getBrowserLanguage, SUPPORTED_LANGUAGES, type SupportedLanguage } from '../utils/languageUtils';
+import { getBrowserLanguage, SUPPORTED_LANGUAGES, type SupportedLanguage, getLanguageFromStorage } from '../utils/languageUtils';
 import type { User } from '../types';
+import { useLanguageStore } from './languageStore';
 
 export interface Settings {
   language: string;
@@ -62,29 +63,75 @@ export const useSettingsStore = create<SettingsStore>()(
           if (doc.exists()) {
             const userData = doc.data();
             const settings = userData.settings || {};
+            const newLanguage = settings.language || defaultSettings.language;
+            const newCurrency = settings.currency || defaultSettings.currency;
+            
             set({
-              language: settings.language || defaultSettings.language,
-              currency: settings.currency || defaultSettings.currency,
+              language: newLanguage,
+              currency: newCurrency,
               isLoading: false
             });
+            
             console.log('사용자 설정 로드 완료:', settings);
+            
+            // 언어 설정이 로드된 후 languageStore에 알림
+            const { updateLanguageFromSettings } = useLanguageStore.getState();
+            updateLanguageFromSettings(newLanguage);
           } else {
-            // 설정이 없으면 브라우저 언어에 따른 기본값으로 초기화
-            const dynamicDefaults = getDefaultSettings();
-            set({ ...dynamicDefaults, isLoading: false });
-            console.log('사용자 설정 없음, 기본값으로 초기화:', dynamicDefaults);
+            // 설정이 없으면 현재 localStorage의 언어 설정을 우선 사용
+            const storedLanguage = getLanguageFromStorage();
+            const currentLanguage = storedLanguage || defaultSettings.language;
+            const currentCurrency = defaultSettings.currency;
+            
+            set({
+              language: currentLanguage,
+              currency: currentCurrency,
+              isLoading: false
+            });
+            
+            console.log('사용자 설정 없음, localStorage 언어 유지:', currentLanguage);
+            
+            // localStorage의 언어로 languageStore 업데이트
+            const { updateLanguageFromSettings } = useLanguageStore.getState();
+            updateLanguageFromSettings(currentLanguage);
           }
         }, (error) => {
           console.error('설정 로드 실패:', error);
-          const dynamicDefaults = getDefaultSettings();
-          set({ ...dynamicDefaults, isLoading: false });
+          // 에러 발생 시에도 localStorage의 언어 설정 유지
+          const storedLanguage = getLanguageFromStorage();
+          const fallbackLanguage = storedLanguage || defaultSettings.language;
+          const fallbackCurrency = defaultSettings.currency;
+          
+          set({ 
+            language: fallbackLanguage, 
+            currency: fallbackCurrency, 
+            isLoading: false 
+          });
+          
+          console.log('설정 로드 실패, localStorage 언어 유지:', fallbackLanguage);
+          
+          // localStorage의 언어로 languageStore 업데이트
+          const { updateLanguageFromSettings } = useLanguageStore.getState();
+          updateLanguageFromSettings(fallbackLanguage);
         });
         
         // 컴포넌트 언마운트 시 리스너 정리를 위해 반환
         return unsubscribe;
       } catch (error) {
         console.error('설정 초기화 실패:', error);
-        set({ ...defaultSettings, isLoading: false });
+        // 에러 발생 시에도 localStorage의 언어 설정 유지
+        const storedLanguage = getLanguageFromStorage();
+        const fallbackLanguage = storedLanguage || defaultSettings.language;
+        const fallbackCurrency = defaultSettings.currency;
+        
+        set({ 
+          language: fallbackLanguage, 
+          currency: fallbackCurrency, 
+          isLoading: false 
+        });
+        
+        console.log('설정 초기화 실패, localStorage 언어 유지:', fallbackLanguage);
+        
         return undefined;
       }
     },
@@ -121,6 +168,10 @@ export const useSettingsStore = create<SettingsStore>()(
             const defaultCurrency = getDefaultCurrencyForLanguage(newSettings.language as SupportedLanguage);
             updatedSettings.currency = defaultCurrency;
             console.log(`언어 변경: ${newSettings.language}, 기본 통화 설정: ${defaultCurrency}`);
+            
+            // languageStore에 언어 변경 알림
+            const { updateLanguageFromSettings } = useLanguageStore.getState();
+            updateLanguageFromSettings(newSettings.language);
           } else {
             console.warn(`지원하지 않는 언어: ${newSettings.language}`);
           }

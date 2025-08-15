@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { I18nextProvider } from 'react-i18next';
 import { HelmetProvider } from 'react-helmet-async';
 import i18n from './i18n';
-import { getBrowserLanguage, getLanguageFromStorage, saveLanguageToStorage } from './utils/languageUtils';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -19,7 +18,7 @@ import SharePage from './pages/SharePage';
 import ShareChartPage from './pages/ShareChartPage';
 
 import { useAuthStore } from './stores/authStore';
-import { useSettingsStore } from './stores/settingsStore';
+import { useLanguageStore } from './stores/languageStore';
 import { isWebViewEnvironment } from './services/webviewBridge';
 import { migrateAllExistingUsers } from './services/auth';
 import './services/webviewBridge'; // 웹뷰 브리지 초기화
@@ -94,12 +93,14 @@ const AppRoutes: React.FC = () => {
 
 function App() {
   const { user, isInitialized, initialize: initializeAuth } = useAuthStore();
-  const { language, isLoading: settingsLoading } = useSettingsStore();
+  const { initializeLanguage } = useLanguageStore();
 
-  // 앱 초기화
+  // 앱 초기화 (한 번만 실행)
   useEffect(() => {
     const initializeApp = async () => {
       try {
+        // 언어 초기화를 먼저 실행 (i18n과 동기화)
+        initializeLanguage();
         await initializeAuth();
       } catch (error) {
         console.error('앱 초기화 실패:', error);
@@ -107,7 +108,7 @@ function App() {
     };
 
     initializeApp();
-  }, [initializeAuth]);
+  }, [initializeAuth, initializeLanguage]);
 
   // 사용자 마이그레이션 (로그인된 사용자가 있을 때 자동 실행)
   useEffect(() => {
@@ -126,36 +127,8 @@ function App() {
     runMigration();
   }, [user, isInitialized]);
 
-  // 언어 설정 우선순위: 계정 언어 > localStorage > 브라우저 언어
-  useEffect(() => {
-    // 1. 사용자가 로그인되어 있고 계정 언어 설정이 있는 경우
-    if (user && language && !settingsLoading) {
-      if (language !== i18n.language) {
-        i18n.changeLanguage(language);
-        saveLanguageToStorage(language as any);
-      }
-    }
-    // 2. 사용자가 로그인되어 있지만 계정 언어 설정이 없는 경우
-    else if (user && !language && !settingsLoading) {
-      const storedLanguage = getLanguageFromStorage();
-      if (storedLanguage && storedLanguage !== i18n.language) {
-        i18n.changeLanguage(storedLanguage);
-      }
-    }
-    // 3. 사용자가 로그인되지 않은 경우
-    else if (!user) {
-      const storedLanguage = getLanguageFromStorage();
-      if (storedLanguage && storedLanguage !== i18n.language) {
-        i18n.changeLanguage(storedLanguage);
-      } else if (!storedLanguage) {
-        const browserLang = getBrowserLanguage();
-        if (browserLang !== i18n.language) {
-          i18n.changeLanguage(browserLang);
-          saveLanguageToStorage(browserLang);
-        }
-      }
-    }
-  }, [user, language, settingsLoading]);
+  // 언어 설정은 앱 시작 시 한 번만 초기화하고, 로그아웃 후에는 재초기화하지 않음
+  // localStorage의 언어 설정이 유지되도록 함
 
   return (
     <HelmetProvider>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Settings as SettingsIcon, Globe, DollarSign, LogOut, User, Trash2, Search, Calendar, CreditCard } from 'lucide-react';
 import { useSettingsStore } from '../stores/settingsStore';
+import { useLanguageStore } from '../stores/languageStore';
 import { useAuthStore, useUser } from '../stores/authStore';
 import { autoCompleteService } from '../services/firestore';
 import type { ChartType, AutoCompleteSuggestion } from '../types';
@@ -14,6 +15,7 @@ import { getBrowserLanguage, saveLanguageToStorage, SUPPORTED_LANGUAGES, type Su
 const SettingsPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { language, currency, updateSettings, isLoading } = useSettingsStore();
+  const { setLanguage } = useLanguageStore();
   const { signOut } = useAuthStore();
   const user = useUser();
   
@@ -118,14 +120,8 @@ const SettingsPage: React.FC = () => {
       if (key === 'language') {
         // 지원하는 언어인지 확인
         if (value in SUPPORTED_LANGUAGES) {
-          // i18n 언어 변경
-          try {
-            await i18n.changeLanguage(value);
-          } catch (error) {
-            console.error('i18n 언어 변경 실패:', error);
-          }
-          // localStorage에 언어 저장
-          saveLanguageToStorage(value as SupportedLanguage);
+          // languageStore를 통해 언어 변경
+          setLanguage(value);
         } else {
           console.warn(`지원하지 않는 언어: ${value}`);
         }
