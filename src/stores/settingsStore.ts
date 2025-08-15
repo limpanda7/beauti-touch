@@ -64,9 +64,9 @@ export const useSettingsStore = create<SettingsStore>()(
             const userData = doc.data();
             const settings = userData.settings || {};
             
-            // localStorage의 언어를 우선 사용하고, 없으면 Firestore 설정, 마지막으로 기본값 사용
+            // 사용자 설정이 있으면 그것을 우선 사용 (localStorage 덮어쓰기)
             const storedLanguage = getLanguageFromStorage();
-            const newLanguage = storedLanguage || settings.language || defaultSettings.language;
+            const newLanguage = settings.language || storedLanguage || defaultSettings.language;
             const newCurrency = settings.currency || defaultSettings.currency;
             
             set({
@@ -77,9 +77,15 @@ export const useSettingsStore = create<SettingsStore>()(
             
             console.log('사용자 설정 로드 완료:', { settings, storedLanguage, finalLanguage: newLanguage });
             
-            // 언어 설정이 로드된 후 languageStore에 알림
-            const { updateLanguageFromSettings } = useLanguageStore.getState();
-            updateLanguageFromSettings(newLanguage);
+            // 사용자 설정이 있으면 언어 스토어를 강제로 업데이트 (localStorage 덮어쓰기)
+            if (settings.language) {
+              const { forceSetLanguageFromUserSettings } = useLanguageStore.getState();
+              forceSetLanguageFromUserSettings(settings.language);
+            } else {
+              // 사용자 설정이 없으면 기존 방식으로 업데이트
+              const { updateLanguageFromSettings } = useLanguageStore.getState();
+              updateLanguageFromSettings(newLanguage);
+            }
           } else {
             // 설정이 없으면 현재 localStorage의 언어 설정을 우선 사용
             const storedLanguage = getLanguageFromStorage();
@@ -172,9 +178,9 @@ export const useSettingsStore = create<SettingsStore>()(
             updatedSettings.currency = defaultCurrency;
             console.log(`언어 변경: ${newSettings.language}, 기본 통화 설정: ${defaultCurrency}`);
             
-            // languageStore에 언어 변경 알림
-            const { updateLanguageFromSettings } = useLanguageStore.getState();
-            updateLanguageFromSettings(newSettings.language);
+            // languageStore에 언어 변경 알림 (localStorage 덮어쓰기)
+            const { forceSetLanguageFromUserSettings } = useLanguageStore.getState();
+            forceSetLanguageFromUserSettings(newSettings.language);
           } else {
             console.warn(`지원하지 않는 언어: ${newSettings.language}`);
           }

@@ -9,6 +9,8 @@ interface LanguageStore {
   initializeLanguage: () => void;
   setLanguage: (language: string) => void;
   updateLanguageFromSettings: (settingsLanguage: string) => void;
+  // 사용자 설정에서 언어를 강제로 설정하는 메서드 추가
+  forceSetLanguageFromUserSettings: (language: string) => void;
 }
 
 export const useLanguageStore = create<LanguageStore>()(
@@ -21,7 +23,7 @@ export const useLanguageStore = create<LanguageStore>()(
       set({ isLoading: true });
       
       try {
-        // 1. localStorage에서 저장된 언어 확인 (가장 우선)
+        // 1. localStorage에서 저장된 언어 확인 (로그인 전이거나 사용자 설정이 없는 경우)
         const storedLanguage = getLanguageFromStorage();
         if (storedLanguage) {
           // i18n 인스턴스와 동기화
@@ -70,6 +72,19 @@ export const useLanguageStore = create<LanguageStore>()(
         saveLanguageToStorage(settingsLanguage as SupportedLanguage);
         set({ currentLanguage: settingsLanguage });
         console.log('설정에서 언어 업데이트됨:', settingsLanguage);
+      }
+    },
+
+    // 사용자 설정에서 언어를 강제로 설정 (로그인 시 localStorage 덮어쓰기)
+    forceSetLanguageFromUserSettings: (language: string) => {
+      if (language && language in SUPPORTED_LANGUAGES) {
+        i18n.changeLanguage(language);
+        // 사용자 설정으로 localStorage 덮어쓰기
+        saveLanguageToStorage(language as SupportedLanguage);
+        set({ currentLanguage: language });
+        console.log('사용자 설정으로 언어 강제 설정 및 localStorage 덮어쓰기:', language);
+      } else {
+        console.warn(`지원하지 않는 언어 또는 유효하지 않은 언어: ${language}`);
       }
     }
   }))

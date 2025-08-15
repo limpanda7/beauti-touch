@@ -35,6 +35,8 @@ const Layout: React.FC = () => {
       const initSettings = async () => {
         try {
           await initializeSettings(user.uid);
+          // 사용자 설정 로드 완료 후 언어를 강제로 업데이트 (localStorage 덮어쓰기)
+          // 이는 settingsStore에서 자동으로 처리됩니다
         } catch (error) {
           console.error('설정 초기화 실패:', error);
         }
