@@ -244,8 +244,7 @@
     "languageDescription": "Chọn ngôn ngữ hiển thị cho ứng dụng.",
     "currency": "Tiền tệ",
     "currencyDescription": "Chọn tiền tệ để hiển thị giá.",
-    "businessType": "Loại hình kinh doanh",
-    "businessTypeDescription": "Đặt loại hình kinh doanh mặc định sẽ được chọn khi nhập thông tin biểu đồ khách hàng.",
+
     "autoComplete": "Quản lý tự động hoàn thành",
     "autoCompleteDescription": "Quản lý dữ liệu tự động hoàn thành cho các trường nhập biểu đồ. Các giá trị đã nhập trước đó sẽ được đề xuất làm tùy chọn tự động hoàn thành.",
     "selectChartType": "Chọn Loại Biểu Đồ",
@@ -274,13 +273,7 @@
       "BRL": "Real (R$)",
       "MXN": "Peso ($)"
     },
-    "businessTypes": {
-      "eyelash": "Lông mi",
-      "waxing": "Tẩy lông",
-      "nail": "Móng tay",
-      "skin": "Chăm sóc da",
-      "massage": "Massage"
-    },
+
     "billing": "Thanh toán",
     "billingDescription": "Quản lý thông tin đăng ký và thanh toán.",
     "currentPlan": "Gói hiện tại",

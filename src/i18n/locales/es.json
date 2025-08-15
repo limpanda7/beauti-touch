@@ -254,8 +254,7 @@
     "languageDescription": "Seleccione el idioma de visualización para la aplicación.",
     "currency": "Moneda",
     "currencyDescription": "Seleccione la moneda a usar para mostrar precios.",
-    "businessType": "Tipo de Negocio",
-    "businessTypeDescription": "Establezca el tipo de negocio predeterminado que se seleccionará al ingresar información del gráfico del cliente.",
+
     "languages": {
       "ko": "한국어",
       "en": "English",
@@ -273,13 +272,7 @@
       "BRL": "Real (R$)",
       "MXN": "Peso ($)"
     },
-    "businessTypes": {
-      "eyelash": "Pestañas",
-      "waxing": "Depilación",
-      "nail": "Uñas",
-      "skin": "Cuidado de la Piel",
-      "massage": "Masaje"
-    },
+
     "billing": "Facturación",
     "billingDescription": "Gestiona la información de suscripción y facturación.",
     "currentPlan": "Plan Actual",

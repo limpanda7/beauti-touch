@@ -11,7 +11,6 @@ import type { User } from '../types';
 export interface Settings {
   language: string;
   currency: string;
-  businessType: ChartType;
 }
 
 interface SettingsStore extends Settings {
@@ -23,8 +22,7 @@ interface SettingsStore extends Settings {
 
 const defaultSettings: Settings = {
   language: 'ko',
-  currency: 'KRW',
-  businessType: ''
+  currency: 'KRW'
 };
 
 // 브라우저 언어에 따른 기본 설정 생성
@@ -34,8 +32,7 @@ const getDefaultSettings = (): Settings => {
   
   return {
     language: browserLanguage,
-    currency: defaultCurrency,
-    businessType: ''
+    currency: defaultCurrency
   };
 };
 
@@ -43,8 +40,7 @@ const getDefaultSettings = (): Settings => {
 function pickSettingsOnly(obj: any): Settings {
   return {
     language: obj.language,
-    currency: obj.currency,
-    businessType: obj.businessType,
+    currency: obj.currency
   };
 }
 
@@ -69,7 +65,6 @@ export const useSettingsStore = create<SettingsStore>()(
             set({
               language: settings.language || defaultSettings.language,
               currency: settings.currency || defaultSettings.currency,
-              businessType: settings.businessType || defaultSettings.businessType,
               isLoading: false
             });
             console.log('사용자 설정 로드 완료:', settings);

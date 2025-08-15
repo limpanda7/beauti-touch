@@ -40,7 +40,26 @@ const ChartPage: React.FC = () => {
   const { reservationId } = useParams<{ reservationId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { businessType } = useSettingsStore();
+
+  // localStorage에서 차트 타입 가져오기
+  const getStoredChartType = (): ChartType => {
+    try {
+      const stored = localStorage.getItem('lastChartType');
+      return (stored as ChartType) || '';
+    } catch (error) {
+      console.error('localStorage에서 차트 타입을 가져오는 중 오류:', error);
+      return '';
+    }
+  };
+
+  // localStorage에 차트 타입 저장하기
+  const setStoredChartType = (chartType: ChartType): void => {
+    try {
+      localStorage.setItem('lastChartType', chartType);
+    } catch (error) {
+      console.error('localStorage에 차트 타입을 저장하는 중 오류:', error);
+    }
+  };
 
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [reservation, setReservation] = useState<Reservation | null>(null);
@@ -155,7 +174,7 @@ const ChartPage: React.FC = () => {
       const reservationData = await reservationService.getById(reservationId);
       if (reservationData) {
         setReservation(reservationData);
-        const currentChartType = reservationData.chartType || businessType || '';
+        const currentChartType = reservationData.chartType || getStoredChartType() || '';
         setChartType(currentChartType);
         setChartData(reservationData.chartData || {});
         // 도형 정보 복원
@@ -199,6 +218,7 @@ const ChartPage: React.FC = () => {
     setChartType(newChartType);
     setChartData({}); // 업종 변경 시 세부 입력 초기화
     setHasUnsavedChanges(true);
+    setStoredChartType(newChartType); // localStorage에 저장
 
     // 차트 타입 변경 시 이전 차트 존재 여부도 업데이트
     if (customer) {

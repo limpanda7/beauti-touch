@@ -179,8 +179,7 @@ const handleNewUserSetup = async (user: User, context: string = 'unknown') => {
 
     const settingsData = {
       language: currentLanguage,
-      currency: getDefaultCurrencyForLanguage(currentLanguage),
-      businessType: ''
+      currency: getDefaultCurrencyForLanguage(currentLanguage)
     };
 
     // 사용자 문서에 settings 필드로 저장

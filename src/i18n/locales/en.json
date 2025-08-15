@@ -246,8 +246,7 @@
     "languageDescription": "Select the display language for the application.",
     "currency": "Currency",
     "currencyDescription": "Select the currency to use for price display.",
-    "businessType": "Business Type",
-    "businessTypeDescription": "Set the default business type that will be selected when entering customer chart information.",
+
     "autoComplete": "Auto-complete Management",
     "autoCompleteDescription": "Manage auto-complete data for chart input fields. Previously entered values will be suggested as auto-complete options.",
     "selectChartType": "Select Chart Type",
@@ -276,13 +275,7 @@
       "BRL": "Real (R$)",
       "MXN": "Peso ($)"
     },
-    "businessTypes": {
-      "eyelash": "Eyelash",
-      "waxing": "Waxing",
-      "nail": "Nail",
-      "skin": "Skin Care",
-      "massage": "Massage"
-    },
+
     "billing": "Billing",
     "billingDescription": "Manage subscription and billing information.",
     "currentPlan": "Current Plan",

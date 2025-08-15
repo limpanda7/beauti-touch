@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Settings as SettingsIcon, Globe, DollarSign, Briefcase, LogOut, User, Trash2, Search, Calendar, CreditCard } from 'lucide-react';
+import { Settings as SettingsIcon, Globe, DollarSign, LogOut, User, Trash2, Search, Calendar, CreditCard } from 'lucide-react';
 import { useSettingsStore } from '../stores/settingsStore';
 import { useAuthStore, useUser } from '../stores/authStore';
 import { autoCompleteService } from '../services/firestore';
@@ -13,7 +13,7 @@ import { getBrowserLanguage, saveLanguageToStorage, SUPPORTED_LANGUAGES, type Su
 
 const SettingsPage: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { language, currency, businessType, updateSettings, isLoading } = useSettingsStore();
+  const { language, currency, updateSettings, isLoading } = useSettingsStore();
   const { signOut } = useAuthStore();
   const user = useUser();
   
@@ -103,7 +103,7 @@ const SettingsPage: React.FC = () => {
     }
   }, [selectedChartType, selectedField]);
 
-    const handleSettingChange = async (key: keyof { language: string; currency: string; businessType: string }, value: string) => {
+    const handleSettingChange = async (key: keyof { language: string; currency: string }, value: string) => {
     if (!user) {
       console.error('사용자가 로그인되지 않았습니다.');
       alert('로그인이 필요합니다.');
@@ -113,11 +113,7 @@ const SettingsPage: React.FC = () => {
     console.log('설정 변경 시도:', { key, value, user, uid: user.uid });
 
     try {
-      if (key === 'businessType') {
-        await updateSettings({ [key]: value as ChartType }, user);
-      } else {
-        await updateSettings({ [key]: value }, user);
-      }
+      await updateSettings({ [key]: value }, user);
       
       if (key === 'language') {
         // 지원하는 언어인지 확인
@@ -168,14 +164,7 @@ const SettingsPage: React.FC = () => {
     { code: 'MXN', name: t('settings.currencies.MXN') }
   ];
 
-  const businessTypes = [
-    { code: '', name: '-' },
-    { code: 'eyelash', name: t('settings.businessTypes.eyelash') },
-    { code: 'waxing', name: t('settings.businessTypes.waxing') },
-    { code: 'nail', name: t('settings.businessTypes.nail') },
-    { code: 'skin', name: t('settings.businessTypes.skin') },
-    { code: 'massage', name: t('settings.businessTypes.massage') }
-  ];
+
 
   return (
     <div className="settings-page">
@@ -227,23 +216,7 @@ const SettingsPage: React.FC = () => {
           </select>
         </div>
 
-        <div className="settings-item">
-          <div className="settings-item-header">
-            <Briefcase className="settings-item-icon" />
-            <h2 className="settings-item-title">{t('settings.businessType')}</h2>
-          </div>
-          <p className="settings-item-description">{t('settings.businessTypeDescription')}</p>
-          <select
-            value={businessType}
-            onChange={(e) => handleSettingChange('businessType', e.target.value)}
-            className="settings-select"
-            disabled={isLoading}
-          >
-            {businessTypes.map(businessType => (
-              <option key={businessType.code} value={businessType.code}>{businessType.name}</option>
-            ))}
-          </select>
-        </div>
+
 
         {/* 자동완성 관리 섹션 */}
         <div className="settings-item">
@@ -261,8 +234,8 @@ const SettingsPage: React.FC = () => {
                 className="settings-select"
               >
                 <option value="">{t('settings.selectChartType')}</option>
-                {businessTypes.filter(bt => bt.code !== '').map(businessType => (
-                  <option key={businessType.code} value={businessType.code}>{businessType.name}</option>
+                {Object.keys(chartFieldDefs).filter(key => key !== 'default' && key !== '').map(chartType => (
+                  <option key={chartType} value={chartType}>{t(`chart.type.${chartType}`)}</option>
                 ))}
               </select>
               

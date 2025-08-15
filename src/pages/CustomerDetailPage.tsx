@@ -19,7 +19,7 @@ import { formatDuration } from '../utils/timeUtils';
 const CustomerDetailPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { formatCurrency } = useCurrencyFormat();
-  const { businessType } = useSettingsStore();
+
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   

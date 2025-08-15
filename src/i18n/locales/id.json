@@ -238,15 +238,8 @@
       "BRL": "Real Brasil (R$)",
       "MXN": "Peso Meksiko ($)"
     },
-    "businessType": "Jenis Bisnis",
-    "businessTypeDescription": "Pilih jenis bisnis untuk menyesuaikan chart.",
-    "businessTypes": {
-      "eyelash": "Bulu Mata",
-      "waxing": "Waxing",
-      "nail": "Kuku",
-      "skin": "Perawatan Kulit",
-      "massage": "Pijat"
-    },
+
+
     "billing": "Penagihan",
     "billingDescription": "Kelola informasi langganan dan penagihan.",
     "currentPlan": "Paket Saat Ini",
