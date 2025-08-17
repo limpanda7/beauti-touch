@@ -1,0 +1,224 @@
+.charts-list-page {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .charts-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    gap: 1rem;
+
+    .charts-list-header-left {
+      .charts-list-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        margin: 0 0 0.5rem 0;
+      }
+
+      .charts-list-subtitle {
+        font-size: 1rem;
+        color: var(--color-text-secondary);
+        margin: 0;
+      }
+    }
+
+    .charts-list-header-right {
+      flex-shrink: 0;
+    }
+  }
+
+  .charts-list-filters {
+    margin-bottom: 2rem;
+
+    .filter-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+  }
+
+  .charts-list-content {
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+
+      .chart-card {
+        background: white;
+        border: 2px solid var(--color-border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+
+        &:hover {
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          transform: translateY(-3px);
+          border-color: var(--color-primary);
+          background: #fefefe;
+        }
+
+        .chart-card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+
+          .chart-status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+
+          .chart-type-badge {
+            padding: 0.25rem 0.75rem;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #495057;
+          }
+        }
+
+        .chart-card-body {
+          .chart-customer-info {
+            margin-bottom: 1rem;
+
+            .customer-name {
+              font-size: 1.25rem;
+              font-weight: 700;
+              color: #212529;
+              margin: 0 0 0.5rem 0;
+            }
+
+            .customer-phone {
+              font-size: 0.875rem;
+              color: #6c757d;
+              margin: 0;
+              font-weight: 500;
+            }
+          }
+
+          .chart-reservation-info {
+            margin-bottom: 1rem;
+
+            > div {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              margin-bottom: 0.75rem;
+              font-size: 0.875rem;
+              color: #495057;
+              font-weight: 500;
+
+              svg {
+                color: #6c757d;
+                flex-shrink: 0;
+              }
+
+              .product-duration {
+                color: #6c757d;
+                font-size: 0.75rem;
+                font-weight: 400;
+              }
+            }
+          }
+
+          .chart-memo {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+
+            p {
+              font-size: 0.875rem;
+              color: var(--color-text-secondary);
+              margin: 0;
+              line-height: 1.4;
+            }
+          }
+        }
+
+        .chart-card-actions {
+          display: flex;
+          gap: 0.75rem;
+          justify-content: flex-end;
+        }
+      }
+    }
+
+    .charts-empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--color-text-secondary);
+
+      svg {
+        margin-bottom: 1rem;
+      }
+
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem 0;
+        color: var(--color-text-primary);
+      }
+
+      p {
+        margin: 0 0 1.5rem 0;
+        line-height: 1.5;
+      }
+    }
+  }
+}
+
+// 반응형 디자인
+@media (max-width: 900px) {
+  .charts-list-page {
+    padding: 1rem;
+
+    .charts-list-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+
+      .charts-list-header-right {
+        align-self: stretch;
+      }
+    }
+
+    .charts-list-filters {
+      .filter-buttons {
+        justify-content: center;
+      }
+    }
+
+    .charts-list-content {
+      .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+
+        .chart-card {
+          padding: 1rem;
+
+          .chart-card-actions {
+            flex-direction: column;
+            gap: 0.5rem;
+
+            button {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}

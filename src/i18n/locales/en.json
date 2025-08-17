@@ -29,6 +29,7 @@
   },
   "navigation": {
     "reservations": "Reservations",
+    "charts": "Charts",
     "customers": "Customers",
     "products": "Products",
     "settings": "Settings",
@@ -372,6 +373,20 @@
     "title": "Chart",
     "createChart": "Chart",
     "viewChart": "View Chart",
+    "list": {
+      "title": "Charts List",
+      "subtitle": "Manage charts that are pending and completed",
+      "filter": {
+        "all": "All",
+        "pending": "Pending",
+        "completed": "Completed"
+      },
+      "viewCustomer": "View Customer",
+      "createChart": "Create Chart",
+      "viewChart": "View Chart",
+      "noCharts": "No charts available",
+      "noChartsDescription": "Create a new reservation to start writing charts"
+    },
     "drawingTitle": "Chart Drawings",
     "faceSideRight": "Face Side (Right)",
     "faceSideLeft": "Face Side (Left)",
@@ -426,6 +441,10 @@
       "usedDevice": "Used Device",
       "usedProduct": "Used Product",
       "caution": "Caution"
+    },
+    "status": {
+      "pending": "Pending",
+      "completed": "Completed"
     },
     "options": {
       "eyelashType": {

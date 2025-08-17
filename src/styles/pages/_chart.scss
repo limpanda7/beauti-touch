@@ -182,10 +182,10 @@
   align-items: center;
   margin-bottom: 1.5rem;
   
-  @media (max-width: 900px) {
-    flex-direction: row;
-    align-items: center;
-    gap: 0.75rem;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 }
 
@@ -194,9 +194,8 @@
   align-items: center;
   gap: 0.5rem;
   
-  @media (max-width: 900px) {
-    flex: 1;
-    min-width: 0;
+  @media (max-width: 768px) {
+    width: 100%;
   }
   
   label {
@@ -204,10 +203,6 @@
     color: #374151;
     font-size: 0.875rem;
     white-space: nowrap;
-    
-    @media (max-width: 900px) {
-      font-size: 0.8rem;
-    }
   }
   
   select {
@@ -217,10 +212,8 @@
     font-size: 0.875rem;
     background-color: white;
     
-    @media (max-width: 900px) {
+    @media (max-width: 768px) {
       flex: 1;
-      min-width: 0;
-      font-size: 0.8rem;
     }
   }
 }
@@ -230,8 +223,9 @@
   align-items: center;
   gap: 0.5rem;
   
-  @media (max-width: 900px) {
-    flex-shrink: 0;
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: flex-end;
   }
   
   // 비활성화된 버튼 스타일
@@ -242,26 +236,6 @@
     &:hover {
       transform: none;
       box-shadow: none;
-    }
-  }
-  
-  // 버튼이 완전히 숨겨진 경우
-  &:has(.btn:disabled) {
-    display: none;
-  }
-  
-  // 모바일/데스크톱 텍스트 전환
-  .load-latest-text-desktop {
-    @media (max-width: 900px) {
-      display: none;
-    }
-  }
-  
-  .load-latest-text-mobile {
-    display: none;
-    
-    @media (max-width: 900px) {
-      display: inline;
     }
   }
 }

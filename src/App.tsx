@@ -14,6 +14,7 @@ import CustomerDetailPage from './pages/CustomerDetailPage';
 import ProductsPage from './pages/ProductsPage';
 import SettingsPage from './pages/SettingsPage';
 import ChartPage from './pages/ChartPage';
+import ChartsListPage from './pages/ChartsListPage';
 import SharePage from './pages/SharePage';
 import ShareChartPage from './pages/ShareChartPage';
 
@@ -75,6 +76,7 @@ const AppRoutes: React.FC = () => {
         }>
           <Route index element={<Navigate to="/dashboard/reservations" replace />} />
           <Route path="reservations" element={<ReservationsPage />} />
+          <Route path="charts" element={<ChartsListPage />} />
           <Route path="customers" element={<CustomersPage />} />
           <Route path="customers/:id" element={<CustomerDetailPage />} />
           <Route path="products" element={<ProductsPage />} />

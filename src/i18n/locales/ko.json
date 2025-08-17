@@ -29,6 +29,7 @@
   },
   "navigation": {
     "reservations": "예약",
+    "charts": "차트",
     "customers": "고객",
     "products": "상품",
     "settings": "설정",
@@ -408,6 +409,20 @@
     "title": "차트",
     "createChart": "차트",
     "viewChart": "차트 보기",
+    "list": {
+      "title": "차트 목록",
+      "subtitle": "작성 전인 차트와 작성된 차트를 관리하세요",
+      "filter": {
+        "all": "전체",
+        "pending": "작성 전",
+        "completed": "작성 완료"
+      },
+      "viewCustomer": "고객 보기",
+      "createChart": "차트 작성",
+      "viewChart": "차트 보기",
+      "noCharts": "차트가 없습니다",
+      "noChartsDescription": "새로운 예약을 만들어 차트를 작성해보세요"
+    },
     "drawingTitle": "차트 그림",
     "faceSideRight": "얼굴 측면 (오른쪽)",
     "faceSideLeft": "얼굴 측면 (왼쪽)",
@@ -468,6 +483,10 @@
       "usedDevice": "사용 기기",
       "usedProduct": "사용 제품",
       "caution": "주의사항"
+    },
+    "status": {
+      "pending": "작성 전",
+      "completed": "작성 완료"
     },
     "options": {
       "eyelashType": {
